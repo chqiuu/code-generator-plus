@@ -1,0 +1,111 @@
+package com.chqiuu.cgp.db;
+
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.SQLColumnDefinition;
+import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
+import com.alibaba.druid.sql.ast.statement.SQLTableElement;
+import com.alibaba.druid.sql.dialect.mysql.ast.MySqlPrimaryKey;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
+import com.alibaba.druid.util.JdbcConstants;
+import com.chqiuu.cgp.connect.BaseConnect;
+import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.TableEntity;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * MySql数据库
+ *
+ * @author chqiu
+ */
+public class MySqlDatabase extends BaseDatabase {
+
+    @Override
+    public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("select table_catalog,table_schema,table_name,table_type,engine,version,row_format,table_rows,avg_row_length,data_length" +
+                " ,max_data_length,index_length,data_free,auto_increment,create_time,update_time,check_time,table_collation,checksum,create_options,table_comment" +
+                " from information_schema.tables where table_schema = (select database())");
+        if (StringUtils.isNotBlank(tableName)) {
+            sql.append(" and `table_name` like '%");
+            sql.append(tableName);
+            sql.append("%'");
+        }
+        sql.append(" order by `create_time` desc");
+        return connect.queryList(sql.toString(), TableEntity.class);
+    }
+
+    @Override
+    public TableEntity queryTable(BaseConnect connect, String tableName) {
+        String sql = ("select table_catalog,table_schema,table_name,table_type,engine,version,row_format,table_rows,avg_row_length,data_length" +
+                " ,max_data_length,index_length,data_free,auto_increment,create_time,update_time,check_time,table_collation,checksum,create_options,table_comment" +
+                " from information_schema.tables where table_schema = (select database())") +
+                " and `table_name` = '" +
+                tableName +
+                "'";
+        List<TableEntity> list = connect.queryList(sql, TableEntity.class);
+        if (list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public List<ColumnEntity> queryColumns(BaseConnect connect, String tableName) {
+        String sql = ("select `table_catalog`,`table_schema`,`table_name`,`column_name`,`ordinal_position`,`column_default`,`is_nullable`" +
+                " ,`data_type`,`character_maximum_length`,`character_octet_length`,`numeric_precision`,`numeric_scale`,`datetime_precision`" +
+                " ,`character_set_name`,`collation_name`,`column_type`,`column_key`,`extra`,`privileges`,`column_comment`,`generation_expression`" +
+                " , CONCAT('`',`column_name`,'` ',`column_type`,CASE WHEN `is_nullable`='NO' THEN ' NOT NULL' ELSE '' END ,CASE WHEN ISNULL(`column_default`) THEN '' ELSE CONCAT(' DEFAULT ',`column_default`) END ,CASE WHEN ISNULL(`extra`) THEN '' ELSE CONCAT(' ',`extra`) END ,CASE WHEN ISNULL(`column_comment`) THEN '' ELSE CONCAT(' COMMENT ',`column_comment`) END) ddl" +
+                " from information_schema.columns where table_schema = (select database())") +
+                " and `table_name` = '" +
+                tableName +
+                "'" +
+                " order by `ordinal_position`";
+        return connect.queryList(sql, ColumnEntity.class);
+    }
+
+    @Override
+    public List<TableEntity> getTableList(String createTableSqls) {
+        List<SQLStatement> stmtList = SQLUtils.parseStatements(createTableSqls, JdbcConstants.MYSQL);
+        List<TableEntity> tableList = new ArrayList<>();
+        for (SQLStatement sqlStatement : stmtList) {
+            if (sqlStatement instanceof MySqlCreateTableStatement) {
+                // 获取表对象
+                MySqlCreateTableStatement stmt = (MySqlCreateTableStatement) sqlStatement;
+                TableEntity tableEntity = new TableEntity();
+                tableEntity.setTableName(stmt.getTableSource().getExpr().toString().replace("`", ""));
+                tableEntity.setTableComment(stmt.getComment().toString().replace("'", ""));
+                List<ColumnEntity> columns = new ArrayList<>();
+                for (SQLTableElement column : stmt.getTableElementList()) {
+                    if (column instanceof SQLColumnDefinition) {
+                        ColumnEntity columnEntity = new ColumnEntity();
+                        // 获取字段对象
+                        SQLColumnDefinition columnDefinition = (SQLColumnDefinition) column;
+                        columnEntity.setColumnName(columnDefinition.getName().getSimpleName().replace("`", ""));
+                        columnEntity.setDataType(columnDefinition.getDataType().getName());
+                        columnEntity.setColumnComment(columnDefinition.getComment().toString().replace("'", ""));
+                        columnEntity.setDdl(column.toString());
+                        columns.add(columnEntity);
+                    } else if (column instanceof MySqlPrimaryKey) {
+                        // 获取表内主键
+                        MySqlPrimaryKey primaryKey = (MySqlPrimaryKey) column;
+                        for (SQLSelectOrderByItem item : primaryKey.getColumns()) {
+                            for (ColumnEntity columnEntity : columns) {
+                                if (item.getExpr().toString().replace("`", "").equals(columnEntity.getColumnName())) {
+                                    // 设置字段主键
+                                    columnEntity.setColumnKey("PRI");
+                                }
+                            }
+                        }
+                    }
+                }
+                tableEntity.setColumns(columns);
+                tableList.add(tableEntity);
+            }
+        }
+        return tableList;
+    }
+}

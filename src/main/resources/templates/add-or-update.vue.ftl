@@ -46,20 +46,20 @@
     },
     methods: {
       init (id) {
-        this.dataForm.${pk.attrname} = id || 0
+        this.dataForm.${pk.attrNameLowerCase} = id || 0
         this.visible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
-          if (this.dataForm.${pk.attrname}) {
+          if (this.dataForm.${pk.attrNameLowerCase}) {
             this.$http({
-              url: this.$http.adornUrl(`/${moduleName}/${pathName}/info/${r'${'}this.dataForm.${pk.attrname}${r'}'}`),
+              url: this.$http.adornUrl(`/${moduleName}/${pathName}/info/${r'${'}this.dataForm.${pk.attrNameLowerCase}${r'}'}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
                 <#list columns as column>
                 <#if column.columnName != pk.columnName>
-                this.dataForm.${column.attrNameLowerCase} = data.${classname}.${column.attrNameLowerCase}
+                this.dataForm.${column.attrNameLowerCase} = data.${classNameLowerCase}.${column.attrNameLowerCase}
                 </#if>
                 </#list>
               }
@@ -72,7 +72,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/${moduleName}/${pathName}/${r'${'}!this.dataForm.${pk.attrname} ? 'save' : 'update'${r'}'}`),
+              url: this.$http.adornUrl(`/${moduleName}/${pathName}/${r'${'}!this.dataForm.${pk.attrNameLowerCase} ? 'save' : 'update'${r'}'}`),
               method: 'post',
               data: this.$http.adornData({
             <#list columns as column>

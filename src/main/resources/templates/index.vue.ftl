@@ -37,8 +37,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.${pk.attrname})">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.${pk.attrname})">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.${pk.attrNameLowerCase})">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.${pk.attrNameLowerCase})">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -127,7 +127,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.${pk.attrname}
+          return item.${pk.attrNameLowerCase}
         })
         this.$confirm(`确定对[id=${r'${'}ids.join(',')}]进行[${r'${'}id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',

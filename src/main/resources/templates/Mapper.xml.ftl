@@ -30,7 +30,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                         AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}${column.attrNameLowerCase}${r'}'},'%')
                     </if>
                 <#else>
-                    <if test="#{column.attrNameLowerCase} != null ">
+                    <if test="${column.attrNameLowerCase} != null ">
                         AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}
                     </if>
                 </#if>

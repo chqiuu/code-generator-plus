@@ -1,5 +1,6 @@
 package com.chqiuu.cgp.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.chqiuu.cgp.common.constant.R;
 import com.chqiuu.cgp.common.constant.ResultConstant;
 import com.chqiuu.cgp.connect.BaseConnect;
@@ -9,10 +10,9 @@ import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.apache.commons.io.IOUtils;
-
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -99,14 +99,14 @@ public class CodeGeneratorController {
             @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
     })
     @GetMapping("/code")
-    public void code(HttpSession httpSession, String rootPackage, String moduleName, String author, String table, boolean isPlus, HttpServletResponse response) {
+    public void code(HttpSession httpSession, String codePackage, String rootPackage, String moduleName, String author, String table, boolean isPlus, HttpServletResponse response) {
         BaseConnect connect = (BaseConnect) httpSession.getAttribute("dbConnect");
         if (null == connect) {
             throw new UserException(ResultConstant.FAILED, "还未连接数据库，请先连接数据库！");
         }
-        if (null == moduleName) {
-            moduleName = rootPackage.substring(rootPackage.lastIndexOf(".") + 1);
-            rootPackage = rootPackage.substring(0, rootPackage.lastIndexOf("."));
+        if (StrUtil.isNotBlank(codePackage)) {
+            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
+            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
         String[] tableNames = new String[1];
         tableNames[0] = table;
@@ -135,14 +135,14 @@ public class CodeGeneratorController {
             @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
     })
     @GetMapping("/codes")
-    public void codes(HttpSession httpSession, String rootPackage, String moduleName, String author, String tables, boolean isPlus, HttpServletResponse response) throws IOException {
+    public void codes(HttpSession httpSession,  String codePackage, String rootPackage, String moduleName, String author, String tables, boolean isPlus, HttpServletResponse response) throws IOException {
         BaseConnect connect = (BaseConnect) httpSession.getAttribute("dbConnect");
         if (null == connect) {
             throw new UserException(ResultConstant.FAILED, "还未连接数据库，请先连接数据库！");
         }
-        if (null == moduleName) {
-            moduleName = rootPackage.substring(rootPackage.lastIndexOf(".") + 1);
-            rootPackage = rootPackage.substring(0, rootPackage.lastIndexOf("."));
+        if (StrUtil.isNotBlank(codePackage)) {
+            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
+            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
         String[] tableNames = tables.replaceAll(" ", "").replaceAll("   ", "").split(",");
 
@@ -165,14 +165,14 @@ public class CodeGeneratorController {
             @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
     })
     @GetMapping("/codeAll")
-    public void codeAll(HttpSession httpSession, String rootPackage, String moduleName, String author, boolean isPlus, HttpServletResponse response) throws Exception {
+    public void codeAll(HttpSession httpSession, String codePackage, String rootPackage, String moduleName, String author, boolean isPlus, HttpServletResponse response) throws Exception {
         BaseConnect connect = (BaseConnect) httpSession.getAttribute("dbConnect");
         if (null == connect) {
             throw new UserException(ResultConstant.FAILED, "还未连接数据库，请先连接数据库！");
         }
-        if (null == moduleName) {
-            moduleName = rootPackage.substring(rootPackage.lastIndexOf(".") + 1);
-            rootPackage = rootPackage.substring(0, rootPackage.lastIndexOf("."));
+        if (StrUtil.isNotBlank(codePackage)) {
+            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
+            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
         byte[] data = codeGeneratorService.generatorCodeAll(connect, rootPackage, moduleName, author, isPlus);
         response.reset();

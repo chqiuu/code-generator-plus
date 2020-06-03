@@ -81,7 +81,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
  /**
  * 根据唯一ID获取详细信息
  *
- * @param ${pk.attrNameLowerCase} ${column.comment}
+ * @param ${pk.attrNameLowerCase} ${pk.comment}
  * @return 详细信息
  */
  ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase});

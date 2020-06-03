@@ -16,9 +16,6 @@ import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 @Repository
 public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpperCase}Entity> {
 
-
- <#elseif plusEnabled == 1>
-
   /**
   * 根据唯一ID获取详细信息
   *
@@ -32,7 +29,6 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
   * @param pageInfo      分页控件
   <#list columns as column>
    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-   <#else>
     * @param ${column.attrNameLowerCase} ${column.comment}
    </#if>
   </#list>
@@ -41,12 +37,11 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
   IPage${r'<'}${classNameUpperCase}ListDto> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDto> pageInfo, <#assign paramsStr = ''>
   <#list columns as column>
    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-   <#else>
-    <#assign paramsStr>@Param("${column.attrNameLowerCase}") ${column.attrType} ${column.attrNameLowerCase},</#assign>
+    <#assign paramsStr>${paramsStr}@Param("${column.attrNameLowerCase}") ${column.attrType} ${column.attrNameLowerCase},</#assign>
    </#if>
-  </#list>${paramsStr?substring(0,paramsStr?length-1)});
+  </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
 }
- <#else>
+<#else>
 import org.springframework.stereotype.Repository;
 /**
  * ${comment}

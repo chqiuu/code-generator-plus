@@ -92,7 +92,6 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
  * @param size          每页显示条数
  <#list columns as column>
  <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
- <#else>
   * @param ${column.attrNameLowerCase} ${column.comment}
  </#if>
 </#list>
@@ -101,10 +100,9 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
  IPage${r'<'}${classNameUpperCase}ListDto> getPage(Integer current, Integer size, <#assign paramsStr = ''>
   <#list columns as column>
    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-   <#else>
-    <#assign paramsStr>${column.attrType} ${column.attrNameLowerCase},</#assign>
+    <#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase},</#assign>
    </#if>
-  </#list>${paramsStr?substring(0,paramsStr?length-1)});
+  </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
  /**
  * 删除
  *

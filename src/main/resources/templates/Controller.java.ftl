@@ -54,14 +54,13 @@ public class ${classNameUpperCase}Controller extends BaseController{
 
     @ApiOperation(value = "${comment}分页查询", notes = "${comment}分页查询")
     @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(@RequestParam ${classNameUpperCase}PageParamVo params) {
+    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(@RequestParam ${classNameUpperCase}PageParamVo vo) {
     return R.ok(${classNameLowerCase}Service.getPage(params.getCurrent(),params.getSize(),<#assign paramsStr = ''>
     <#list columns as column>
         <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-        <#else>
-            <#assign paramsStr>params.get${column.attrNameUpperCase}(),</#assign>
+            <#assign paramsStr>${paramsStr}vo.get${column.attrNameUpperCase}(),</#assign>
         </#if>
-    </#list>${paramsStr?substring(0,paramsStr?length-1)}));
+    </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}));
     }
 
     @ApiOperation(value = "新建${comment}", notes = "新建${comment}，返回ID")

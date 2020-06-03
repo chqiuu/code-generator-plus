@@ -24,7 +24,6 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         FROM `${tableName}` AS ${acronymLowerCase} WHERE 1=1
         <#list columns as column>
             <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-            <#else>
                 <#if column.attrType == 'String'>
                     <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">
                         AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}${column.attrNameLowerCase}${r'}'},'%')

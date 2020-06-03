@@ -23,8 +23,7 @@ import lombok.EqualsAndHashCode;
 @Data
 </#if>
 @ApiModel(value = "${comment}录入信息")
-public class ${classNameUpperCase}ListDto implements Serializable
-${r'{'}
+public class ${classNameUpperCase}ListDto implements Serializable${r'{'}
 
 private static final long serialVersionUID = 1L;
 //TODO 当您看到这个后您应该自己修改模板增减字段

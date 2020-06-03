@@ -124,19 +124,16 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     @Override
     public IPage${r'<'}${classNameUpperCase}ListDto> getPage(Integer current, Integer size, <#assign paramsStr = ''>
     <#list columns as column>
-        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-        <#else>
-            <#assign paramsStr>${column.attrType} ${column.attrNameLowerCase}, </#assign>
-        </#if>
-    </#list>${paramsStr?substring(0,paramsStr?length-1)}){
+        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase}, </#assign></#if>
+    </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}){
         Page${r'<'}${classNameUpperCase}ListDto> pageInfo = new Page<>(current, size);
-        return this.baseMapper.getPage(pageInfo, <#assign paramsStr = ''>
+        return this.baseMapper.getPage(pageInfo,
+    <#assign paramsStr = ''>
     <#list columns as column>
         <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-        <#else>
-            <#assign paramsStr>${column.attrNameLowerCase}, </#assign>
+            <#assign paramsStr>${paramsStr}${column.attrNameLowerCase}, </#assign>
         </#if>
-    </#list>${paramsStr?substring(0,paramsStr?length-1)});
+    </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
     }
 
     @Override

@@ -28,8 +28,7 @@ import lombok.EqualsAndHashCode;
 </#if>
 @ApiModel(value = "${comment}查询参数")
 
-public class ${classNameUpperCase}PageParamVo implements Serializable
-${r'{'}
+public class ${classNameUpperCase}PageParamVo implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
 

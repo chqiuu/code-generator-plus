@@ -34,8 +34,7 @@ import java.math.BigDecimal;
 public class ${classNameUpperCase}Entity extends Model${r'<'}${classNameUpperCase}Entity>
 <#else>
 public class ${classNameUpperCase}Entity implements Serializable
-</#if>
-${r'{'}
+</#if>${r'{'}
 
     private static final long serialVersionUID = 1L;
 

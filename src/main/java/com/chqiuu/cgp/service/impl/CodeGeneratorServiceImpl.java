@@ -75,7 +75,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
-    public byte[] generatorCode(BaseConnect connect, String codePackage, String moduleName, String author, String[] tableNames, boolean isPlus) {
+    public byte[] generatorCode(BaseConnect connect, String rootPackage, String moduleName, String author, String[] tableNames, boolean isPlus) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zip = new ZipOutputStream(outputStream)) {
             for (String tableName : tableNames) {
@@ -87,7 +87,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 //查询列信息
                 List<ColumnEntity> columns = queryColumns(connect, tableName);
                 //生成代码
-                generatorCode(codePackage, moduleName, author, table, columns, zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                generatorCode(connect.getDriverClassEnum(), rootPackage, moduleName, author, table, columns, zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,22 +98,8 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     /**
      * 代码生成
      *
-     * @param table             数据库表名
-     * @param columns           字段列表
-     * @param zip               压缩
-     * @param isPlus            是否为MyBatis-Plus
-     * @param mapQueryEnabled   是否启用map查询功能
-     * @param lombokDataEnabled 是否启用@Data注解
-     */
-    private void generatorCode(TableEntity table, List<ColumnEntity> columns
-            , ZipOutputStream zip, boolean isPlus, boolean mapQueryEnabled, boolean lombokDataEnabled) {
-        generatorCode(null, null, null, table, columns, zip, isPlus, mapQueryEnabled, lombokDataEnabled);
-    }
-
-    /**
-     * 代码生成
-     *
-     * @param codePackage       包名
+     * @param driverClassEnum
+     * @param rootPackage       包名
      * @param moduleName        模块名
      * @param author            创建者
      * @param table             数据库表名
@@ -123,13 +109,14 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param mapQueryEnabled   是否启用map查询功能
      * @param lombokDataEnabled 是否启用@Data注解
      */
-    private void generatorCode(String codePackage, String moduleName, String author, TableEntity table
+    private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table
             , List<ColumnEntity> columns, ZipOutputStream zip, boolean isPlus, boolean mapQueryEnabled
             , boolean lombokDataEnabled) throws NullPointerException {
         //表信息
         GeneratorDto dto = new GeneratorDto();
         dto.setTableName(table.getTableName());
-        dto.setComment(table.getTableComment());
+        dto.setComment(table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment());
+        dto.setDbType(driverClassEnum.getDbType());
         // 表名转换成Java类名
         String className = tableToJava(dto.getTableName(), "");
         dto.setClassNameUpperCase(className);
@@ -144,23 +131,15 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             columnDto.setDataType(column.getDataType());
             columnDto.setComment(column.getColumnComment());
             columnDto.setExtra(column.getExtra());
-            // 字段详情
-            String columnDetail = String.format("`%s` %s%s%s%s%s"
-                    , column.getColumnName()
-                    , column.getColumnType()
-                    , "NO".equals(column.getIsNullable()) ? " NOT NULL" : ""
-                    , null == column.getColumnDefault() ? "" : " DEFAULT " + (column.getColumnDefault().equals("") ? "''" : column.getColumnDefault())
-                    , null == column.getExtra() ? "" : " " + column.getExtra()
-                    , null == column.getColumnComment() ? "" : " COMMENT '" + column.getColumnComment() + "'");
-            columnDto.setColumnDetail(columnDetail);
-
-            //列名转换成Java属性名
+            columnDto.setColumnDetail(column.getDdl());
+            // 字段长度
+            columnDto.setCharlength(column.getCharacterMaximumLength() == null ? column.getNumericPrecision() : column.getCharacterMaximumLength());
+            // 列名转换成Java属性名
             String attrName = columnToJava(columnDto.getColumnName());
             // 大写开头属性
             columnDto.setAttrNameUpperCase(attrName);
             // 小写开头属性
             columnDto.setAttrNameLowerCase(attrName.substring(0, 1).toLowerCase() + attrName.substring(1));
-
             // 列的数据类型，转换成Java类型
             columnDto.setAttrType(getJavaType(columnDto.getColumnName(), columnDto.getDataType()));
 
@@ -181,32 +160,115 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         dto.setAcronymLowerCase(getAcronym(dto.getClassNameUpperCase()));
         // 表名首字母大写
         dto.setAcronymUpperCase(getAcronym(dto.getClassNameUpperCase()).toUpperCase());
-        dto.setCodePackage(codePackage);
+        if (StrUtil.isBlank(rootPackage)) {
+            rootPackage = "com.chqiuu";
+        }
+        dto.setRootPackage(rootPackage);
+        dto.setModuleName(moduleName);
+        dto.setCodePackage(String.format("%s.%s", rootPackage, moduleName));
         // URI修改为缩写
-        dto.setPathName(getPathName(codePackage, dto.getClassNameUpperCase()));
+        dto.setPathName(String.format("/%s/%sc", moduleName.substring(0, 1), getAcronym(dto.getClassNameUpperCase())));
         dto.setAuthor(author);
         dto.setPlusEnabled(isPlus ? 1 : 0);
         dto.setMapQueryEnabled(mapQueryEnabled ? 1 : 0);
         dto.setLombokDataEnabled(lombokDataEnabled ? 1 : 0);
         dto.setCreateTime(LocalDateTime.now());
-        dto.setModuleName(moduleName);
+        // 根据模型数据生成代码文件
+        generateFiles(dto, zip);
+    }
 
-
+    /**
+     * 根据模型数据批量生成代码文件
+     *
+     * @param generator 模型数据
+     * @param zip       压缩文件流
+     */
+    private void generateFiles(GeneratorDto generator, ZipOutputStream zip) {
         //获取模板列表
         List<String> templates = getTemplates();
         for (String templateStr : templates) {
-            try (StringWriter writer = new StringWriter()) {
-                Template template = configurer.getConfiguration().getTemplate(templateStr);
-                template.process(dto, writer);
-                String fileName = getFileName(templateStr, dto.getClassNameUpperCase(), codePackage, moduleName, isPlus);
-                // 添加到zip
-                zip.putNextEntry(new ZipEntry(fileName));
-                IOUtils.write(writer.toString(), zip, "UTF-8");
-                zip.closeEntry();
-            } catch (Exception e) {
-                throw new UserException(ResultConstant.FAILED, "渲染模板失败，表名：" + dto.getTableName(), e);
+            if (generator.getPlusEnabled() == 0) {
+                if (templateStr.contains("DTO.") || templateStr.contains("VO.")) {
+                    continue;
+                }
             }
+            generateFile(generator, templateStr, zip, getFileName(templateStr, generator.getClassNameUpperCase(), generator.getRootPackage(), generator.getModuleName(), generator.getPlusEnabled()));
         }
+    }
+
+
+    /**
+     * 根据模型数据生成代码文件
+     *
+     * @param generator    模型数据
+     * @param templateName 模板文件
+     * @param zip          压缩文件流
+     * @param fileName     生成的文件名
+     */
+    private void generateFile(GeneratorDto generator, String templateName, ZipOutputStream zip, String fileName) {
+        try (StringWriter writer = new StringWriter()) {
+            Template template = configurer.getConfiguration().getTemplate(templateName);
+            template.process(generator, writer);
+            // 添加到zip
+            zip.putNextEntry(new ZipEntry(fileName));
+            IOUtils.write(writer.toString(), zip, "UTF-8");
+            zip.closeEntry();
+        } catch (Exception e) {
+            throw new UserException(ResultConstant.FAILED, "渲染模板失败，表名：" + generator.getTableName(), e);
+        }
+    }
+
+    /**
+     * 获取文件名
+     *
+     * @param template    模板
+     * @param className   类名
+     * @param packageName 包名
+     * @param moduleName  模块名
+     * @param plusEnabled 是否支持plus
+     * @return 文件名
+     */
+    private String getFileName(String template, String className, String packageName, String moduleName, int plusEnabled) {
+        String packagePath = "main" + File.separator + "java" + File.separator;
+        if (StrUtil.isNotBlank(packageName)) {
+            packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
+        }
+        if (template.contains("Controller.java.ftl")) {
+            return packagePath + "controller" + File.separator + className + "Controller.java";
+        } else if (template.contains("Service.java.ftl")) {
+            return packagePath + "service" + File.separator + className + "Service.java";
+        } else if (template.contains("ServiceImpl.java.ftl")) {
+            return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
+        } else if (template.contains("Entity.java.ftl")) {
+            return packagePath + "entity" + File.separator + className + "Entity.java";
+        } else if (template.contains("DetailDTO.java.ftl")) {
+            return packagePath + "dto" + File.separator + className + "DetailDTO.java";
+        } else if (template.contains("ListDTO.java.ftl")) {
+            return packagePath + "dto" + File.separator + className + "ListDTO.java";
+        } else if (template.contains("PageParamVO.java.ftl")) {
+            return packagePath + "vo" + File.separator + className + "PageParamVO.java";
+        } else if (template.contains("InputVO.java.ftl")) {
+            return packagePath + "vo" + File.separator + className + "InputVO.java";
+        } else if (template.contains("Dao.java.ftl")) {
+            if (plusEnabled == 1) {
+                return packagePath + "mapper" + File.separator + className + "Mapper.java";
+            } else {
+                return packagePath + "dao" + File.separator + className + "Dao.java";
+            }
+        } else if (template.contains("Mapper.xml.ftl")) {
+            packagePath = "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + packageName.substring(packageName.lastIndexOf(".") + 1);
+            return packagePath + File.separator + className + "Mapper.xml";
+        }
+        if (template.contains("index.vue.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
+                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
+        }
+
+        if (template.contains("add-or-update.vue.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
+                    File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
+        }
+        return packagePath;
     }
 
     /**
@@ -231,21 +293,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             }
         }
         return javaType;
-    }
-
-    /**
-     * 获取URL路径名称，用于生成Controller @RequestMapping
-     *
-     * @param codePackage 包名
-     * @param classname   对象名称
-     * @return
-     */
-    private String getPathName(String codePackage, String classname) {
-        String builder = "/" +
-                codePackage.substring(codePackage.lastIndexOf('.') + 1, codePackage.lastIndexOf('.') + 2) +
-                "/" +
-                getAcronym(classname);
-        return builder.toLowerCase() + "c";
     }
 
     /**
@@ -317,52 +364,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         return templateNameItems;
     }
 
-    /**
-     * 获取文件名
-     *
-     * @param template    模板
-     * @param className
-     * @param packageName
-     * @param isPlus
-     * @return
-     */
-    private String getFileName(String template, String className, String packageName, String moduleName, boolean isPlus) {
-        String packagePath = "main" + File.separator + "java" + File.separator;
-        if (StrUtil.isNotBlank(packageName)) {
-            packagePath += packageName.replace(".", File.separator) + File.separator + moduleName + File.separator;
-        }
-        if (template.contains("Controller.java.ftl")) {
-            return packagePath + "controller" + File.separator + className + "Controller.java";
-        } else if (template.contains("Service.java.ftl")) {
-            return packagePath + "service" + File.separator + className + "Service.java";
-        } else if (template.contains("ServiceImpl.java.ftl")) {
-            return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
-        } else if (template.contains("Entity.java.ftl")) {
-            return packagePath + "entity" + File.separator + className + "Entity.java";
-        } else if (template.contains("Dao.java.ftl")) {
-            if (isPlus) {
-                return packagePath + "mapper" + File.separator + className + "Mapper.java";
-            } else {
-                return packagePath + "dao" + File.separator + className + "Dao.java";
-            }
-        } else if (template.contains("Mapper.xml.ftl")) {
-            packagePath = "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + packageName.substring(packageName.lastIndexOf(".") + 1);
-            return packagePath + File.separator + className + "Mapper.xml";
-        }
-        if (template.contains("index.vue.vm")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
-        }
-
-        if (template.contains("add-or-update.vue.vm")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
-        }
-        return null;
-    }
 
     @Override
-    public byte[] generatorCodeAll(BaseConnect connect, String codePackage, String moduleName, String author, boolean isPlus) {
+    public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus) {
         List<TableEntity> list = queryTableList(connect, null);
         List<String> tableNameList = new ArrayList<>();
         for (TableEntity entity : list) {
@@ -370,6 +374,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         }
         String[] tableNames = new String[tableNameList.size()];
         tableNameList.toArray(tableNames);
-        return generatorCode(connect, codePackage, moduleName, author, tableNames, isPlus);
+        return generatorCode(connect, rootPackage, moduleName, author, tableNames, isPlus);
     }
 }

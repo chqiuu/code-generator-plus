@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper <#if plusEnabled == 1>namespace="${codePackage}.mapper.${classNameUpperCase}Mapper" <#else> namespace="${codePackage}.dao.${classNameUpperCase}Dao" </#if>>
+${r'<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">'}
+${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${classNameUpperCase}Mapper" <#else> namespace="${codePackage}.dao.${classNameUpperCase}Dao" </#if>${r'>'}
     <!-- ${comment} 表名：`${tableName}` -->
     <sql id="Base_Column_List">
         <#list columns as column>`${column.columnName}`<#if column?has_next>,</#if></#list>
@@ -9,7 +9,35 @@
         <#list columns as column>${acronymLowerCase}.`${column.columnName}`<#if column?has_next>,</#if></#list>
     </sql>
 <#if plusEnabled == 1>
-    <#else>
+
+    <!--根据唯一ID获取详细信息-->
+    <select id="getDetailById" resultType="${codePackage}.dto.${classNameUpperCase}DetailDTO">
+        SELECT
+        <include refid="Base_${acronymUpperCase}_Column_List"/>
+        FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}
+    </select>
+
+    <!--获取基地动态文章列表（分页）-->
+    <select id="getPage" resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
+        SELECT
+        <include refid="Base_${acronymUpperCase}_Column_List"/>
+        FROM `${tableName}` AS ${acronymLowerCase} WHERE 1=1
+        <#list columns as column>
+            <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+            <#else>
+                <#if column.attrType == 'String'>
+                    <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">
+                        AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}${column.attrNameLowerCase}${r'}'},'%')
+                    </if>
+                <#else>
+                    <if test="#{column.attrNameLowerCase} != null ">
+                        AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}
+                    </if>
+                </#if>
+            </#if>
+        </#list>
+    </select>
+<#else>
         <!-- 可根据自己的需求，是否要使用 -->
         <resultMap id="BaseResultMap" type="${codePackage}.entity.${classNameUpperCase}Entity">
             <#list columns as column>
@@ -80,5 +108,5 @@
             <include refid="Base_Column_List"/>
             FROM `${tableName}` AS ${acronymLowerCase}
         </select>
-    </#if>
+</#if>
 </mapper>

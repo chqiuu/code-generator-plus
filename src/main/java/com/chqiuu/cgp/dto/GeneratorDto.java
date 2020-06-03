@@ -24,6 +24,10 @@ public class GeneratorDto implements Serializable {
      */
     private String comment;
     /**
+     * 数据库类型
+     */
+    private String dbType;
+    /**
      * 表的主键
      */
     private ColumnDto pk;
@@ -48,9 +52,17 @@ public class GeneratorDto implements Serializable {
      */
     private String acronymUpperCase;
     /**
-     * 包名
+     * 项目主包名
      */
-    private String codePackage = "com.chqiuu";
+    private String rootPackage = "com.chqiuu";
+    /**
+     * 模块名称
+     */
+    private String moduleName;
+    /**
+     * 模块对应包名
+     */
+    private String codePackage;
     /**
      * URI修改为缩写
      */
@@ -59,10 +71,6 @@ public class GeneratorDto implements Serializable {
      * 作者
      */
     private String author = "chqiuu";
-    /**
-     * 模块名称
-     */
-    private String moduleName;
     /**
      * 是否为MyBatis-Plus
      */
@@ -75,6 +83,10 @@ public class GeneratorDto implements Serializable {
      * 是否启用@Data注解
      */
     private int lombokDataEnabled;
+    /**
+     * 排除字段
+     */
+    private String exclusionShowColumns = "is_deleted,del_time,del_user,create_time,update_time,gmt_create,gmt_modified";
     /**
      * 创建时间
      */

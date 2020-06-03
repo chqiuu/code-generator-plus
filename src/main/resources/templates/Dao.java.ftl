@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
+import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 /**
  * ${comment}
  *
@@ -14,6 +16,35 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 @Repository
 public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpperCase}Entity> {
 
+
+ <#elseif plusEnabled == 1>
+
+  /**
+  * 根据唯一ID获取详细信息
+  *
+  * @param ${pk.attrNameLowerCase} ${column.comment}
+  * @return 详细信息
+  */
+  ${classNameUpperCase}DetailDTO getDetailById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
+
+  /**
+  * 分页查询
+  * @param pageInfo      分页控件
+  <#list columns as column>
+   <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+   <#else>
+    * @param ${column.attrNameLowerCase} ${column.comment}
+   </#if>
+  </#list>
+  * @return 列表
+  */
+  IPage${r'<'}${classNameUpperCase}ListDto> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDto> pageInfo, <#assign paramsStr = ''>
+  <#list columns as column>
+   <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+   <#else>
+    <#assign paramsStr>@Param("${column.attrNameLowerCase}") ${column.attrType} ${column.attrNameLowerCase},</#assign>
+   </#if>
+  </#list>${paramsStr?substring(0,paramsStr?length-1)});
 }
  <#else>
 import org.springframework.stereotype.Repository;

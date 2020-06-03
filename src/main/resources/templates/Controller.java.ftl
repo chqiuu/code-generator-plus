@@ -10,40 +10,58 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.stereotype.Controller;
-import javax.annotation.Resource;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
-import ${codePackage}.entity.${classNameUpperCase}Entity;
-import ${codePackage}.service.${classNameUpperCase}Service;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import ${rootPackage}.common.base.BaseController;
+import ${rootPackage}.common.domain.R;
+import ${rootPackage}.common.domain.ResultConstant;
+import ${codePackage}.service.${classNameUpperCase}Service;
+import ${codePackage}.entity.${classNameUpperCase}Entity;
+
+<#if plusEnabled == 1>
+import ${codePackage}.vo.${classNameUpperCase}PageParamVO;
+import ${codePackage}.vo.${classNameUpperCase}InputVO;
+    import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
+    import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+</#if>
 /**
  * ${comment}控制层
  *
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
  */
+@Validated
 @RestController
 @RequestMapping("${pathName}")
 @Api(value = "${comment}", tags = "${comment}")
 @AllArgsConstructor
-public class ${classNameUpperCase}Controller {
+public class ${classNameUpperCase}Controller extends BaseController{
 
     private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
 
-    @ApiOperation(value = "获取列表（分页）", notes = "获取列表（分页）")
-    @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDto>> page(@RequestParam ${classNameUpperCase}PageParamVo params) {
-        return R.ok(${classNameLowerCase}Service.getPage(params));
-    }
-
+<#if plusEnabled == 1>
     @ApiOperation(value = "根据唯一ID获取详细信息", notes = "根据唯一ID获取详细信息")
     @GetMapping("/info/{${pk.attrNameLowerCase}}")
-    public R${r'<'}${classNameUpperCase}Entity> info(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
-        return R.ok(${classNameLowerCase}Service.getById(${pk.attrNameLowerCase}));
+    public R${r'<'}${classNameUpperCase}DetailDTO> info(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
+        return R.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
+    }
+
+    @ApiOperation(value = "${comment}分页查询", notes = "${comment}分页查询")
+    @GetMapping("/page")
+    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(@RequestParam ${classNameUpperCase}PageParamVo params) {
+    return R.ok(${classNameLowerCase}Service.getPage(params.getCurrent(),params.getSize(),<#assign paramsStr = ''>
+    <#list columns as column>
+        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+        <#else>
+            <#assign paramsStr>params.get${column.attrNameUpperCase}(),</#assign>
+        </#if>
+    </#list>${paramsStr?substring(0,paramsStr?length-1)}));
     }
 
     @ApiOperation(value = "新建${comment}", notes = "新建${comment}，返回ID")
@@ -77,4 +95,5 @@ public class ${classNameUpperCase}Controller {
         //TODO 其他限制删除条件
         return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
     }
+</#if>
 }

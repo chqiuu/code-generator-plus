@@ -1,52 +1,39 @@
 package com.chqiuu.cgp.db;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.SQLColumnDefinition;
 import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
 import com.alibaba.druid.sql.ast.statement.SQLTableElement;
-import com.alibaba.druid.sql.dialect.mysql.ast.MySqlPrimaryKey;
-import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
+import com.alibaba.druid.sql.dialect.oracle.ast.stmt.OracleCreateTableStatement;
+import com.alibaba.druid.sql.dialect.oracle.ast.stmt.OraclePrimaryKey;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MySql数据库
+ * Oracle数据库
  *
  * @author chqiu
  */
-public class MySqlDatabase extends BaseDatabase {
+public class OracleDatabase extends BaseDatabase {
 
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select table_catalog,table_schema,table_name,table_type,engine,version,row_format,table_rows,avg_row_length,data_length" +
-                " ,max_data_length,index_length,data_free,auto_increment,create_time,update_time,check_time,table_collation,checksum,create_options,table_comment" +
-                " from information_schema.tables where table_schema = (select database())");
-        if (StringUtils.isNotBlank(tableName)) {
-            sql.append(" and `table_name` like '%");
-            sql.append(tableName);
-            sql.append("%'");
-        }
-        sql.append(" order by `create_time` desc");
-        return connect.queryList(sql.toString(), TableEntity.class);
+        String sql = String.format("select dt.table_name tableName, dtc.comments tableComment from user_tables dt,user_tab_comments dtc,user_objects uo where dt.table_name = dtc.table_name and dt.table_name = uo.object_name and uo.object_type='TABLE' %s order by uo.CREATED desc"
+                , StrUtil.isBlank(tableName) ? "" : " and dt.table_name like concat('%', UPPER('" + tableName + "'))");
+        return connect.queryList(sql, TableEntity.class);
     }
 
     @Override
     public TableEntity queryTable(BaseConnect connect, String tableName) {
-        String sql = ("select table_catalog,table_schema,table_name,table_type,engine,version,row_format,table_rows,avg_row_length,data_length" +
-                " ,max_data_length,index_length,data_free,auto_increment,create_time,update_time,check_time,table_collation,checksum,create_options,table_comment" +
-                " from information_schema.tables where table_schema = (select database())") +
-                " and `table_name` = '" +
-                tableName +
-                "'";
+        String sql = String.format("select dt.table_name tableName,dtc.comments tableComment,dt.last_analyzed createTime from user_tables dt,user_tab_comments dtc where dt.table_name=dtc.table_name and dt.table_name = UPPER('%s')", tableName);
         List<TableEntity> list = connect.queryList(sql, TableEntity.class);
         if (list.size() > 0) {
             return list.get(0);
@@ -56,15 +43,20 @@ public class MySqlDatabase extends BaseDatabase {
 
     @Override
     public List<ColumnEntity> queryColumns(BaseConnect connect, String tableName) {
-        String sql = ("select `table_catalog`,`table_schema`,`table_name`,`column_name`,`ordinal_position`,`column_default`,`is_nullable`" +
-                " ,`data_type`,`character_maximum_length`,`character_octet_length`,`numeric_precision`,`numeric_scale`,`datetime_precision`" +
-                " ,`character_set_name`,`collation_name`,`column_type`,`column_key`,`extra`,`privileges`,`column_comment`,`generation_expression`" +
-                " , CONCAT('`',`column_name`,'` ',`column_type`,CASE WHEN `is_nullable`='NO' THEN ' NOT NULL' ELSE '' END ,CASE WHEN ISNULL(`column_default`) THEN '' ELSE CONCAT(' DEFAULT ',`column_default`) END ,CASE WHEN ISNULL(`extra`) THEN '' ELSE CONCAT(' ',`extra`) END ,CASE WHEN ISNULL(`column_comment`) THEN '' ELSE CONCAT(' COMMENT ',`column_comment`) END) ddl" +
-                " from information_schema.columns where table_schema = (select database())") +
-                " and `table_name` = '" +
-                tableName +
-                "'" +
-                " order by `ordinal_position`";
+        String sql = String.format("select temp.column_name columnname,\n" +
+                "        temp.data_type dataType,\n" +
+                "        temp.comments columnComment,\n" +
+                "        case temp.constraint_type when 'P' then 'PRI' when 'C' then 'UNI' else '' end \"COLUMNKEY\",\n" +
+                "        '' \"EXTRA\"\n" +
+                "        from (select col.column_id,col.column_name,col.data_type,colc.comments,uc.constraint_type,\n" +
+                "        row_number() over (partition by col.column_name order by uc.constraint_type desc) as row_flg\n" +
+                "        from user_tab_columns col left join user_col_comments colc\n" +
+                "        on colc.table_name = col.table_name and colc.column_name = col.column_name\n" +
+                "        left join user_cons_columns ucc on ucc.table_name = col.table_name\n" +
+                "        and ucc.column_name = col.column_name\n" +
+                "        left join user_constraints uc on uc.constraint_name = ucc.constraint_name\n" +
+                "        where col.table_name = upper('%s')) temp\n" +
+                "        where temp.row_flg = 1 order by temp.column_id", tableName);
         return connect.queryList(sql, ColumnEntity.class);
     }
 
@@ -73,9 +65,9 @@ public class MySqlDatabase extends BaseDatabase {
         List<SQLStatement> stmtList = SQLUtils.parseStatements(createTableSqls, JdbcConstants.MYSQL);
         List<TableEntity> tableList = new ArrayList<>();
         for (SQLStatement sqlStatement : stmtList) {
-            if (sqlStatement instanceof MySqlCreateTableStatement) {
+            if (sqlStatement instanceof OracleCreateTableStatement) {
                 // 获取表对象
-                MySqlCreateTableStatement stmt = (MySqlCreateTableStatement) sqlStatement;
+                OracleCreateTableStatement stmt = (OracleCreateTableStatement) sqlStatement;
                 TableEntity tableEntity = new TableEntity();
                 tableEntity.setTableName(stmt.getTableSource().getExpr().toString().replace("`", ""));
                 tableEntity.setTableComment(stmt.getComment().toString().replace("'", ""));
@@ -114,9 +106,9 @@ public class MySqlDatabase extends BaseDatabase {
                         }
                         columnEntity.setDdl(column.toString());
                         columns.add(columnEntity);
-                    } else if (column instanceof MySqlPrimaryKey) {
+                    } else if (column instanceof OraclePrimaryKey) {
                         // 获取表内主键
-                        MySqlPrimaryKey primaryKey = (MySqlPrimaryKey) column;
+                        OraclePrimaryKey primaryKey = (OraclePrimaryKey) column;
                         for (SQLSelectOrderByItem item : primaryKey.getColumns()) {
                             for (ColumnEntity columnEntity : columns) {
                                 if (item.getExpr().toString().replace("`", "").equals(columnEntity.getColumnName())) {

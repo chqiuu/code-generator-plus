@@ -6,10 +6,12 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-
+import java.time.LocalDateTime;
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
+    import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
+    import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 <#else>
 import org.springframework.beans.factory.annotation.Autowired;
 import ${codePackage}.dao.${classNameUpperCase}Dao;
@@ -34,7 +36,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     public ${classNameUpperCase}ServiceImpl(${classNameUpperCase}Dao ${classNameLowerCase}Dao) {
         this.${classNameLowerCase}Dao = ${classNameLowerCase}Dao;
     }
-<#if pk.extra == 'auto_increment'>
+    <#if pk.extra == 'auto_increment'>
     /**
      * 插入数据
      *
@@ -56,7 +58,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
         public void insert(${classNameUpperCase}Entity entity) {
                 ${classNameLowerCase}Dao.insert(entity);
         }
-</#if>
+    </#if>
 
     /**
      * 根据主键更新数据
@@ -78,7 +80,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     public ${classNameUpperCase}Entity getByPrimary(${classNameUpperCase}Entity entity) {
         return ${classNameLowerCase}Dao.getByPrimary(entity);
     }
-<#if mapQueryEnabled == 1>
+    <#if mapQueryEnabled == 1>
     /**
      * 根据查询条件获取一条记录
      *
@@ -110,6 +112,46 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     @Override
     public List${r'<'}${classNameUpperCase}Entity> getAll() {
         return ${classNameLowerCase}Dao.getAll();
+    }
+
+<#elseif plusEnabled == 1>
+
+    @Override
+    public ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase}) {
+        return this.baseMapper.getDetailById(${pk.attrNameLowerCase});
+    }
+
+    @Override
+    public IPage${r'<'}${classNameUpperCase}ListDto> getPage(Integer current, Integer size, <#assign paramsStr = ''>
+    <#list columns as column>
+        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+        <#else>
+            <#assign paramsStr>${column.attrType} ${column.attrNameLowerCase}, </#assign>
+        </#if>
+    </#list>${paramsStr?substring(0,paramsStr?length-1)}){
+        Page${r'<'}${classNameUpperCase}ListDto> pageInfo = new Page<>(current, size);
+        return this.baseMapper.getPage(pageInfo, <#assign paramsStr = ''>
+    <#list columns as column>
+        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+        <#else>
+            <#assign paramsStr>${column.attrNameLowerCase}, </#assign>
+        </#if>
+    </#list>${paramsStr?substring(0,paramsStr?length-1)});
+    }
+
+    @Override
+    public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long userId){
+        ${classNameUpperCase}Entity updateEntity = new ${classNameUpperCase}Entity();
+        updateEntity.set${pk.attrNameUpperCase}(${pk.attrNameLowerCase});
+        updateEntity.setIsDeleted(true);
+    <#list columns as column>
+        <#if column.columnName == 'del_time'>
+            updateEntity.setDelTime(LocalDateTime.now());
+        <#elseif column.columnName == 'del_user'>
+            updateEntity.setDelUser(userId);
+        </#if>
+    </#list>
+        return baseMapper.updateById(updateEntity) > 0;
     }
 </#if>
 ${r'}'}

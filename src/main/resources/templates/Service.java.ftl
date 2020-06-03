@@ -7,6 +7,9 @@ import java.util.Map;
 
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+ import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
+ import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 </#if>
 /**
  * ${comment}
@@ -16,7 +19,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends IService${r'<'}${classNameUpperCase}Entity></#if> ${r'{'}
 
-    <#if plusEnabled == 0>
+<#if plusEnabled == 0>
     <#if pk.extra == 'auto_increment'>
     /**
      * 插入数据
@@ -50,28 +53,65 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
     ${classNameUpperCase}Entity getByPrimary(${classNameUpperCase}Entity entity);
 
 
-<#if mapQueryEnabled == 1>
-    /**
-     * 根据查询条件获取一条记录
-     *
-     * @param conditions 查询条件
-     * @return 查询结果
-     */
-    ${classNameUpperCase}Entity getOne(Map${r'<'}String, Object> conditions);
+    <#if mapQueryEnabled == 1>
+        /**
+         * 根据查询条件获取一条记录
+         *
+         * @param conditions 查询条件
+         * @return 查询结果
+         */
+        ${classNameUpperCase}Entity getOne(Map${r'<'}String, Object> conditions);
 
-    /**
-     * 根据查询条件查询
-     *
-     * @param conditions 查询条件
-     * @return 结果集
-     */
-    List${r'<'}${classNameUpperCase}Entity> queryList(Map${r'<'}String, Object> conditions);
-</#if>
+        /**
+         * 根据查询条件查询
+         *
+         * @param conditions 查询条件
+         * @return 结果集
+         */
+        List${r'<'}${classNameUpperCase}Entity> queryList(Map${r'<'}String, Object> conditions);
+    </#if>
     /**
      * 查询所有数据
      *
      * @return 结果集
      */
     List<${classNameUpperCase}Entity> getAll();
-</#if>
+<#elseif plusEnabled == 1>
+
+ /**
+ * 根据唯一ID获取详细信息
+ *
+ * @param ${pk.attrNameLowerCase} ${column.comment}
+ * @return 详细信息
+ */
+ ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase});
+
+ /**
+ * 分页查询
+ * @param current       当前页
+ * @param size          每页显示条数
+ <#list columns as column>
+ <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+ <#else>
+  * @param ${column.attrNameLowerCase} ${column.comment}
+ </#if>
+</#list>
+ * @return 列表
+ */
+ IPage${r'<'}${classNameUpperCase}ListDto> getPage(Integer current, Integer size, <#assign paramsStr = ''>
+  <#list columns as column>
+   <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+   <#else>
+    <#assign paramsStr>${column.attrType} ${column.attrNameLowerCase},</#assign>
+   </#if>
+  </#list>${paramsStr?substring(0,paramsStr?length-1)});
+ /**
+ * 删除
+ *
+ * @param ${pk.attrNameLowerCase} ${pk.comment}
+ * @param userId    当前操作人员ID
+ * @return 是否成功
+ */
+ boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long userId);
+ </#if>
 ${r'}'}

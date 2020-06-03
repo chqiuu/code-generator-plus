@@ -33,7 +33,9 @@ public enum JdbcTypeEnum {
     NVARCHAR("NVARCHAR", "String"),
     VARCHAR("VARCHAR", "String"),
     MEDIUMBLOB("MEDIUMBLOB", "String"),
+    LONGBLOB("LONGBLOB", "String"),
     MEDIUMTEXT("MEDIUMTEXT", "String"),
+    LONGTEXT("LONGTEXT", "String"),
     CLOB("CLOB", "String"),
     NCLOB("NCLOB", "String"),
     BLOB("BLOB", "String"),
@@ -107,7 +109,7 @@ public enum JdbcTypeEnum {
             return null;
         }
         for (JdbcTypeEnum e : values()) {
-            if (e.getJavaType().equals(javaType.toUpperCase())) {
+            if (e.getJavaType().equals(javaType)) {
                 return e;
             }
         }

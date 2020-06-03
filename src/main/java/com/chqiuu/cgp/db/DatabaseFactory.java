@@ -13,14 +13,11 @@ public class DatabaseFactory {
         switch (driverClass) {
             case MYSQL:
                 return new MySqlDatabase();
-            case SQLITE:
-                //TODO
-                break;
-            case SQLSERVER:
-                //TODO
-                break;
+            case ORACLE:
+                return new OracleDatabase();
+            case POSTGRESQL:
+                return new PostgreSqlDatabase();
             default:
-                //TODO
                 break;
         }
         return null;

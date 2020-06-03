@@ -57,25 +57,25 @@ public interface CodeGeneratorService {
      * 生成代码
      *
      * @param connect     数据库连接
-     * @param codePackage 包名
+     * @param rootPackage 包名
      * @param moduleName  模块名
      * @param author      创建人
      * @param tableNames  生成代码的表
      * @param isPlus      是否为MyBatis-Plus
      * @return 字节码
      */
-    byte[] generatorCode(BaseConnect connect, String codePackage, String moduleName, String author, String[] tableNames, boolean isPlus);
+    byte[] generatorCode(BaseConnect connect, String rootPackage, String moduleName, String author, String[] tableNames, boolean isPlus);
 
     /**
      * 生成全部表代码
      *
      * @param connect     数据库连接
-     * @param codePackage 包名
+     * @param rootPackage 包名
      * @param moduleName  模块名
      * @param author      创建人
      * @param isPlus      是否为MyBatis-Plus
      * @return 字节码
      */
-    byte[] generatorCodeAll(BaseConnect connect, String codePackage, String moduleName, String author, boolean isPlus);
+    byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus);
 
 }

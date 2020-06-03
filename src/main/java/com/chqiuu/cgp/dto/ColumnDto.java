@@ -35,6 +35,10 @@ public class ColumnDto implements Serializable {
      */
     private String attrNameLowerCase;
     /**
+     * 字符长度
+     */
+    private Long charlength;
+    /**
      * 属性类型
      */
     private String attrType;

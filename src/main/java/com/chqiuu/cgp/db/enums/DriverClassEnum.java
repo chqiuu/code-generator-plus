@@ -115,10 +115,10 @@ public enum DriverClassEnum {
      */
     MYSQL("MySQL", "com.mysql.jdbc.Driver", "jdbc:mysql://[server]:[port]/[database]?allowMultiQueries=true&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8&useSSL=false", "select 1"),
     ORACLE("Oracle", "oracle.jdbc.driver.OracleDriver", "jdbc:oracle:thin:@[server]:[port]:[database]", "select 1 from dual"),
-    SQLSERVER("SQL Server", "com.microsoft.jdbc.sqlserver.SQLServerDriver", "jdbc:sqlserver://[server]:[port];DatabaseName=[database];integratedSecurity=false", "select 1"),
+    SQLSERVER("SQLServer", "com.microsoft.jdbc.sqlserver.SQLServerDriver", "jdbc:sqlserver://[server]:[port];DatabaseName=[database];integratedSecurity=false", "select 1"),
     SYBASE("sybase", "com.sybase.jdbc2.jdbc.SybDriver", "jdbc:sybase:Tds:[server]:[port]/[database]", ""),
     JTDS("jtds", "net.sourceforge.jtds.jdbc.Driver", "url", null),
-    POSTGRESQL("postgresql", "org.postgresql.Driver", "url", "select version()"),
+    POSTGRESQL("PostgreSQL", "org.postgresql.Driver", "url", "select version()"),
     FAKE("fake", "com.alibaba.druid.mock.MockDriver", "url", null),
     MOCK("mock", "com.alibaba.druid.mock.MockDriver", "url", null),
     HSQLDB("hsqldb", "org.hsqldb.jdbcDriver", "url", "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS"),

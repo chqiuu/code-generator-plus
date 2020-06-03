@@ -39,6 +39,7 @@ public abstract class BaseDatabase {
      * @return 表字段信息
      */
     public abstract List<ColumnEntity> queryColumns(BaseConnect connect, String tableName);
+
     /**
      * 通过表名模糊查询
      *

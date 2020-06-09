@@ -81,7 +81,6 @@ public class CodeGeneratorController {
         BaseConnect connect = (BaseConnect) httpSession.getAttribute("dbConnect");
         if (null == connect) {
             return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "请先连接数据库！");
-
         }
         //查询列表数据
         return R.ok(codeGeneratorService.queryTableList(connect, tableName));

@@ -12,6 +12,14 @@ import ${codePackage}.entity.${classNameUpperCase}Entity;
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+    import ${rootPackage}.common.validator.group.Default;
+    import ${rootPackage}.common.validator.group.Update;
+    import org.hibernate.validator.constraints.Length;
+
+    import javax.validation.constraints.Max;
+    import javax.validation.constraints.NotNull;
+    import java.time.LocalDateTime;
+    import java.time.LocalDate;
 </#if>
 
 /**
@@ -25,7 +33,7 @@ import lombok.EqualsAndHashCode;
 @Data
 </#if>
 @ApiModel(value = "${comment}录入信息")
-public class ${classNameUpperCase}InputVo implements Serializable${r'{'}
+public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
     //TODO 当您看到这个后您应该自己修改模板增减规则

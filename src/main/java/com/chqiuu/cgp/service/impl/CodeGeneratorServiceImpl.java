@@ -115,7 +115,8 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         //表信息
         GeneratorDto dto = new GeneratorDto();
         dto.setTableName(table.getTableName());
-        dto.setComment(table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment());
+        dto.setComment(StrUtil.isEmpty(table.getTableComment()) ? table.getTableName()
+                : (table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment()));
         dto.setDbType(driverClassEnum.getDbType());
         // 表名转换成Java类名
         String className = tableToJava(dto.getTableName(), "");
@@ -126,10 +127,11 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         List<ColumnDto> columsList = new ArrayList<ColumnDto>();
         for (ColumnEntity column : columns) {
             ColumnDto columnDto = new ColumnDto();
-            //列名
+            // 列名
             columnDto.setColumnName(column.getColumnName());
             columnDto.setDataType(column.getDataType());
-            columnDto.setComment(column.getColumnComment());
+            // 列描述
+            columnDto.setComment(StrUtil.isEmpty(column.getColumnComment()) ? column.getColumnName() : column.getColumnComment());
             columnDto.setExtra(column.getExtra());
             columnDto.setColumnDetail(column.getDdl());
             // 字段长度
@@ -146,6 +148,10 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             //是否主键
             if ("PRI".equalsIgnoreCase(column.getColumnKey()) && dto.getPk() == null) {
                 dto.setPk(columnDto);
+            }
+            //是否存在逻辑删除字段 is_deleted
+            if ("is_deleted".equalsIgnoreCase(column.getColumnName())) {
+                dto.setLogicDelete(1);
             }
             columsList.add(columnDto);
         }
@@ -256,7 +262,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 return packagePath + "dao" + File.separator + className + "Dao.java";
             }
         } else if (template.contains("Mapper.xml.ftl")) {
-            packagePath = "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + packageName.substring(packageName.lastIndexOf(".") + 1);
+            packagePath = "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName;
             return packagePath + File.separator + className + "Mapper.xml";
         }
         if (template.contains("index.vue.ftl")) {

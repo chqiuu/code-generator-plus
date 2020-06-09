@@ -12,6 +12,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
     import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
     import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+    import com.baomidou.mybatisplus.core.metadata.IPage;
+    import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+    import java.time.LocalDateTime;
+    import java.time.LocalDate;
 <#else>
 import org.springframework.beans.factory.annotation.Autowired;
 import ${codePackage}.dao.${classNameUpperCase}Dao;
@@ -122,11 +126,11 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     }
 
     @Override
-    public IPage${r'<'}${classNameUpperCase}ListDto> getPage(Integer current, Integer size, <#assign paramsStr = ''>
+    public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(Integer current, Integer size, <#assign paramsStr = ''>
     <#list columns as column>
         <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase}, </#assign></#if>
     </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}){
-        Page${r'<'}${classNameUpperCase}ListDto> pageInfo = new Page<>(current, size);
+        Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(current, size);
         return this.baseMapper.getPage(pageInfo,
     <#assign paramsStr = ''>
     <#list columns as column>
@@ -136,6 +140,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
     }
 
+    <#if logicDelete == 1>
     @Override
     public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long userId){
         ${classNameUpperCase}Entity updateEntity = new ${classNameUpperCase}Entity();
@@ -150,5 +155,6 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     </#list>
         return baseMapper.updateById(updateEntity) > 0;
     }
+    </#if>
 </#if>
 ${r'}'}

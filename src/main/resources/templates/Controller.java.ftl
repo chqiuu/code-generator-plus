@@ -29,6 +29,13 @@ import ${codePackage}.vo.${classNameUpperCase}PageParamVO;
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
     import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
     import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+    import ${rootPackage}.common.validator.group.Default;
+    import ${rootPackage}.common.validator.group.Create;
+    import ${rootPackage}.common.validator.group.Update;
+    import javax.validation.constraints.NotNull;
+    import com.baomidou.mybatisplus.core.metadata.IPage;
+    import java.time.LocalDateTime;
+    import java.time.LocalDate;
 </#if>
 /**
  * ${comment}控制层
@@ -54,8 +61,8 @@ public class ${classNameUpperCase}Controller extends BaseController{
 
     @ApiOperation(value = "${comment}分页查询", notes = "${comment}分页查询")
     @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(@RequestParam ${classNameUpperCase}PageParamVo vo) {
-    return R.ok(${classNameLowerCase}Service.getPage(params.getCurrent(),params.getSize(),<#assign paramsStr = ''>
+    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(@RequestParam ${classNameUpperCase}PageParamVO vo) {
+    return R.ok(${classNameLowerCase}Service.getPage(vo.getCurrent(),vo.getSize(),<#assign paramsStr = ''>
     <#list columns as column>
         <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
             <#assign paramsStr>${paramsStr}vo.get${column.attrNameUpperCase}(),</#assign>
@@ -65,11 +72,11 @@ public class ${classNameUpperCase}Controller extends BaseController{
 
     @ApiOperation(value = "新建${comment}", notes = "新建${comment}，返回ID")
     @PostMapping("/add")
-    public Result<${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
+    public R<${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}Entity entity = vo.convertToEntity();
         entity.set${pk.attrNameUpperCase}(null);
         ${classNameLowerCase}Service.save(entity);
-        return Result.ok(entity.get${pk.attrNameUpperCase}());
+        return R.ok(entity.get${pk.attrNameUpperCase}());
     }
 
     @ApiOperation(value = "更新${comment}", notes = "更新${comment}")
@@ -77,22 +84,26 @@ public class ${classNameUpperCase}Controller extends BaseController{
     public R${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
         if (null == entity) {
-            return Result.failed(ResultConstant.NOT_FOUND, "没有找到需要更新的记录");
+            return R.failed(ResultConstant.NOT_FOUND, "没有找到需要更新的记录");
         }
         ${classNameLowerCase}Service.updateById(vo.convertToEntity());
-        return Result.ok();
+        return R.ok();
     }
 
     @ApiOperation(value = "根据唯一ID删除${comment}", notes = "根据唯一ID删除${comment}")
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
-    public Result${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
+    public R${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         UserOnlineDto user = getOnlineUser();
-        ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
+        ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
         if (null == entity) {
-            return Result.failed(ResultConstant.NOT_FOUND, "没有找到需要删除的记录");
+            return R.failed(ResultConstant.NOT_FOUND, "没有找到需要删除的记录");
         }
         //TODO 其他限制删除条件
-        return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
+    <#if logicDelete == 1>
+        return R.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
+    <#else>
+        return R.ok(${classNameLowerCase}Service.removeById(${pk.attrNameLowerCase}));
+    </#if>
     }
 </#if>
 }

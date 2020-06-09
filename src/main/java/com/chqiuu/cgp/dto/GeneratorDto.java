@@ -72,6 +72,10 @@ public class GeneratorDto implements Serializable {
      */
     private String author = "chqiuu";
     /**
+     * 是否存在逻辑删除字段 is_deleted
+     */
+    private int logicDelete;
+    /**
      * 是否为MyBatis-Plus
      */
     private int plusEnabled;

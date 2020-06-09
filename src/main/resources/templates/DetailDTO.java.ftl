@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+    import java.time.LocalDateTime;
+    import java.time.LocalDate;
 </#if>
 
 /**

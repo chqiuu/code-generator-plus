@@ -8,6 +8,8 @@ import java.util.Map;
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+ import java.time.LocalDateTime;
+ import java.time.LocalDate;
  import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
  import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 </#if>
@@ -97,12 +99,14 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
 </#list>
  * @return 列表
  */
- IPage${r'<'}${classNameUpperCase}ListDto> getPage(Integer current, Integer size, <#assign paramsStr = ''>
+ IPage${r'<'}${classNameUpperCase}ListDTO> getPage(Integer current, Integer size, <#assign paramsStr = ''>
   <#list columns as column>
    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
     <#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase},</#assign>
    </#if>
   </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
+
+  <#if logicDelete == 1>
  /**
  * 删除
  *
@@ -111,5 +115,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
  * @return 是否成功
  */
  boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long userId);
- </#if>
+  </#if>
+
+</#if>
 ${r'}'}

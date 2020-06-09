@@ -7,6 +7,11 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import org.apache.ibatis.annotations.Param;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 /**
  * ${comment}
  *
@@ -19,7 +24,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
   /**
   * 根据唯一ID获取详细信息
   *
-  * @param ${pk.attrNameLowerCase} ${column.comment}
+  * @param ${pk.attrNameLowerCase} ${pk.comment}
   * @return 详细信息
   */
   ${classNameUpperCase}DetailDTO getDetailById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
@@ -34,7 +39,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
   </#list>
   * @return 列表
   */
-  IPage${r'<'}${classNameUpperCase}ListDto> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDto> pageInfo, <#assign paramsStr = ''>
+  IPage${r'<'}${classNameUpperCase}ListDTO> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDTO> pageInfo, <#assign paramsStr = ''>
   <#list columns as column>
    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
     <#assign paramsStr>${paramsStr}@Param("${column.attrNameLowerCase}") ${column.attrType} ${column.attrNameLowerCase},</#assign>

@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+    import java.time.LocalDateTime;
+    import java.time.LocalDate;
 </#if>
 
 /**
@@ -28,7 +30,7 @@ import lombok.EqualsAndHashCode;
 </#if>
 @ApiModel(value = "${comment}查询参数")
 
-public class ${classNameUpperCase}PageParamVo implements Serializable${r'{'}
+public class ${classNameUpperCase}PageParamVO implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
 

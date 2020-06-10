@@ -8,6 +8,14 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <sql id="Base_${acronymUpperCase}_Column_List">
         <#list columns as column>${acronymLowerCase}.`${column.columnName}`<#if column?has_next>,</#if></#list>
     </sql>
+
+<!-- 可根据自己的需求，是否要使用 -->
+<resultMap id="BaseResultMap" type="${codePackage}.entity.${classNameUpperCase}Entity">
+    <#list columns as column>
+        <result property="${column.attrNameLowerCase}" column="${column.columnName}"/>
+    </#list>
+</resultMap>
+
 <#if plusEnabled == 1>
 
     <!--根据唯一ID获取详细信息-->
@@ -17,7 +25,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}
     </select>
 
-    <!--获取基地动态文章列表（分页）-->
+    <!--${comment}分页查询-->
     <select id="getPage" resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
@@ -37,13 +45,6 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         </#list>
     </select>
 <#else>
-        <!-- 可根据自己的需求，是否要使用 -->
-        <resultMap id="BaseResultMap" type="${codePackage}.entity.${classNameUpperCase}Entity">
-            <#list columns as column>
-                <result property="${column.attrNameLowerCase}" column="${column.columnName}"/>
-            </#list>
-        </resultMap>
-
         <!--插入数据-->
         <insert id="insert" parameterType="${codePackage}.entity.${classNameUpperCase}Entity"<#if pk.extra == 'auto_increment'> useGeneratedKeys="true" keyProperty="${pk.attrNameLowerCase}"</#if>>
         INSERT INTO `${tableName}`

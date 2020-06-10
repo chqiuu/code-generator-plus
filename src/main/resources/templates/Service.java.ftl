@@ -89,7 +89,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
  ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase});
 
  /**
- * 分页查询
+ * ${comment}分页查询
  * @param current       当前页
  * @param size          每页显示条数
  <#list columns as column>
@@ -97,7 +97,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
   * @param ${column.attrNameLowerCase} ${column.comment}
  </#if>
 </#list>
- * @return 列表
+ * @return ${comment}列表
  */
  IPage${r'<'}${classNameUpperCase}ListDTO> getPage(Integer current, Integer size, <#assign paramsStr = ''>
   <#list columns as column>

@@ -30,14 +30,14 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
   ${classNameUpperCase}DetailDTO getDetailById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
 
   /**
-  * 分页查询
+  * ${comment}分页查询
   * @param pageInfo      分页控件
   <#list columns as column>
    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
     * @param ${column.attrNameLowerCase} ${column.comment}
    </#if>
   </#list>
-  * @return 列表
+  * @return ${comment}列表
   */
   IPage${r'<'}${classNameUpperCase}ListDTO> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDTO> pageInfo, <#assign paramsStr = ''>
   <#list columns as column>

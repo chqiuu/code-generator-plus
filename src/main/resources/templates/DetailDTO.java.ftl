@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 </#if>
 
 /**
-* ${comment}录入信息
+* ${comment}详细信息
 *
 * @author ${author}
 * @date ${createTime?date("yyyy-MM-dd")}
@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
-@ApiModel(value = "${comment}录入信息")
+@ApiModel(value = "${comment}详细信息")
 public class ${classNameUpperCase}DetailDTO implements Serializable${r'{'}
 
 private static final long serialVersionUID = 1L;

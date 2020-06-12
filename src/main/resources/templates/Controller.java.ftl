@@ -59,19 +59,16 @@ public class ${classNameUpperCase}Controller extends BaseController{
     }
 
     @ApiOperation(value = "${comment}分页查询", notes = "${comment}分页查询")
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "current", value = "当前页", paramType = "query", dataType = "int", defaultValue = "1")
+        , @ApiImplicitParam(name = "size", value = "每页显示条数", paramType = "query", dataType = "int", defaultValue = "10")
+    <#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+        , @ApiImplicitParam(name = "${column.attrNameLowerCase}", value = "${column.comment}", paramType = "query")
+        </#if></#list>
+    })
     @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(Integer current, Integer size, <#assign paramsStr = ''>
-    <#list columns as column>
-        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-            <#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase},</#assign>
-        </#if>
-    </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}) {
-    return R.ok(${classNameLowerCase}Service.getPage(current,size,<#assign paramsStr = ''>
-    <#list columns as column>
-        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-            <#assign paramsStr>${paramsStr}${column.attrNameLowerCase}(),</#assign>
-        </#if>
-    </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}));
+    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(Integer current, Integer size, <#assign paramsStr = ''><#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase},</#assign></#if></#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}) {
+        return R.ok(${classNameLowerCase}Service.getPage(current,size,<#assign paramsStr = ''><#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrNameLowerCase},</#assign></#if></#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}));
     }
 
     @ApiOperation(value = "新建${comment}", notes = "新建${comment}，返回ID")

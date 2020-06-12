@@ -29,7 +29,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <select id="getPage" resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
-        FROM `${tableName}` AS ${acronymLowerCase} WHERE 1=1
+        FROM `${tableName}` AS ${acronymLowerCase} WHERE 1 = 1
         <#list columns as column>
             <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
                 <#if column.attrType == 'String'>

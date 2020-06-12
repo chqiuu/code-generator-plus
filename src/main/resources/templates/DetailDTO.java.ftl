@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
 @ApiModel(value = "${comment}详细信息")
 public class ${classNameUpperCase}DetailDTO implements Serializable${r'{'}
 
-private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 //TODO 当您看到这个后您应该自己修改模板增减字段
 <#list columns as column>
     /**

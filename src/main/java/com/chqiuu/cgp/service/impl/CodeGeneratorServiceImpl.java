@@ -251,8 +251,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             return packagePath + "dto" + File.separator + className + "DetailDTO.java";
         } else if (template.contains("ListDTO.java.ftl")) {
             return packagePath + "dto" + File.separator + className + "ListDTO.java";
-        } else if (template.contains("PageParamVO.java.ftl")) {
-            return packagePath + "vo" + File.separator + className + "PageParamVO.java";
         } else if (template.contains("InputVO.java.ftl")) {
             return packagePath + "vo" + File.separator + className + "InputVO.java";
         } else if (template.contains("Dao.java.ftl")) {

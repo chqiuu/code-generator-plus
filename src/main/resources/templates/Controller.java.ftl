@@ -25,7 +25,6 @@ import ${codePackage}.service.${classNameUpperCase}Service;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
 <#if plusEnabled == 1>
-import ${codePackage}.vo.${classNameUpperCase}PageParamVO;
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
     import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
     import ${codePackage}.dto.${classNameUpperCase}ListDTO;
@@ -61,11 +60,16 @@ public class ${classNameUpperCase}Controller extends BaseController{
 
     @ApiOperation(value = "${comment}分页查询", notes = "${comment}分页查询")
     @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(@RequestParam ${classNameUpperCase}PageParamVO vo) {
-    return R.ok(${classNameLowerCase}Service.getPage(vo.getCurrent(),vo.getSize(),<#assign paramsStr = ''>
+    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(Integer current, Integer size, <#assign paramsStr = ''>
     <#list columns as column>
         <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-            <#assign paramsStr>${paramsStr}vo.get${column.attrNameUpperCase}(),</#assign>
+            <#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase},</#assign>
+        </#if>
+    </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}) {
+    return R.ok(${classNameLowerCase}Service.getPage(current,size,<#assign paramsStr = ''>
+    <#list columns as column>
+        <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+            <#assign paramsStr>${paramsStr}${column.attrNameLowerCase}(),</#assign>
         </#if>
     </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}));
     }

@@ -209,7 +209,7 @@ public enum DriverClassEnum {
 
     public static DriverClassEnum getByDbType(String dbType) {
         for (DriverClassEnum e : values()) {
-            if (e.getDbType().equals(dbType)) {
+            if (e.getDbType().equalsIgnoreCase(dbType)) {
                 return e;
             }
         }

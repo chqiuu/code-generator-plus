@@ -78,7 +78,11 @@ public class MySqlDatabase extends BaseDatabase {
                 MySqlCreateTableStatement stmt = (MySqlCreateTableStatement) sqlStatement;
                 TableEntity tableEntity = new TableEntity();
                 tableEntity.setTableName(stmt.getTableSource().getExpr().toString().replace("`", ""));
-                tableEntity.setTableComment(stmt.getComment().toString().replace("'", ""));
+                if (null == stmt.getComment()) {
+                    tableEntity.setTableComment(tableEntity.getTableName() + "Comment");
+                } else {
+                    tableEntity.setTableComment(stmt.getComment().toString().replace("'", ""));
+                }
                 List<ColumnEntity> columns = new ArrayList<>();
                 for (SQLTableElement column : stmt.getTableElementList()) {
                     if (column instanceof SQLColumnDefinition) {
@@ -86,7 +90,11 @@ public class MySqlDatabase extends BaseDatabase {
                         // 获取字段对象
                         SQLColumnDefinition columnDefinition = (SQLColumnDefinition) column;
                         columnEntity.setColumnName(columnDefinition.getName().getSimpleName().replace("`", ""));
-                        columnEntity.setColumnComment(columnDefinition.getComment().toString().replace("'", ""));
+                        if (null == columnDefinition.getComment()) {
+                            columnEntity.setColumnComment(columnEntity.getColumnName());
+                        } else {
+                            columnEntity.setColumnComment(columnDefinition.getComment().toString().replace("'", ""));
+                        }
                         columnEntity.setDataType(columnDefinition.getDataType().getName());
                         String columnType = columnDefinition.getDataType().toString();
                         columnEntity.setColumnType(columnType);

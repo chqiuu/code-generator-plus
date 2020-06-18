@@ -15,6 +15,7 @@ import com.chqiuu.cgp.dto.ColumnDto;
 import com.chqiuu.cgp.dto.GeneratorDto;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
+import com.chqiuu.cgp.vo.GeneratorTableVO;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.template.Template;
@@ -59,7 +60,11 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {
         BaseDatabase database = new DatabaseFactory().create(connect.getDriverClassEnum());
-        return database.queryTableList(connect, tableName);
+        List<TableEntity> list = database.queryTableList(connect, tableName);
+        list.forEach(t -> {
+            t.setColumns(database.queryColumns(connect, t.getTableName()));
+        });
+        return list;
     }
 
     @Override
@@ -220,7 +225,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             IOUtils.write(writer.toString(), zip, "UTF-8");
             zip.closeEntry();
         } catch (Exception e) {
-            throw new UserException(ResultConstant.FAILED, "渲染模板失败，表名：" + generator.getTableName(), e);
+            throw new UserException(ResultConstant.FAILED, String.format("渲染模板失败，表名：%s ；文件名：%s" , generator.getTableName(), fileName), e);
         }
     }
 
@@ -263,11 +268,14 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             packagePath = "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName;
             return packagePath + File.separator + className + "Mapper.xml";
         }
+        if (template.contains("menu.sql.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "menu" + File.separator + "modules" +
+                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
+        }
         if (template.contains("index.vue.ftl")) {
             return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
                     File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
         }
-
         if (template.contains("add-or-update.vue.ftl")) {
             return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
                     File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
@@ -379,5 +387,23 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         String[] tableNames = new String[tableNameList.size()];
         tableNameList.toArray(tableNames);
         return generatorCode(connect, rootPackage, moduleName, author, tableNames, isPlus);
+    }
+
+    @Override
+    public byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, List<GeneratorTableVO> tables, List<TableEntity> allTables) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (ZipOutputStream zip = new ZipOutputStream(outputStream)) {
+            tables.forEach(t -> {
+                for (TableEntity table : allTables) {
+                    if (table.getTableName().equals(t.getTableName())) {
+                        //生成代码
+                        generatorCode(driverClassEnum, rootPackage, t.getModule(), author, table, table.getColumns(), zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outputStream.toByteArray();
     }
 }

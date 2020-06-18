@@ -4,6 +4,7 @@ import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
+import com.chqiuu.cgp.vo.GeneratorTableVO;
 
 import java.util.List;
 
@@ -78,4 +79,17 @@ public interface CodeGeneratorService {
      */
     byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus);
 
+    /**
+     * 多表批量生成代码
+     *
+     *
+     * @param driverClassEnum
+     * @param rootPackage 项目主包名
+     * @param author      创建人
+     * @param isPlus      是否为MyBatis-Plus
+     * @param tables      需要生成的表
+     * @param allTables   所有表
+     * @return 字节码
+     */
+    byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, List<GeneratorTableVO> tables, List<TableEntity> allTables);
 }

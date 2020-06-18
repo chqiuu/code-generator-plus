@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UserException.class)
     public R<String> handleUserException(UserException e) {
+        log.error(e.getMessage(), e);
         return R.failed(e.getResultConstant(), e.getMessage());
     }
 

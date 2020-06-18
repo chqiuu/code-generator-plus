@@ -47,7 +47,7 @@ public abstract class BaseConnect {
         try {
             conn = getDataSource().getConnection();
             stmt = conn.createStatement();
-            log.info("executeUpdate SQL: {}", typeSql);
+            log.debug("executeUpdate SQL: {}", typeSql);
             intReturn = stmt.executeUpdate(typeSql);
         } catch (SQLException e) {
             log.error("Message: {} ,sql: {}", e.getMessage(), typeSql);
@@ -69,7 +69,7 @@ public abstract class BaseConnect {
             conn = getDataSource().getConnection();
             stmt = conn.createStatement();
             for (String sql : sqls) {
-                log.info("executeUpdate SQL: {}", sql);
+                log.debug("executeUpdate SQL: {}", sql);
                 stmt.executeUpdate(sql);
             }
         } catch (SQLException e) {
@@ -93,7 +93,7 @@ public abstract class BaseConnect {
         try {
             conn = getDataSource().getConnection();
             stmt = conn.createStatement();
-            log.info("executeQuery SQL: {}", querySql);
+            log.debug("executeQuery SQL: {}", querySql);
             resultSet = stmt.executeQuery(querySql);
             // 获得结果集结构信息,元数据
             ResultSetMetaData md = resultSet.getMetaData();
@@ -130,7 +130,7 @@ public abstract class BaseConnect {
         try {
             conn = getDataSource().getConnection();
             stmt = conn.createStatement();
-            log.info("executeQuery SQL: {}", querySql);
+            log.debug("executeQuery SQL: {}", querySql);
             resultSet = stmt.executeQuery(querySql);
             list = convertMetaData(resultSet, clazz);
         } catch (Exception e) {

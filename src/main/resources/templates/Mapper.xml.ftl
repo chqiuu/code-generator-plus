@@ -17,7 +17,6 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
 </resultMap>
 
 <#if plusEnabled == 1>
-
     <!--根据唯一ID获取详细信息-->
     <select id="getDetailById" resultType="${codePackage}.dto.${classNameUpperCase}DetailDTO">
         SELECT
@@ -46,7 +45,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     </select>
 <#else>
         <!--插入数据-->
-        <insert id="insert" parameterType="${codePackage}.entity.${classNameUpperCase}Entity"<#if pk.extra == 'auto_increment'> useGeneratedKeys="true" keyProperty="${pk.attrNameLowerCase}"</#if>>
+        <insert id="insert" parameterType="${codePackage}.entity.${classNameUpperCase}Entity"<#if pk.extra?? && pk.extra == 'auto_increment'> useGeneratedKeys="true" keyProperty="${pk.attrNameLowerCase}"</#if>>
         INSERT INTO `${tableName}`
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <#list columns as column>

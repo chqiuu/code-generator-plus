@@ -40,7 +40,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     public ${classNameUpperCase}ServiceImpl(${classNameUpperCase}Dao ${classNameLowerCase}Dao) {
         this.${classNameLowerCase}Dao = ${classNameLowerCase}Dao;
     }
-    <#if pk.extra == 'auto_increment'>
+    <#if pk.extra?? && pk.extra == 'auto_increment'>
     /**
      * 插入数据
      *

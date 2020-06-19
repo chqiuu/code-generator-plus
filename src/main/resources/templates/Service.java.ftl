@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends IService${r'<'}${classNameUpperCase}Entity></#if> ${r'{'}
 
 <#if plusEnabled == 0>
-    <#if pk.extra == 'auto_increment'>
+    <#if pk.extra?? && pk.extra == 'auto_increment'>
     /**
      * 插入数据
      *

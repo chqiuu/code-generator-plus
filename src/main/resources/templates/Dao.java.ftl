@@ -1,9 +1,7 @@
+<#if plusEnabled == 1>
 package ${codePackage}.mapper;
-
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 import org.springframework.stereotype.Repository;
-
-<#if plusEnabled == 1>
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
@@ -47,6 +45,8 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
   </#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
 }
 <#else>
+    package ${codePackage}.dao;
+    import ${codePackage}.entity.${classNameUpperCase}Entity;
 import org.springframework.stereotype.Repository;
 /**
  * ${comment}

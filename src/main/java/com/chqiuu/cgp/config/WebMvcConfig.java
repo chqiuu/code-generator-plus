@@ -52,7 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         //设置首页地址
-        registry.addViewController("/").setViewName("redirect:/static/info");
+        registry.addViewController("/").setViewName("redirect:/static");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 

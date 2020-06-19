@@ -1,12 +1,9 @@
 package com.chqiuu.cgp;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+//@SpringBootTest
 class CodeGeneratorPlusApplicationTests {
 
-    @Test
+  //  @Test
     void contextLoads() {
     }
 

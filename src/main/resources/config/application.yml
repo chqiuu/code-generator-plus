@@ -1,7 +1,5 @@
 server:
-  port: 80
-  servlet:
-    context-path: /code-generator-plus
+  port: 803
 
 spring:
   application:

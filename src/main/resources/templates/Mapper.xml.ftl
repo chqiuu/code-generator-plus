@@ -64,7 +64,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             UPDATE `${tableName}`
             <set>
                 <#list columns as column>
-                    <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">`$column.columnName` = ${r'#{'}${column.attrNameLowerCase}${r'}'}<#if column?has_next>,</#if></if>
+                    <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}<#if column?has_next>,</#if></if>
                 </#list>
             </set>
             WHERE `${pk.columnName}` = ${r'#{'}${pk.attrNameLowerCase}${r'}'}
@@ -74,7 +74,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         <select id="getByPrimary" parameterType="${codePackage}.entity.${classNameUpperCase}Entity"
                 resultType="${codePackage}.entity.${classNameUpperCase}Entity">
             SELECT
-            <include refid="Base_Column_List"/>
+            <include refid="Base_${acronymUpperCase}_Column_List"/>
             FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}
         </select>
 
@@ -82,7 +82,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         <!--根据查询条件获取一条记录-->
         <select id="getOne" parameterType="${codePackage}.entity.${classNameUpperCase}Entity" resultType="${codePackage}.entity.${classNameUpperCase}Entity">
             SELECT
-            <include refid="Base_Column_List"/>
+            <include refid="Base_${acronymUpperCase}_Column_List"/>
             FROM `${tableName}` AS ${acronymLowerCase} where 1=1
             <#list columns as column>
                 <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}</if>
@@ -93,7 +93,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         <!--根据查询条件查询-->
         <select id="queryList" parameterType="${codePackage}.entity.${classNameUpperCase}Entity" resultType="${codePackage}.entity.${classNameUpperCase}Entity">
             SELECT
-            <include refid="Base_Column_List"/>
+            <include refid="Base_${acronymUpperCase}_Column_List"/>
             FROM `${tableName}` AS ${acronymLowerCase} where 1=1
             <#list columns as column>
                 <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}</if>
@@ -104,7 +104,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         <!--查询所有数据-->
         <select id="getAll" resultType="${codePackage}.entity.${classNameUpperCase}Entity">
             SELECT
-            <include refid="Base_Column_List"/>
+            <include refid="Base_${acronymUpperCase}_Column_List"/>
             FROM `${tableName}` AS ${acronymLowerCase}
         </select>
 </#if>

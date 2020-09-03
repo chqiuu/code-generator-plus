@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 ${r'<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">'}
 ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${classNameUpperCase}Mapper" <#else> namespace="${codePackage}.dao.${classNameUpperCase}Dao" </#if>${r'>'}
-    <!-- ${comment} 表名：`${tableName}` -->
+    <!-- ${commentEscape} 表名：`${tableName}` -->
     <sql id="Base_Column_List">
         <#list columns as column>`${column.columnName}`<#if column?has_next>,</#if></#list>
     </sql>
@@ -25,7 +25,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     </select>
 
     <!--${comment}分页查询-->
-    <select id="getPage" resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
+    <select id="getPage" parameterType="${codePackage}.query.${classNameUpperCase}PageQuery" resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
         FROM `${tableName}` AS ${acronymLowerCase} WHERE 1 = 1
@@ -33,11 +33,11 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
                 <#if column.attrType == 'String'>
                     <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">
-                        AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}${column.attrNameLowerCase}${r'}'},'%')
+                        AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}query.${column.attrNameLowerCase}${r'}'},'%')
                     </if>
                 <#else>
                     <if test="${column.attrNameLowerCase} != null ">
-                        AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}
+                        AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}query.${column.attrNameLowerCase}${r'}'}
                     </if>
                 </#if>
             </#if>

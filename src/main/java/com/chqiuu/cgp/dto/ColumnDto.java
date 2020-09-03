@@ -23,7 +23,10 @@ public class ColumnDto implements Serializable {
      * 列名备注
      */
     private String comment;
-
+    /**
+     * 列名描述转义 ，转义特殊字符防止生成后代码报错
+     */
+    private String commentEscape;
     /**
      * 属性名称(第一个字母大写)，如：user_name => UserName
      * column.attrNameUpperCase

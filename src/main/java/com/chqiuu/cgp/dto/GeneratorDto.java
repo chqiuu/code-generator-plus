@@ -24,6 +24,10 @@ public class GeneratorDto implements Serializable {
      */
     private String comment;
     /**
+     * 表的备注转义 ，转义特殊字符防止生成后代码报错
+     */
+    private String commentEscape;
+    /**
      * 数据库类型
      */
     private String dbType;
@@ -44,11 +48,11 @@ public class GeneratorDto implements Serializable {
      */
     private String classNameLowerCase;
     /**
-     * 表名首字母缩写小写
+     * 表名首字母缩写小写 如：sys_user => su
      */
     private String acronymLowerCase;
     /**
-     * 表名首字母大写
+     * 表名首字母大写 如：sys_user => SU
      */
     private String acronymUpperCase;
     /**

@@ -122,6 +122,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         dto.setTableName(table.getTableName());
         dto.setComment(StrUtil.isEmpty(table.getTableComment()) ? table.getTableName()
                 : (table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment()));
+        if (StrUtil.isNotBlank(dto.getComment())) {
+            dto.setCommentEscape(dto.getComment().replaceAll("\"", "\\\\\"").replaceAll("\r", " ").replaceAll("\n", " "));
+        }
         dto.setDbType(driverClassEnum.getDbType());
         // 表名转换成Java类名
         String className = tableToJava(dto.getTableName(), "");
@@ -137,6 +140,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             columnDto.setDataType(column.getDataType());
             // 列描述
             columnDto.setComment(StrUtil.isEmpty(column.getColumnComment()) ? column.getColumnName() : column.getColumnComment());
+            if (StrUtil.isNotBlank(columnDto.getComment())) {
+                columnDto.setCommentEscape(columnDto.getComment().replaceAll("\"", "\\\\\"").replaceAll("\r", " ").replaceAll("\n", " "));
+            }
             columnDto.setExtra(column.getExtra());
             columnDto.setColumnDetail(column.getDdl());
             // 字段长度
@@ -225,7 +231,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             IOUtils.write(writer.toString(), zip, "UTF-8");
             zip.closeEntry();
         } catch (Exception e) {
-            throw new UserException(ResultConstant.FAILED, String.format("渲染模板失败，表名：%s ；文件名：%s" , generator.getTableName(), fileName), e);
+            throw new UserException(ResultConstant.FAILED, String.format("渲染模板失败，表名：%s ；文件名：%s", generator.getTableName(), fileName), e);
         }
     }
 
@@ -256,6 +262,8 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             return packagePath + "dto" + File.separator + className + "DetailDTO.java";
         } else if (template.contains("ListDTO.java.ftl")) {
             return packagePath + "dto" + File.separator + className + "ListDTO.java";
+        } else if (template.contains("PageQuery.java.ftl")) {
+            return packagePath + "query" + File.separator + className + "PageQuery.java";
         } else if (template.contains("InputVO.java.ftl")) {
             return packagePath + "vo" + File.separator + className + "InputVO.java";
         } else if (template.contains("Dao.java.ftl")) {

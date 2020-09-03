@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
-    import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
-    import ${codePackage}.dto.${classNameUpperCase}ListDTO;
-    import com.baomidou.mybatisplus.core.metadata.IPage;
-    import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-    import java.time.LocalDateTime;
-    import java.time.LocalDate;
+import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
+import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import ${codePackage}.query.${classNameUpperCase}PageQuery;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 <#else>
 import org.springframework.beans.factory.annotation.Autowired;
 import ${codePackage}.dao.${classNameUpperCase}Dao;
@@ -24,14 +25,14 @@ import ${codePackage}.entity.${classNameUpperCase}Entity;
 import ${codePackage}.service.${classNameUpperCase}Service;
 
 /**
- * ${comment}业务层
+ * ${commentEscape}业务逻辑层实现
  *
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
  */
 @Service
 @AllArgsConstructor
-public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends ServiceImpl${r'<'}${classNameUpperCase}Mapper, ${classNameUpperCase}Entity> </#if> implements ${classNameUpperCase}Service ${r'{'}
+public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends ServiceImpl${r'<'}${classNameUpperCase}Mapper, ${classNameUpperCase}Entity></#if> implements ${classNameUpperCase}Service ${r'{'}
 
 <#if plusEnabled == 0>
     private final ${classNameUpperCase}Dao ${classNameLowerCase}Dao;
@@ -119,29 +120,28 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1> extends Ser
     }
 
 <#elseif plusEnabled == 1>
-
     @Override
     public ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getDetailById(${pk.attrNameLowerCase});
     }
 
     @Override
-    public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(Integer current, Integer size, <#assign paramsStr = ''><#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase}, </#assign></#if></#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}){
-        Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(current, size);
-        return this.baseMapper.getPage(pageInfo,<#assign paramsStr = ''><#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrNameLowerCase}, </#assign></#if></#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)});
+    public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery pageQuery) {
+        Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(pageQuery.getCurrent(), pageQuery.getSize());
+        return this.baseMapper.getPage(pageInfo, pageQuery);
     }
 
     <#if logicDelete == 1>
     @Override
-    public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long userId){
+    public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long operatorId) {
         ${classNameUpperCase}Entity updateEntity = new ${classNameUpperCase}Entity();
         updateEntity.set${pk.attrNameUpperCase}(${pk.attrNameLowerCase});
         updateEntity.setIsDeleted(true);
     <#list columns as column>
         <#if column.columnName == 'del_time'>
-            updateEntity.setDelTime(LocalDateTime.now());
+        updateEntity.setDelTime(LocalDateTime.now());
         <#elseif column.columnName == 'del_user'>
-            updateEntity.setDelUser(userId);
+        updateEntity.setDelUser(operatorId);
         </#if>
     </#list>
         return baseMapper.updateById(updateEntity) > 0;

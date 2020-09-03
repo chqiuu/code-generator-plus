@@ -25,19 +25,21 @@ import ${codePackage}.service.${classNameUpperCase}Service;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
 <#if plusEnabled == 1>
+import ${rootPackage}.user.dto.UserOnlineDTO;
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
-    import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
-    import ${codePackage}.dto.${classNameUpperCase}ListDTO;
-    import ${rootPackage}.common.validator.group.Default;
-    import ${rootPackage}.common.validator.group.Create;
-    import ${rootPackage}.common.validator.group.Update;
-    import javax.validation.constraints.NotNull;
-    import com.baomidou.mybatisplus.core.metadata.IPage;
-    import java.time.LocalDateTime;
-    import java.time.LocalDate;
+import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
+import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import ${codePackage}.query.${classNameUpperCase}PageQuery;
+import ${rootPackage}.common.validator.group.Default;
+import ${rootPackage}.common.validator.group.Create;
+import ${rootPackage}.common.validator.group.Update;
+import javax.validation.constraints.NotNull;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
 </#if>
 /**
- * ${comment}控制层
+ * ${comment}请求处理层
  *
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
@@ -45,7 +47,7 @@ import ${codePackage}.vo.${classNameUpperCase}InputVO;
 @Validated
 @RestController
 @RequestMapping("${pathName}")
-@Api(value = "${comment}", tags = "${comment}")
+@Api(value = "${commentEscape}", tags = "${commentEscape}")
 @AllArgsConstructor
 public class ${classNameUpperCase}Controller extends BaseController{
 
@@ -58,20 +60,20 @@ public class ${classNameUpperCase}Controller extends BaseController{
         return R.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
     }
 
-    @ApiOperation(value = "${comment}分页查询", notes = "${comment}分页查询")
+    @ApiOperation(value = "${commentEscape}分页查询", notes = "${commentEscape}分页查询")
     @ApiImplicitParams({
-    @ApiImplicitParam(name = "current", value = "当前页", paramType = "query", dataType = "int", defaultValue = "1")
-        , @ApiImplicitParam(name = "size", value = "每页显示条数", paramType = "query", dataType = "int", defaultValue = "10")
+            @ApiImplicitParam(name = "current", value = "当前页", paramType = "query", dataType = "int", defaultValue = "1")
+            , @ApiImplicitParam(name = "size", value = "每页显示条数", paramType = "query", dataType = "int", defaultValue = "10")
     <#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-        , @ApiImplicitParam(name = "${column.attrNameLowerCase}", value = "${column.comment}", paramType = "query")
+            , @ApiImplicitParam(name = "${column.attrNameLowerCase}", value = "${column.commentEscape}", paramType = "query")
         </#if></#list>
     })
     @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(Integer current, Integer size, <#assign paramsStr = ''><#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrType} ${column.attrNameLowerCase},</#assign></#if></#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}) {
-        return R.ok(${classNameLowerCase}Service.getPage(current,size,<#assign paramsStr = ''><#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')><#assign paramsStr>${paramsStr}${column.attrNameLowerCase},</#assign></#if></#list>${paramsStr?trim?substring(0,paramsStr?trim?length-1)}));
+    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery pageQuery) {
+        return R.ok(${classNameLowerCase}Service.getPage(pageQuery));
     }
 
-    @ApiOperation(value = "新建${comment}", notes = "新建${comment}，返回ID")
+    @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
     @PostMapping("/add")
     public R<${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}Entity entity = vo.convertToEntity();
@@ -80,7 +82,7 @@ public class ${classNameUpperCase}Controller extends BaseController{
         return R.ok(entity.get${pk.attrNameUpperCase}());
     }
 
-    @ApiOperation(value = "更新${comment}", notes = "更新${comment}")
+    @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
     @PostMapping("/update")
     public R${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
@@ -91,10 +93,10 @@ public class ${classNameUpperCase}Controller extends BaseController{
         return R.ok();
     }
 
-    @ApiOperation(value = "根据唯一ID删除${comment}", notes = "根据唯一ID删除${comment}")
+    @ApiOperation(value = "根据唯一ID删除${commentEscape}", notes = "根据唯一ID删除${commentEscape}")
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
     public R${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
-        UserOnlineDto user = getOnlineUser();
+        UserOnlineDTO user = getOnlineUser();
         ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
         if (null == entity) {
             return R.failed(ResultConstant.NOT_FOUND, "没有找到需要删除的记录");

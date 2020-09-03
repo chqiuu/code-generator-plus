@@ -1,4 +1,4 @@
-package ${codePackage}.dto;
+package ${codePackage}.query;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,15 +6,23 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 
+import ${codePackage}.entity.${classNameUpperCase}Entity;
+
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import ${rootPackage}.common.validator.group.Default;
+import ${rootPackage}.common.validator.group.Update;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 </#if>
 
 /**
- * ${comment}详细信息
+ * ${comment}分页查询对象
  *
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
@@ -22,20 +30,35 @@ import java.time.LocalDate;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
-@ApiModel(value = "${commentEscape}详细信息")
-public class ${classNameUpperCase}DetailDTO implements Serializable${r'{'}
+@ApiModel(value = "${commentEscape}分页查询对象")
+public class ${classNameUpperCase}PageQuery implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
-//TODO 当您看到这个后您应该自己修改模板增减字段
-<#list columns as column>
     /**
-     * ${column.comment} ${column.columnDetail}
+     * 当前页
+     */
+    @ApiModelProperty(value = "当前页")
+    private Integer current = 1;
+    /**
+     * 每页显示条数
+     */
+    @ApiModelProperty(value = "每页显示条数")
+    private Integer size = 10;
+
+//TODO 当您看到这个后您应该自己修改模板增减规则
+<#list columns as column>
+    <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+    /**
+     * ${column.commentEscape} ${column.columnDetail}
      */
     @ApiModelProperty(value = "${column.commentEscape}")
     private ${column.attrType} ${column.attrNameLowerCase};
+    </#if>
 </#list>
 <#if lombokDataEnabled == 0>
     <#list columns as column>
+        <#if exclusionShowColumns?contains(column.columnName)>
+        <#else>
     /**
      * 获取：${column.comment}
      *
@@ -53,6 +76,7 @@ public class ${classNameUpperCase}DetailDTO implements Serializable${r'{'}
     public void set${column.attrNameUpperCase}(${column.attrType} ${column.attrNameLowerCase}) {
         this.${column.attrNameLowerCase} = ${column.attrNameLowerCase};
     }
+        </#if>
     </#list>
 </#if>
 ${r'}'}

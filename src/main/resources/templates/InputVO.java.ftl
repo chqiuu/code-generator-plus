@@ -94,6 +94,6 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
         entity.set${column.attrNameUpperCase}(${column.attrNameLowerCase});
             </#if>
         </#list>
-    return entity;
+        return entity;
     }
 ${r'}'}

@@ -55,8 +55,8 @@ public class ${classNameUpperCase}Controller extends BaseController{
 
 <#if plusEnabled == 1>
     @ApiOperation(value = "根据唯一ID获取详细信息", notes = "根据唯一ID获取详细信息")
-    @GetMapping("/info/{${pk.attrNameLowerCase}}")
-    public R${r'<'}${classNameUpperCase}DetailDTO> info(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
+    @GetMapping("/detail/{${pk.attrNameLowerCase}}")
+    public R${r'<'}${classNameUpperCase}DetailDTO> detail(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         return R.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
     }
 

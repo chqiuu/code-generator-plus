@@ -16,8 +16,6 @@ import com.chqiuu.cgp.dto.GeneratorDto;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
 import com.chqiuu.cgp.vo.GeneratorTableVO;
-import freemarker.cache.FileTemplateLoader;
-import freemarker.cache.MultiTemplateLoader;
 import freemarker.template.Template;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -201,8 +195,20 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param zip       压缩文件流
      */
     private void generateFiles(GeneratorDto generator, ZipOutputStream zip) {
-        //获取模板列表
-        List<String> templates = getTemplates();
+        // 模板列表
+        String[] templates = new String[]{"add-or-update.vue.ftl"
+                , "Controller.java.ftl"
+                , "Dao.java.ftl"
+                , "DetailDTO.java.ftl"
+                , "Entity.java.ftl"
+                , "index.vue.ftl"
+                , "InputVO.java.ftl"
+                , "ListDTO.java.ftl"
+                , "Mapper.xml.ftl"
+                , "menu.sql.ftl"
+                , "PageQuery.java.ftl"
+                , "Service.java.ftl"
+                , "ServiceImpl.java.ftl"};
         for (String templateStr : templates) {
             if (generator.getPlusEnabled() == 0) {
                 if (templateStr.contains("DTO.") || templateStr.contains("VO.")) {
@@ -354,36 +360,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     private String columnToJava(String columnName) {
         return WordUtils.capitalizeFully(columnName, new char[]{'_'}).replace("_", "");
     }
-
-    /**
-     * 获取FTL模板文件路径
-     *
-     * @return FTL模板文件路径
-     * @throws IOException
-     */
-    private String getTemplateLoaderPath() throws IOException {
-        MultiTemplateLoader multiTemplateLoader = (MultiTemplateLoader) configurer.getConfiguration().getTemplateLoader();
-        if (multiTemplateLoader != null) {
-            if (multiTemplateLoader.getTemplateLoader(0) instanceof FileTemplateLoader) {
-                return ((FileTemplateLoader) multiTemplateLoader.getTemplateLoader(0)).baseDir.getCanonicalPath();
-            }
-        }
-        return null;
-    }
-
-    private List<String> getTemplates() {
-        List<String> templateNameItems = new ArrayList<>();
-        log.debug("执行加载模板文件夹里面所有模板的名字...");
-        try {
-            templateNameItems = Files.list(Paths.get(Objects.requireNonNull(getTemplateLoaderPath()))).filter(f -> f.getFileName().toString().endsWith(".ftl"))
-                    .map(p -> p.getFileName().toString()).collect(Collectors.toList());
-            log.debug("执行加载模板文件夹里面所有模板的名字-->成功!");
-        } catch (IOException e) {
-            log.error("执行加载模板文件夹里面所有模板的名字-->失败:", e);
-        }
-        return templateNameItems;
-    }
-
 
     @Override
     public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus) {

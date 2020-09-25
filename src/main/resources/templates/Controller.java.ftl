@@ -94,8 +94,11 @@ public class ${classNameUpperCase}Controller extends BaseController{
     }
 
     @ApiOperation(value = "根据唯一ID删除${commentEscape}", notes = "根据唯一ID删除${commentEscape}")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "${pk.attrNameLowerCase}", value = "${pk.comment}", paramType = "path"),
+    })
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
-    public R${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
+    public R${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         UserOnlineDTO user = getOnlineUser();
         ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
         if (null == entity) {

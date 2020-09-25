@@ -219,7 +219,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         }
     }
 
-
     /**
      * 根据模型数据生成代码文件
      *
@@ -300,6 +299,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     /**
      * 根据数据库数据类型获取java对象类型
      *
+
      * @param columnName 字段名称
      * @param dataType   数据库数据类型
      * @return java对象类型

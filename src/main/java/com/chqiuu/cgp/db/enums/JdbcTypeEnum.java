@@ -70,11 +70,13 @@ public enum JdbcTypeEnum {
     BIGINT("BIGINT", "Long"),
     UNSIGNED("UNSIGNED", "Long"),
     BIGINT_UNSIGNED("BIGINT UNSIGNED", "Long"),
+
     /**
-     * BigDecimal类型
+     * BigDecimal类型 decimal
      */
     MONEY("MONEY", "BigDecimal"),
     NUMERIC("NUMERIC", "BigDecimal"),
+    DECIMAL("DECIMAL", "BigDecimal"),
     /**
      * Double类型
      */

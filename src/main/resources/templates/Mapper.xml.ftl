@@ -33,11 +33,11 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         <#list columns as column>
             <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
                 <#if column.attrType == 'String'>
-        <if test="${column.attrNameLowerCase} != null and ${column.attrNameLowerCase} != ''">
+        <if test="query.${column.attrNameLowerCase} != null and query.${column.attrNameLowerCase} != ''">
             AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}query.${column.attrNameLowerCase}${r'}'},'%')
         </if>
                 <#else>
-        <if test="${column.attrNameLowerCase} != null ">
+        <if test="query.${column.attrNameLowerCase} != null ">
             AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}query.${column.attrNameLowerCase}${r'}'}
         </if>
                 </#if>

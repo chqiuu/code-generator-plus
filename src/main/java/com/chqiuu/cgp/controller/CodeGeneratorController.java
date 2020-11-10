@@ -2,8 +2,8 @@ package com.chqiuu.cgp.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.chqiuu.cgp.common.base.BaseController;
-import com.chqiuu.cgp.common.constant.R;
-import com.chqiuu.cgp.common.constant.ResultConstant;
+import com.chqiuu.cgp.common.constant.Result;
+import com.chqiuu.cgp.common.constant.ResultEnum;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.BaseDatabase;
 import com.chqiuu.cgp.db.DatabaseFactory;
@@ -61,17 +61,17 @@ public class CodeGeneratorController extends BaseController {
             @ApiImplicitParam(name = "password", value = "密码", paramType = "query", required = true),
     })
     @GetMapping("/connectDatabase")
-    public R<String> connectDatabase(@RequestParam(value = "dbType", defaultValue = "mysql") String dbType,
+    public Result<String> connectDatabase(@RequestParam(value = "dbType", defaultValue = "mysql") String dbType,
                                      String server, Integer port, String database, String username, String password) {
         DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType(dbType);
         if (null == driverClassEnum) {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "数据库类型无效！");
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "数据库类型无效！");
         }
         BaseConnect connect = null;
         try {
             connect = codeGeneratorService.connectDatabase(driverClassEnum, server, port, database, username, password);
         } catch (Exception e) {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, e.getMessage());
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, e.getMessage());
         }
         //连接数据库
         if (null != connect && null != connect.getDataSource()) {
@@ -79,9 +79,9 @@ public class CodeGeneratorController extends BaseController {
             httpSession.setAttribute("dbConnect", connect);
             httpSession.setAttribute("allTables", codeGeneratorService.queryTableList(connect, null));
             httpSession.setAttribute("dbType", dbType);
-            return R.ok("数据库连接成功");
+            return Result.ok("数据库连接成功");
         } else {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "数据库连接失败");
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "数据库连接失败");
         }
     }
 
@@ -89,32 +89,32 @@ public class CodeGeneratorController extends BaseController {
     @ApiImplicitParams({@ApiImplicitParam(name = "sql", value = "数据库脚本", paramType = "query", required = true),
     })
     @PostMapping("/importSql")
-    public R<String> importSql(@RequestBody SqlVO vo) {
+    public Result<String> importSql(@RequestBody SqlVO vo) {
         DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType(vo.getDbType());
         if (null == driverClassEnum) {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "数据库类型有误");
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "数据库类型有误");
         }
         BaseDatabase database = new DatabaseFactory().create(driverClassEnum);
         List<TableEntity> tableList = database.getTableList(vo.getDdl());
         if (tableList.isEmpty()) {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "从脚本中没有获取到数据库表");
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "从脚本中没有获取到数据库表");
         }
         HttpSession httpSession = getSession();
         // 将数据库表结构保存到Session中
         httpSession.setAttribute("allTables", tableList);
         httpSession.setAttribute("dbType", vo.getDbType());
-        return R.ok();
+        return Result.ok();
     }
 
     @ApiOperation(value = "获取数据库中的所有表", notes = "获取数据库中的所有表")
     @GetMapping("/getAllTables")
-    public R<List<TableEntity>> getAllTables() {
+    public Result<List<TableEntity>> getAllTables() {
         List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
         if (null == list) {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "请先连接数据库！");
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "请先连接数据库！");
         }
         //查询列表数据
-        return R.ok(list);
+        return Result.ok(list);
     }
 
     @ApiOperation(value = "多表批量生成代码", notes = "多表批量生成代码")
@@ -122,11 +122,11 @@ public class CodeGeneratorController extends BaseController {
     public void generatorCodes(@RequestBody GeneratorVO vo) throws IOException {
         List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
         if (null == list) {
-            throw new UserException(ResultConstant.FAILED, "未找到对应都表！");
+            throw new UserException(ResultEnum.FAILED, "未找到对应都表！");
         }
         DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType((String) getSession().getAttribute("dbType"));
         if (null == driverClassEnum) {
-            throw new UserException(ResultConstant.FAILED, "数据库类型有误！");
+            throw new UserException(ResultEnum.FAILED, "数据库类型有误！");
         }
         byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getTables(), list);
         HttpServletResponse response = getResponse();
@@ -145,13 +145,13 @@ public class CodeGeneratorController extends BaseController {
     @ApiImplicitParams({@ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", required = false),
     })
     @GetMapping("/queryTableList")
-    public R<List<TableEntity>> queryList(String tableName) {
+    public Result<List<TableEntity>> queryList(String tableName) {
         BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
         if (null == connect) {
-            return R.failed(ResultConstant.PARAM_EMPTY_ERROR, "请先连接数据库！");
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "请先连接数据库！");
         }
         //查询列表数据
-        return R.ok(codeGeneratorService.queryTableList(connect, tableName));
+        return Result.ok(codeGeneratorService.queryTableList(connect, tableName));
     }
 
     /**
@@ -170,7 +170,7 @@ public class CodeGeneratorController extends BaseController {
                      boolean isPlus, HttpServletResponse response) {
         BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
         if (null == connect) {
-            throw new UserException(ResultConstant.FAILED, "还未连接数据库，请先连接数据库！");
+            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
         }
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
@@ -207,7 +207,7 @@ public class CodeGeneratorController extends BaseController {
                       boolean isPlus, HttpServletResponse response) throws IOException {
         BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
         if (null == connect) {
-            throw new UserException(ResultConstant.FAILED, "还未连接数据库，请先连接数据库！");
+            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
         }
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
@@ -238,7 +238,7 @@ public class CodeGeneratorController extends BaseController {
                         boolean isPlus, HttpServletResponse response) throws Exception {
         BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
         if (null == connect) {
-            throw new UserException(ResultConstant.FAILED, "还未连接数据库，请先连接数据库！");
+            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
         }
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);

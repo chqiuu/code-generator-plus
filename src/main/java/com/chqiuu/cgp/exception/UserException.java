@@ -1,11 +1,9 @@
 package com.chqiuu.cgp.exception;
 
 
-import com.chqiuu.cgp.common.constant.ResultConstant;
+import com.chqiuu.cgp.common.constant.ResultEnum;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.IOException;
 
 /**
  * 自定义异常处理
@@ -16,23 +14,23 @@ public class UserException extends RuntimeException {
 
     @Getter
     @Setter
-    private ResultConstant resultConstant;
+    private ResultEnum resultEnum;
 
-    public UserException(ResultConstant resultConstant) {
-        this(resultConstant, resultConstant.getMessage());
+    public UserException(ResultEnum resultEnum) {
+        this(resultEnum, resultEnum.getMessage());
     }
 
-    public UserException(ResultConstant resultConstant, Throwable e) {
-        this(resultConstant, resultConstant.getMessage(), e);
+    public UserException(ResultEnum resultEnum, Throwable e) {
+        this(resultEnum, resultEnum.getMessage(), e);
     }
 
-    public UserException(ResultConstant resultConstant, String message) {
+    public UserException(ResultEnum resultEnum, String message) {
         super(message);
-        this.resultConstant = resultConstant;
+        this.resultEnum = resultEnum;
     }
 
-    public UserException(ResultConstant resultConstant, String message, Throwable e) {
+    public UserException(ResultEnum resultEnum, String message, Throwable e) {
         super(message, e);
-        this.resultConstant = resultConstant;
+        this.resultEnum = resultEnum;
     }
 }

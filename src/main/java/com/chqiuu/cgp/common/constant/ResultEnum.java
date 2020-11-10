@@ -1,11 +1,14 @@
 package com.chqiuu.cgp.common.constant;
 
+import lombok.Getter;
+
 /**
  * 返回代码与错误信息
  *
  * @author chqiu
  */
-public enum ResultConstant {
+@Getter
+public enum ResultEnum {
 
     /**
      * 用户端错误
@@ -239,24 +242,8 @@ public enum ResultConstant {
 
     private final String message;
 
-    ResultConstant(int code, String message) {
+    ResultEnum(int code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String toString() {
-        return "ResultConstant{" +
-                "code=" + code +
-                ", message='" + message + '\'' +
-                '}';
     }
 }

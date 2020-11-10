@@ -19,8 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import ${rootPackage}.common.base.BaseController;
-import ${rootPackage}.common.domain.R;
-import ${rootPackage}.common.domain.ResultConstant;
+import ${rootPackage}.common.domain.Result;
+import ${rootPackage}.common.domain.ResultEnum;
 import ${codePackage}.service.${classNameUpperCase}Service;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
@@ -56,8 +56,8 @@ public class ${classNameUpperCase}Controller extends BaseController{
 <#if plusEnabled == 1>
     @ApiOperation(value = "根据唯一ID获取详细信息", notes = "根据唯一ID获取详细信息")
     @GetMapping("/detail/{${pk.attrNameLowerCase}}")
-    public R${r'<'}${classNameUpperCase}DetailDTO> detail(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
-        return R.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
+    public Result${r'<'}${classNameUpperCase}DetailDTO> detail(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
+        return Result.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
     }
 
     @ApiOperation(value = "${commentEscape}分页查询", notes = "${commentEscape}分页查询")
@@ -69,28 +69,28 @@ public class ${classNameUpperCase}Controller extends BaseController{
         </#if></#list>
     })
     @GetMapping("/page")
-    public R${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery pageQuery) {
-        return R.ok(${classNameLowerCase}Service.getPage(pageQuery));
+    public Result${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery pageQuery) {
+        return Result.ok(${classNameLowerCase}Service.getPage(pageQuery));
     }
 
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
     @PostMapping("/add")
-    public R<${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
+    public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}Entity entity = vo.convertToEntity();
         entity.set${pk.attrNameUpperCase}(null);
         ${classNameLowerCase}Service.save(entity);
-        return R.ok(entity.get${pk.attrNameUpperCase}());
+        return Result.ok(entity.get${pk.attrNameUpperCase}());
     }
 
     @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
     @PostMapping("/update")
-    public R${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
+    public Result${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
         if (null == entity) {
-            return R.failed(ResultConstant.NOT_FOUND, "没有找到需要更新的记录");
+            return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
         }
         ${classNameLowerCase}Service.updateById(vo.convertToEntity());
-        return R.ok();
+        return Result.ok();
     }
 
     @ApiOperation(value = "根据唯一ID删除${commentEscape}", notes = "根据唯一ID删除${commentEscape}")
@@ -98,17 +98,17 @@ public class ${classNameUpperCase}Controller extends BaseController{
         @ApiImplicitParam(name = "${pk.attrNameLowerCase}", value = "${pk.comment}", paramType = "path"),
     })
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
-    public R${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
+    public Result${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         UserOnlineDTO user = getOnlineUser();
         ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
         if (null == entity) {
-            return R.failed(ResultConstant.NOT_FOUND, "没有找到需要删除的记录");
+            return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
         }
         //TODO 其他限制删除条件
     <#if logicDelete == 1>
-        return R.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
+        return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
     <#else>
-        return R.ok(${classNameLowerCase}Service.removeById(${pk.attrNameLowerCase}));
+        return Result.ok(${classNameLowerCase}Service.removeById(${pk.attrNameLowerCase}));
     </#if>
     }
 </#if>

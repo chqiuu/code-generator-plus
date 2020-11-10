@@ -17,21 +17,29 @@
     <properties>
         <java.version>1.8</java.version>
         <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
-        <druid-spring-boot-starter.version>1.1.22</druid-spring-boot-starter.version>
-        <mybatis-plus-boot-starter.version>3.3.2</mybatis-plus-boot-starter.version>
-        <knife4j-spring-boot-starter.version>2.0.3</knife4j-spring-boot-starter.version>
+        <druid-spring-boot-starter.version>1.1.24</druid-spring-boot-starter.version>
+        <mybatis-plus-boot-starter.version>3.4.0</mybatis-plus-boot-starter.version>
+        <knife4j-spring-boot-starter.version>2.0.5</knife4j-spring-boot-starter.version>
         <slf4j.version>1.7.30</slf4j.version>
         <httpclient.version>4.5.12</httpclient.version>
         <nlp-lang.version>1.7.8</nlp-lang.version>
-        <fastjson.version>1.2.68</fastjson.version>
-        <hutool.version>5.3.5</hutool.version>
+        <fastjson.version>1.2.73</fastjson.version>
+        <hutool.version>5.4.3</hutool.version>
         <poi.version>3.17</poi.version>
         <easyexcel.version>2.2.3</easyexcel.version>
         <flying-saucer-pdf.version>9.1.20</flying-saucer-pdf.version>
         <itextpdf.version>5.5.13.1</itextpdf.version>
         <itext-asian.version>5.2.0</itext-asian.version>
         <jsoup.version>1.13.1</jsoup.version>
+        <jooq.version>3.13.2</jooq.version>
+
+        <sqlite-jdbc.version>3.8.11.2</sqlite-jdbc.version>
+        <ojdbc8.version>18.3.0.0</ojdbc8.version>
+        <mssql-jdbc.version>6.4.0.jre8</mssql-jdbc.version>
+        <postgresql.version>42.0.0</postgresql.version>
+
         <commons-fileupload.version>1.4</commons-fileupload.version>
+        <commons-text.version>1.8</commons-text.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-email.version>1.5</commons-email.version>
     </properties>
@@ -68,7 +76,7 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
-            <version>3.13.2</version>
+            <version>${jooq.version}</version>
         </dependency>
 
         <!-- 用于保存配置相关的数据库驱动架包 begin-->
@@ -76,25 +84,25 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.8.11.2</version>
+            <version>${sqlite-jdbc.version}</version>
         </dependency>
         <!-- Oracle驱动架包 -->
         <dependency>
             <groupId>com.oracle.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
-            <version>18.3.0.0</version>
+            <version>${ojdbc8.version}</version>
         </dependency>
         <!-- sqlserver驱动架包 -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>6.4.0.jre8</version>
+            <version>${mssql-jdbc.version}</version>
         </dependency>
         <!-- postgresql驱动架包 -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.0.0</version>
+            <version>${postgresql.version}</version>
         </dependency>
         <!-- MySql驱动架包 -->
         <dependency>
@@ -142,7 +150,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.8</version>
+            <version>${commons-text.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
 
         <dependency>
@@ -161,11 +174,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.5</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -176,5 +184,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

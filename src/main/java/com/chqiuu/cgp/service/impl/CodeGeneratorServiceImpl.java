@@ -1,7 +1,7 @@
 package com.chqiuu.cgp.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.chqiuu.cgp.common.constant.ResultConstant;
+import com.chqiuu.cgp.common.constant.ResultEnum;
 import com.chqiuu.cgp.config.GeneratorProperties;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.connect.HikariConnect;
@@ -81,7 +81,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 //查询表信息
                 TableEntity table = queryTable(connect, tableName.trim());
                 if (table == null) {
-                    throw new UserException(ResultConstant.FAILED, "未找到指定数据库表，" + tableName);
+                    throw new UserException(ResultEnum.FAILED, "未找到指定数据库表，" + tableName);
                 }
                 //查询列信息
                 List<ColumnEntity> columns = queryColumns(connect, tableName);
@@ -149,7 +149,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             columnDto.setAttrNameLowerCase(attrName.substring(0, 1).toLowerCase() + attrName.substring(1));
             // 列的数据类型，转换成Java类型
             columnDto.setAttrType(getJavaType(columnDto.getColumnName(), columnDto.getDataType()));
-
             //是否主键
             if ("PRI".equalsIgnoreCase(column.getColumnKey()) && dto.getPk() == null) {
                 dto.setPk(columnDto);
@@ -178,7 +177,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         dto.setModuleName(moduleName);
         dto.setCodePackage(String.format("%s.%s", rootPackage, moduleName));
         // URI修改为缩写
-        dto.setPathName(String.format("/%s/%sc", moduleName.substring(0, 1), getAcronym(dto.getClassNameUpperCase())));
+        dto.setPathName(String.format("/%s/%s", moduleName, getLastWord(dto.getTableName())));
         dto.setAuthor(author);
         dto.setPlusEnabled(isPlus ? 1 : 0);
         dto.setMapQueryEnabled(mapQueryEnabled ? 1 : 0);
@@ -187,6 +186,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         // 根据模型数据生成代码文件
         generateFiles(dto, zip);
     }
+
 
     /**
      * 根据模型数据批量生成代码文件
@@ -236,7 +236,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             IOUtils.write(writer.toString(), zip, "UTF-8");
             zip.closeEntry();
         } catch (Exception e) {
-            throw new UserException(ResultConstant.FAILED, String.format("渲染模板失败，表名：%s ；文件名：%s", generator.getTableName(), fileName), e);
+            throw new UserException(ResultEnum.FAILED, String.format("渲染模板失败，表名：%s ；文件名：%s", generator.getTableName(), fileName), e);
         }
     }
 
@@ -299,7 +299,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     /**
      * 根据数据库数据类型获取java对象类型
      *
-
      * @param columnName 字段名称
      * @param dataType   数据库数据类型
      * @return java对象类型
@@ -338,6 +337,22 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             }
         }
         return builder.toString().toLowerCase();
+    }
+
+    /**
+     * 获取字符串中最后一个单词
+     *
+     * @param tableName 表名
+     * @return 字符串中最后一个单词
+     */
+    private String getLastWord(String tableName) {
+        if (StrUtil.isBlank(tableName)) {
+            return "";
+        }
+        if (tableName.contains("_")) {
+            return tableName.substring(tableName.lastIndexOf("_") + 1);
+        }
+        return tableName;
     }
 
     /**

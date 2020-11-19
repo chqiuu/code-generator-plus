@@ -2,13 +2,14 @@ package com.chqiuu.cgp.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.chqiuu.cgp.common.base.BaseController;
-import com.chqiuu.cgp.common.constant.Result;
-import com.chqiuu.cgp.common.constant.ResultEnum;
+import com.chqiuu.cgp.common.domain.Result;
+import com.chqiuu.cgp.common.domain.ResultEnum;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.BaseDatabase;
 import com.chqiuu.cgp.db.DatabaseFactory;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
+import com.chqiuu.cgp.dto.CodePreviewDTO;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
 import com.chqiuu.cgp.vo.GeneratorVO;
@@ -62,12 +63,12 @@ public class CodeGeneratorController extends BaseController {
     })
     @GetMapping("/connectDatabase")
     public Result<String> connectDatabase(@RequestParam(value = "dbType", defaultValue = "mysql") String dbType,
-                                     String server, Integer port, String database, String username, String password) {
+                                          String server, Integer port, String database, String username, String password) {
         DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType(dbType);
         if (null == driverClassEnum) {
             return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "数据库类型无效！");
         }
-        BaseConnect connect = null;
+        BaseConnect connect;
         try {
             connect = codeGeneratorService.connectDatabase(driverClassEnum, server, port, database, username, password);
         } catch (Exception e) {
@@ -146,12 +147,8 @@ public class CodeGeneratorController extends BaseController {
     })
     @GetMapping("/queryTableList")
     public Result<List<TableEntity>> queryList(String tableName) {
-        BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
-        if (null == connect) {
-            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "请先连接数据库！");
-        }
         //查询列表数据
-        return Result.ok(codeGeneratorService.queryTableList(connect, tableName));
+        return Result.ok(codeGeneratorService.queryTableList(getConnect(), tableName));
     }
 
     /**
@@ -167,11 +164,7 @@ public class CodeGeneratorController extends BaseController {
     })
     @GetMapping("/code")
     public void code(String codePackage, String rootPackage, String moduleName, String author, String table,
-                     boolean isPlus, HttpServletResponse response) {
-        BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
-        if (null == connect) {
-            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
-        }
+                     boolean isPlus) {
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
             rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
@@ -180,7 +173,8 @@ public class CodeGeneratorController extends BaseController {
         tableNames[0] = table;
         byte[] data = new byte[0];
         try {
-            data = codeGeneratorService.generatorCode(connect, rootPackage, moduleName, author, tableNames, isPlus);
+            data = codeGeneratorService.generatorCode(getConnect(), rootPackage, moduleName, author, tableNames, isPlus);
+            HttpServletResponse response = getResponse();
             response.reset();
             response.setHeader("Content-Disposition", "attachment; filename=code-" + table + ".zip");
             response.addHeader("Content-Length", "" + data.length);
@@ -189,6 +183,23 @@ public class CodeGeneratorController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @ApiOperation(value = "预览生成的代码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", paramType = "query", required = true),
+            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", paramType = "query", required = true),
+            @ApiImplicitParam(name = "author", value = "创建人。用于注解", paramType = "query", required = true),
+            @ApiImplicitParam(name = "table", value = "表名", paramType = "query", required = true),
+            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
+    })
+    @GetMapping("/preview")
+    public Result<List<CodePreviewDTO>> preview(String codePackage, String rootPackage, String moduleName, String author, String table, boolean isPlus) {
+        if (StrUtil.isNotBlank(codePackage)) {
+            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
+            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
+        }
+        return Result.ok(codeGeneratorService.preview(getConnect(), rootPackage, moduleName, author, table, isPlus));
     }
 
     /**
@@ -204,24 +215,35 @@ public class CodeGeneratorController extends BaseController {
     })
     @GetMapping("/codes")
     public void codes(String codePackage, String rootPackage, String moduleName, String author, String tables,
-                      boolean isPlus, HttpServletResponse response) throws IOException {
-        BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
-        if (null == connect) {
-            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
-        }
+                      boolean isPlus) throws IOException {
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
             rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
         String[] tableNames = tables.replaceAll(" ", "").replaceAll("   ", "").split(",");
-
-        byte[] data = codeGeneratorService.generatorCode(connect, rootPackage, moduleName, author, tableNames, isPlus);
+        byte[] data = codeGeneratorService.generatorCode(getConnect(), rootPackage, moduleName, author, tableNames, isPlus);
+        HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", rootPackage, new Date().toLocaleString()));
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-typeeam; charset=UTF-8");
         IOUtils.write(data, response.getOutputStream());
     }
+
+
+    /**
+     * 从Session中获取数据库连接
+     *
+     * @return 数据库连接
+     */
+    private BaseConnect getConnect() {
+        BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
+        if (null == connect) {
+            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
+        }
+        return connect;
+    }
+
 
     /**
      * 生成代码，全部生成
@@ -235,16 +257,13 @@ public class CodeGeneratorController extends BaseController {
     })
     @GetMapping("/codeAll")
     public void codeAll(String codePackage, String rootPackage, String moduleName, String author,
-                        boolean isPlus, HttpServletResponse response) throws Exception {
-        BaseConnect connect = (BaseConnect) getSession().getAttribute("dbConnect");
-        if (null == connect) {
-            throw new UserException(ResultEnum.FAILED, "还未连接数据库，请先连接数据库！");
-        }
+                        boolean isPlus) throws Exception {
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
             rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
-        byte[] data = codeGeneratorService.generatorCodeAll(connect, rootPackage, moduleName, author, isPlus);
+        byte[] data = codeGeneratorService.generatorCodeAll(getConnect(), rootPackage, moduleName, author, isPlus);
+        HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=\"code-" + new Date().toLocaleString() + ".zip\"");
         response.addHeader("Content-Length", "" + data.length);

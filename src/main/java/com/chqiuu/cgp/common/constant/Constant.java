@@ -1,6 +1,8 @@
 package com.chqiuu.cgp.common.constant;
 
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.chqiuu.cgp.connect.BaseConnect;
 
 /**
@@ -9,6 +11,58 @@ import com.chqiuu.cgp.connect.BaseConnect;
  * @author chqiu
  */
 public class Constant {
+
+    /**
+     * 系统默认值
+     */
+    public static class DefaultValues {
+        /**
+         * 系统默认密码
+         */
+        public static final String DEFAULT_PASSWORD = "123456";
+        /**
+         * 加密后的默认密码
+         */
+        public static final String DEFAULT_PASSWORD_ENCODE = "$2a$10$AaFMnxj0UrAfSel0g3zqtuKQYWGlxnq9igF5DOfiPdPEo5e6UNZLS";
+    }
+
+    /**
+     * 系统全局变量
+     */
+    public static class Public {
+
+
+        /**
+         * 设备验证码缓存前缀
+         */
+        public final static String VERIFICATION_CODE_REDIS_PREFIX = "gen-vc:";
+        /**
+         * 微信二维码登录唯一值
+         */
+        public final static String WECHAT_LOGIN_QR_CODE_REDIS_PREFIX = "gen-login:";
+        /**
+         * 代码模版文件列表
+         */
+        public final static String[] CODE_FILE_TEMPLATES = new String[]{"add-or-update.vue.ftl"
+                , "Controller.java.ftl"
+                , "Dao.java.ftl"
+                , "DetailDTO.java.ftl"
+                , "Entity.java.ftl"
+                , "index.vue.ftl"
+                , "InputVO.java.ftl"
+                , "ListDTO.java.ftl"
+                , "Mapper.xml.ftl"
+                , "menu.sql.ftl"
+                , "PageQuery.java.ftl"
+                , "Service.java.ftl"
+                , "ServiceImpl.java.ftl"};
+        /**
+         * 初始化ID生成器，调用方式 snowflake.nextId();
+         */
+        public static Snowflake SNOW_FLAKE = IdUtil.getSnowflake(1, 2);
+
+
+    }
 
     /**
      * 数据库

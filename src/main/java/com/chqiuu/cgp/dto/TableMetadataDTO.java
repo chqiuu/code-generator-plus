@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 生成器上下文数据
+ * 表生成器元数据
  *
  * @author chqiu
  */
 @Data
-public class GeneratorDto implements Serializable {
+public class TableMetadataDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**

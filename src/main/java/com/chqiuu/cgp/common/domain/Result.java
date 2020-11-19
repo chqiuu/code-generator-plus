@@ -1,4 +1,4 @@
-package com.chqiuu.cgp.common.constant;
+package com.chqiuu.cgp.common.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

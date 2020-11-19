@@ -1,7 +1,7 @@
 package com.chqiuu.cgp.handler;
 
-import com.chqiuu.cgp.common.constant.Result;
-import com.chqiuu.cgp.common.constant.ResultEnum;
+import com.chqiuu.cgp.common.domain.Result;
+import com.chqiuu.cgp.common.domain.ResultEnum;
 import com.chqiuu.cgp.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;

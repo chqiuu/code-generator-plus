@@ -1,7 +1,7 @@
 package com.chqiuu.cgp.exception;
 
 
-import com.chqiuu.cgp.common.constant.ResultEnum;
+import com.chqiuu.cgp.common.domain.ResultEnum;
 import lombok.Getter;
 import lombok.Setter;
 

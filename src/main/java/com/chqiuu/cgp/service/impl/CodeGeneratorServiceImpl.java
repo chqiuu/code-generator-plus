@@ -1,7 +1,7 @@
 package com.chqiuu.cgp.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.chqiuu.cgp.common.constant.ResultEnum;
+import com.chqiuu.cgp.common.domain.ResultEnum;
 import com.chqiuu.cgp.config.GeneratorProperties;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.connect.HikariConnect;
@@ -11,8 +11,9 @@ import com.chqiuu.cgp.db.entity.ColumnEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
+import com.chqiuu.cgp.dto.CodePreviewDTO;
 import com.chqiuu.cgp.dto.ColumnDto;
-import com.chqiuu.cgp.dto.GeneratorDto;
+import com.chqiuu.cgp.dto.TableMetadataDTO;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
 import com.chqiuu.cgp.vo.GeneratorTableVO;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static com.chqiuu.cgp.common.constant.Constant.Public.CODE_FILE_TEMPLATES;
 
 @Slf4j
 @Service
@@ -74,6 +77,45 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
+    public List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author, String tableName, boolean isPlus) {
+        //查询表信息
+        TableEntity table = queryTable(connect, tableName.trim());
+        if (table == null) {
+            throw new UserException(ResultEnum.FAILED, "未找到指定数据库表，" + tableName);
+        }
+        //查询列信息
+        List<ColumnEntity> columns = queryColumns(connect, tableName);
+        //生成代码
+        return getTableCodePreview(connect.getDriverClassEnum(), rootPackage, moduleName, author, table, columns, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+    }
+
+    private List<CodePreviewDTO> getTableCodePreview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table, List<ColumnEntity> columns, boolean isPlus, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+        // 获取表生成代码元数据信息
+        TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, table, columns, isPlus, mapQueryEnabled, lombokDataEnabled);
+        List<CodePreviewDTO> list = new ArrayList<>();
+        // 模板列表
+        for (String templateName : CODE_FILE_TEMPLATES) {
+            if (tableMetadata.getPlusEnabled() == 0) {
+                if (templateName.contains("DTO.") || templateName.contains("VO.")) {
+                    continue;
+                }
+            }
+            try (StringWriter writer = new StringWriter()) {
+                CodePreviewDTO codePreview = new CodePreviewDTO();
+                codePreview.setPackageName(tableMetadata.getCodePackage());
+                codePreview.setFileName(templateName);
+                Template template = configurer.getConfiguration().getTemplate(templateName);
+                template.process(tableMetadata, writer);
+                codePreview.setContent(writer.toString());
+                list.add(codePreview);
+            } catch (Exception e) {
+                throw new UserException(ResultEnum.FAILED, String.format("渲染模板失败，表名：%s ；templateName：%s", tableMetadata.getTableName(), templateName), e);
+            }
+        }
+        return list;
+    }
+
+    @Override
     public byte[] generatorCode(BaseConnect connect, String rootPackage, String moduleName, String author, String[] tableNames, boolean isPlus) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zip = new ZipOutputStream(outputStream)) {
@@ -97,7 +139,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     /**
      * 代码生成
      *
-     * @param driverClassEnum
+     * @param driverClassEnum   数据库驱动类型
      * @param rootPackage       包名
      * @param moduleName        模块名
      * @param author            创建者
@@ -111,8 +153,28 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table
             , List<ColumnEntity> columns, ZipOutputStream zip, boolean isPlus, boolean mapQueryEnabled
             , boolean lombokDataEnabled) throws NullPointerException {
-        //表信息
-        GeneratorDto dto = new GeneratorDto();
+        // 获取表生成代码元数据信息
+        TableMetadataDTO dto = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, table, columns, isPlus, mapQueryEnabled, lombokDataEnabled);
+        // 根据模型数据生成代码文件
+        generateFiles(dto, zip);
+    }
+
+    /**
+     * 获取表生成代码元数据信息
+     *
+     * @param driverClassEnum   数据库驱动类型
+     * @param rootPackage       包名
+     * @param moduleName        模块名
+     * @param author            创建者
+     * @param table             数据库表名
+     * @param columns           字段列表
+     * @param isPlus            是否为MyBatis-Plus
+     * @param mapQueryEnabled   是否启用map查询功能
+     * @param lombokDataEnabled 是否启用@Data注解
+     * @return 元数据信息
+     */
+    private TableMetadataDTO getTableMetadata(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table, List<ColumnEntity> columns, boolean isPlus, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+        TableMetadataDTO dto = new TableMetadataDTO();
         dto.setTableName(table.getTableName());
         dto.setComment(StrUtil.isEmpty(table.getTableComment()) ? table.getTableName()
                 : (table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment()));
@@ -124,7 +186,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         String className = tableToJava(dto.getTableName(), "");
         dto.setClassNameUpperCase(className);
         dto.setClassNameLowerCase(className.substring(0, 1).toLowerCase() + className.substring(1));
-
         //列信息
         List<ColumnDto> columsList = new ArrayList<ColumnDto>();
         for (ColumnEntity column : columns) {
@@ -165,7 +226,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         if (dto.getPk() == null) {
             dto.setPk(dto.getColumns().get(0));
         }
-
         // 表名首字母小写
         dto.setAcronymLowerCase(getAcronym(dto.getClassNameUpperCase()));
         // 表名首字母大写
@@ -183,39 +243,26 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         dto.setMapQueryEnabled(mapQueryEnabled ? 1 : 0);
         dto.setLombokDataEnabled(lombokDataEnabled ? 1 : 0);
         dto.setCreateTime(LocalDateTime.now());
-        // 根据模型数据生成代码文件
-        generateFiles(dto, zip);
+        return dto;
     }
 
 
     /**
      * 根据模型数据批量生成代码文件
      *
-     * @param generator 模型数据
-     * @param zip       压缩文件流
+     * @param tableMetadata 表原数据
+     * @param zip           压缩文件流
      */
-    private void generateFiles(GeneratorDto generator, ZipOutputStream zip) {
+    private void generateFiles(TableMetadataDTO tableMetadata, ZipOutputStream zip) {
         // 模板列表
-        String[] templates = new String[]{"add-or-update.vue.ftl"
-                , "Controller.java.ftl"
-                , "Dao.java.ftl"
-                , "DetailDTO.java.ftl"
-                , "Entity.java.ftl"
-                , "index.vue.ftl"
-                , "InputVO.java.ftl"
-                , "ListDTO.java.ftl"
-                , "Mapper.xml.ftl"
-                , "menu.sql.ftl"
-                , "PageQuery.java.ftl"
-                , "Service.java.ftl"
-                , "ServiceImpl.java.ftl"};
-        for (String templateStr : templates) {
-            if (generator.getPlusEnabled() == 0) {
+        for (String templateStr : CODE_FILE_TEMPLATES) {
+            if (tableMetadata.getPlusEnabled() == 0) {
                 if (templateStr.contains("DTO.") || templateStr.contains("VO.")) {
                     continue;
                 }
             }
-            generateFile(generator, templateStr, zip, getFileName(templateStr, generator.getClassNameUpperCase(), generator.getRootPackage(), generator.getModuleName(), generator.getPlusEnabled()));
+            generateFile(tableMetadata, templateStr, zip, getFileName(templateStr, tableMetadata.getClassNameUpperCase()
+                    , tableMetadata.getRootPackage(), tableMetadata.getModuleName(), tableMetadata.getPlusEnabled()));
         }
     }
 
@@ -227,7 +274,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param zip          压缩文件流
      * @param fileName     生成的文件名
      */
-    private void generateFile(GeneratorDto generator, String templateName, ZipOutputStream zip, String fileName) {
+    private void generateFile(TableMetadataDTO generator, String templateName, ZipOutputStream zip, String fileName) {
         try (StringWriter writer = new StringWriter()) {
             Template template = configurer.getConfiguration().getTemplate(templateName);
             template.process(generator, writer);

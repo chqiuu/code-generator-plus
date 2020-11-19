@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 
 <#if plusEnabled == 1>
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -43,7 +44,8 @@ public class ${classNameUpperCase}Entity implements Serializable</#if>${r'{'}
      * ${column.comment} ${column.columnDetail}
      */
     <#if plusEnabled == 1><#if column.columnName == pk.columnName>
-    @TableId(value = "${column.columnName}")
+    <#--设置表主键，并设置ID生成方式-->
+    @TableId(value = "${column.columnName}"<#if column.attrType == 'Long'>, type = IdType.ASSIGN_ID<#elseif column.attrType == 'Integer'>, type = IdType.AUTO</#if>)
     </#if>
         <#if column.columnName == 'is_deleted'>
         <#--逻辑删除标识-->

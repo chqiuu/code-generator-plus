@@ -1,4 +1,4 @@
-package com.chqiuu.cgp.common.constant;
+package com.chqiuu.cgp.common.domain;
 
 import lombok.Getter;
 

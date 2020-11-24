@@ -24,6 +24,53 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}
     </select>
 
+    <!--${comment}列表查询-->
+    <select id="getList" parameterType="${codePackage}.query.${classNameUpperCase}ListQuery"
+            resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
+        SELECT
+        <include refid="Base_${acronymUpperCase}_Column_List"/>
+        FROM `${tableName}` AS ${acronymLowerCase} WHERE 1 = 1
+        <#list columns as column>
+            <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+                <#if column.attrType == 'String'>
+        <if test="query.${column.attrNameLowerCase} != null and query.${column.attrNameLowerCase} != ''">
+            AND ${acronymLowerCase}.`${column.columnName}` LIKE CONCAT(${r'#{'}query.${column.attrNameLowerCase}${r'}'},'%')
+        </if>
+                <#else>
+        <if test="query.${column.attrNameLowerCase} != null ">
+            AND ${acronymLowerCase}.`${column.columnName}` = ${r'#{'}query.${column.attrNameLowerCase}${r'}'}
+        </if>
+                </#if>
+            </#if>
+        </#list>
+        <choose>
+            <when test="sortType=='${pk.attrNameLowerCase}'">
+                <choose>
+                    <when test="sortord=='asc'">
+                        ORDER BY ${acronymLowerCase}.`${pk.columnName}` asc
+                    </when>
+                    <otherwise>
+                        ORDER BY ${acronymLowerCase}.`${pk.columnName}` desc
+                    </otherwise>
+                </choose>
+            </when>
+            <#list columns as column>
+                <#if column.columnName == 'create_time'>
+            <otherwise>
+                <choose>
+                    <when test="sortord=='asc'">
+                        ORDER BY ${acronymLowerCase}.`create_time` asc
+                    </when>
+                    <otherwise>
+                        ORDER BY ${acronymLowerCase}.`create_time` desc
+                    </otherwise>
+                </choose>
+            </otherwise>
+                </#if>
+            </#list>
+        </choose>
+    </select>
+
     <!--${comment}分页查询-->
     <select id="getPage" parameterType="${codePackage}.query.${classNameUpperCase}PageQuery"
             resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
@@ -43,6 +90,32 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 </#if>
             </#if>
         </#list>
+        <choose>
+            <when test="sortType=='${pk.attrNameLowerCase}'">
+                <choose>
+                    <when test="sortord=='asc'">
+                        ORDER BY ${acronymLowerCase}.`${pk.columnName}` asc
+                    </when>
+                    <otherwise>
+                        ORDER BY ${acronymLowerCase}.`${pk.columnName}` desc
+                    </otherwise>
+                </choose>
+            </when>
+            <#list columns as column>
+                <#if column.columnName == 'create_time'>
+            <otherwise>
+                <choose>
+                    <when test="sortord=='asc'">
+                        ORDER BY ${acronymLowerCase}.`create_time` asc
+                    </when>
+                    <otherwise>
+                        ORDER BY ${acronymLowerCase}.`create_time` desc
+                    </otherwise>
+                </choose>
+            </otherwise>
+                </#if>
+            </#list>
+        </choose>
     </select>
 <#else>
     <!--插入数据-->

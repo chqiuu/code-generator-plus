@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import ${codePackage}.query.${classNameUpperCase}ListQuery;
 import ${codePackage}.query.${classNameUpperCase}PageQuery;
 import org.apache.ibatis.annotations.Param;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -27,6 +28,13 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
      * @return 详细信息
      */
     ${classNameUpperCase}DetailDTO getDetailById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
+
+    /**
+    * ${comment}列表查询
+    * @param query       查询对象
+    * @return ${comment}列表
+    */
+    List${r'<'}${classNameUpperCase}ListDTO> getList(@Param("query") ${classNameUpperCase}ListQuery query);
 
     /**
      * ${comment}分页查询

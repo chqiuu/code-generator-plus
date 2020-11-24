@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import ${codePackage}.query.${classNameUpperCase}ListQuery;
 import ${codePackage}.query.${classNameUpperCase}PageQuery;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -126,9 +127,14 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
     }
 
     @Override
-    public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery pageQuery) {
-        Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(pageQuery.getCurrent(), pageQuery.getSize());
-        return this.baseMapper.getPage(pageInfo, pageQuery);
+    public List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query) {
+        return this.baseMapper.getList(query);
+    }
+
+    @Override
+    public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query) {
+        Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(query.getCurrent(), query.getSize());
+        return this.baseMapper.getPage(pageInfo, query);
     }
 
     <#if logicDelete == 1>

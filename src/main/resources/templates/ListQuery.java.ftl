@@ -22,7 +22,7 @@ import java.time.LocalDate;
 </#if>
 
 /**
- * ${comment}分页查询对象
+ * ${comment}列表查询对象
  *
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
@@ -30,8 +30,8 @@ import java.time.LocalDate;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
-@ApiModel(value = "${commentEscape}分页查询对象")
-public class ${classNameUpperCase}PageQuery implements Serializable${r'{'}
+@ApiModel(value = "${commentEscape}列表查询对象")
+public class ${classNameUpperCase}ListQuery implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
     /**
@@ -44,16 +44,6 @@ public class ${classNameUpperCase}PageQuery implements Serializable${r'{'}
     */
     @ApiModelProperty(value = "排序方式：正序asc，倒序desc，默认为desc")
     private String sortord;
-    /**
-     * 当前页
-     */
-    @ApiModelProperty(value = "当前页")
-    private Integer current = 1;
-    /**
-     * 每页显示条数
-     */
-    @ApiModelProperty(value = "每页显示条数")
-    private Integer size = 10;
 
 //TODO 当您看到这个后您应该自己修改模板增减规则
 <#list columns as column>

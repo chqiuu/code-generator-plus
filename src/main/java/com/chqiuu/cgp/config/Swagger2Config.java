@@ -40,26 +40,26 @@ import springfox.documentation.swagger2.web.Swagger2Controller;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Swagger2 前端API配置
  *
  * @author chqiu
  */
+// @Configuration制定了Spring要加载这个类
 @Configuration
+// @EnableSwagger2注解要开启Swagger功能
 @EnableSwagger2
 public class Swagger2Config {
 
+    /**
+     * Swagger默认访问路径配置，当前访问路径为：项目地址+/swagger
+     */
     private static final String DEFAULT_PATH = "/swagger";
 
     @Autowired
     private GeneratorProperties properties;
-
-    private String version = "1.0.7";
 
     @Bean
     public Docket createRestApi() {
@@ -73,11 +73,11 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("四川省科普基地管理系统 API")
-                .description("四川省科普基地管理系统 API接口")
+                .title("代码生成器 API")
+                .description("代码生成器 API接口")
                 .termsOfServiceUrl("127.0.0.1")
                 .contact(new Contact("chqiuu", "http://www.apache.org", "chqiuu@qq.com"))
-                .version(version).license("Apache 2.0").licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
+                .version("1.0.0").license("Apache 2.0").licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .build();
     }
 
@@ -96,24 +96,22 @@ public class Swagger2Config {
     /**
      * SwaggerUI资源访问
      *
-     * @param servletContext
-     * @param order
-     * @return
-     * @throws Exception
+     * @param servletContext ServletContext
+     * @param order order
+     * @return SimpleUrlHandlerMapping
+     * @throws Exception 若资源位置未配置则会抛出异常
      */
     @Bean
-    public SimpleUrlHandlerMapping swaggerUrlHandlerMapping(ServletContext servletContext,
-                                                            @Value("${swagger.mapping.order:10}") int order) throws Exception {
+    public SimpleUrlHandlerMapping swaggerUrlHandlerMapping(ServletContext servletContext, @Value("${swagger.mapping.order:10}") int order) throws Exception {
         SimpleUrlHandlerMapping urlHandlerMapping = new SimpleUrlHandlerMapping();
         Map<String, ResourceHttpRequestHandler> urlMap = new HashMap<>(10);
         {
             PathResourceResolver pathResourceResolver = new PathResourceResolver();
             pathResourceResolver.setAllowedLocations(new ClassPathResource("META-INF/resources/webjars/"));
             pathResourceResolver.setUrlPathHelper(new UrlPathHelper());
-
             ResourceHttpRequestHandler resourceHttpRequestHandler = new ResourceHttpRequestHandler();
-            resourceHttpRequestHandler.setLocations(Arrays.asList(new ClassPathResource("META-INF/resources/webjars/")));
-            resourceHttpRequestHandler.setResourceResolvers(Arrays.asList(pathResourceResolver));
+            resourceHttpRequestHandler.setLocations(Collections.singletonList(new ClassPathResource("META-INF/resources/webjars/")));
+            resourceHttpRequestHandler.setResourceResolvers(Collections.singletonList(pathResourceResolver));
             resourceHttpRequestHandler.setServletContext(servletContext);
             resourceHttpRequestHandler.afterPropertiesSet();
             //设置新的路径
@@ -123,10 +121,9 @@ public class Swagger2Config {
             PathResourceResolver pathResourceResolver = new PathResourceResolver();
             pathResourceResolver.setAllowedLocations(new ClassPathResource("META-INF/resources/"));
             pathResourceResolver.setUrlPathHelper(new UrlPathHelper());
-
             ResourceHttpRequestHandler resourceHttpRequestHandler = new ResourceHttpRequestHandler();
-            resourceHttpRequestHandler.setLocations(Arrays.asList(new ClassPathResource("META-INF/resources/")));
-            resourceHttpRequestHandler.setResourceResolvers(Arrays.asList(pathResourceResolver));
+            resourceHttpRequestHandler.setLocations(Collections.singletonList(new ClassPathResource("META-INF/resources/")));
+            resourceHttpRequestHandler.setResourceResolvers(Collections.singletonList(pathResourceResolver));
             resourceHttpRequestHandler.setServletContext(servletContext);
             resourceHttpRequestHandler.afterPropertiesSet();
             //设置新的路径
@@ -139,7 +136,7 @@ public class Swagger2Config {
     }
 
     /**
-     * SwaggerUI接口访问
+     * SwaggerUI接口访问重载
      */
     @Controller
     @ApiIgnore
@@ -159,7 +156,7 @@ public class Swagger2Config {
         @Autowired
         private List<RequestHandlerProvider> handlerProviders;
         @Autowired
-        ObjectProvider<MarkdownFiles> markdownFilesObjectProvider;
+        private ObjectProvider<MarkdownFiles> markdownFilesObjectProvider;
         private Knife4jController knife4jController;
 
         @Override
@@ -169,9 +166,9 @@ public class Swagger2Config {
         }
 
         /**
-         * 首页
+         * Swagger API首页地址
          *
-         * @return
+         * @return 首页地址
          */
         @RequestMapping
         public ModelAndView index() {

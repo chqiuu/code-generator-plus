@@ -53,6 +53,7 @@ public class Constant {
                 , "ListDTO.java.ftl"
                 , "Mapper.xml.ftl"
                 , "menu.sql.ftl"
+                , "ListQuery.java.ftl"
                 , "PageQuery.java.ftl"
                 , "Service.java.ftl"
                 , "ServiceImpl.java.ftl"};

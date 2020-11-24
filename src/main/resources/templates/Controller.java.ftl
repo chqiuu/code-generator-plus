@@ -29,6 +29,7 @@ import ${rootPackage}.user.dto.UserOnlineDTO;
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import ${codePackage}.query.${classNameUpperCase}ListQuery;
 import ${codePackage}.query.${classNameUpperCase}PageQuery;
 import ${rootPackage}.common.validator.group.Default;
 import ${rootPackage}.common.validator.group.Create;
@@ -37,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.List;
 </#if>
 /**
  * ${comment}请求处理层
@@ -60,17 +62,32 @@ public class ${classNameUpperCase}Controller extends BaseController{
         return Result.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
     }
 
+    @ApiOperation(value = "${commentEscape}列表查询", notes = "${commentEscape}列表查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sortParam", value = "排序参数", paramType = "query")
+            , @ApiImplicitParam(name = "sortord", value = "排序方式：正序asc，倒序desc，默认为desc", paramType = "query")
+    <#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
+        , @ApiImplicitParam(name = "${column.attrNameLowerCase}", value = "${column.commentEscape}", paramType = "query")
+    </#if></#list>
+    })
+    @GetMapping("/list")
+    public Result${r'<List<'}${classNameUpperCase}ListDTO>> list(${classNameUpperCase}ListQuery query) {
+        return Result.ok(${classNameLowerCase}Service.getList(query));
+    }
+
     @ApiOperation(value = "${commentEscape}分页查询", notes = "${commentEscape}分页查询")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "current", value = "当前页", paramType = "query", dataType = "int", defaultValue = "1")
+            @ApiImplicitParam(name = "sortParam", value = "排序参数", paramType = "query")
+            , @ApiImplicitParam(name = "sortord", value = "排序方式：正序asc，倒序desc，默认为desc", paramType = "query")
+            , @ApiImplicitParam(name = "current", value = "当前页", paramType = "query", dataType = "int", defaultValue = "1")
             , @ApiImplicitParam(name = "size", value = "每页显示条数", paramType = "query", dataType = "int", defaultValue = "10")
     <#list columns as column><#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
             , @ApiImplicitParam(name = "${column.attrNameLowerCase}", value = "${column.commentEscape}", paramType = "query")
         </#if></#list>
     })
     @GetMapping("/page")
-    public Result${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery pageQuery) {
-        return Result.ok(${classNameLowerCase}Service.getPage(pageQuery));
+    public Result${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery query) {
+        return Result.ok(${classNameLowerCase}Service.getPage(query));
     }
 
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")

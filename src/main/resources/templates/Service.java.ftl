@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
+import ${codePackage}.query.${classNameUpperCase}ListQuery;
 import ${codePackage}.query.${classNameUpperCase}PageQuery;
 </#if>
 /**
@@ -89,11 +90,18 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
     ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase});
 
     /**
+    * ${comment}列表查询
+    * @param query       查询对象
+    * @return ${comment}列表
+    */
+    List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query);
+
+    /**
      * ${comment}分页查询
-     * @param pageQuery       分页查询对象
-     * @return ${comment}列表
+     * @param query       分页查询对象
+     * @return ${comment}列表（带分页）
      */
-    IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery pageQuery);
+    IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query);
 
   <#if logicDelete == 1>
     /**

@@ -25,4 +25,8 @@ public class CodePreviewDTO implements Serializable {
      * 文件内容
      */
     private String content;
+    /**
+     * 代码语言
+     */
+    private String language;
 }

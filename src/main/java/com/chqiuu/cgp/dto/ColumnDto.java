@@ -46,7 +46,7 @@ public class ColumnDto implements Serializable {
      */
     private String attrType;
     /**
-     * auto_increment
+     *  auto_increment
      */
     private String extra;
     /**

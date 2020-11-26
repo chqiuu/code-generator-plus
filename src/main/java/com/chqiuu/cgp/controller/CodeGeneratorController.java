@@ -202,9 +202,6 @@ public class CodeGeneratorController extends BaseController {
         return Result.ok(codeGeneratorService.preview(getConnect(), rootPackage, moduleName, author, table, isPlus));
     }
 
-    /**
-     * 生成代码
-     */
     @ApiOperation(value = "多表批量生成代码", notes = "多表批量生成代码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", paramType = "query", required = true),
@@ -243,7 +240,6 @@ public class CodeGeneratorController extends BaseController {
         }
         return connect;
     }
-
 
     /**
      * 生成代码，全部生成

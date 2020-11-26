@@ -1,6 +1,7 @@
 package com.chqiuu.cgp.config;
 
 import cn.hutool.core.date.DatePattern;
+import com.chqiuu.cgp.interceptor.TimeConsumingInterceptor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.unit.DataSize;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -54,6 +56,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
         //设置首页地址
         registry.addViewController("/").setViewName("redirect:/static");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(
+                new TimeConsumingInterceptor())
+                // 需拦截的URI配置
+                .addPathPatterns("/**")
+                // 不需拦截的URI配置
+                .excludePathPatterns("/swagger/**", "/static/**", "/resource/**");
     }
 
     @Bean

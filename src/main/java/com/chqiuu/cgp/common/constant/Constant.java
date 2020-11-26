@@ -43,20 +43,21 @@ public class Constant {
         /**
          * 代码模版文件列表
          */
-        public final static String[] CODE_FILE_TEMPLATES = new String[]{"add-or-update.vue.ftl"
+        public final static String[] CODE_FILE_TEMPLATES = new String[]{
+                "Entity.java.ftl"
                 , "Controller.java.ftl"
+                , "Service.java.ftl"
+                , "ServiceImpl.java.ftl"
                 , "Dao.java.ftl"
-                , "DetailDTO.java.ftl"
-                , "Entity.java.ftl"
-                , "index.vue.ftl"
-                , "InputVO.java.ftl"
-                , "ListDTO.java.ftl"
                 , "Mapper.xml.ftl"
-                , "menu.sql.ftl"
+                , "DetailDTO.java.ftl"
+                , "ListDTO.java.ftl"
+                , "InputVO.java.ftl"
                 , "ListQuery.java.ftl"
                 , "PageQuery.java.ftl"
-                , "Service.java.ftl"
-                , "ServiceImpl.java.ftl"};
+                , "menu.sql.ftl"
+                , "index.vue.ftl"
+                , "add-or-update.vue.ftl"};
         /**
          * 初始化ID生成器，调用方式 snowflake.nextId();
          */

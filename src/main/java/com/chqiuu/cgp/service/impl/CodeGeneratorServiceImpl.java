@@ -107,6 +107,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 Template template = configurer.getConfiguration().getTemplate(templateName);
                 template.process(tableMetadata, writer);
                 codePreview.setContent(writer.toString());
+                codePreview.setLanguage(templateName.split("\\.")[1]);
                 list.add(codePreview);
             } catch (Exception e) {
                 throw new UserException(ResultEnum.FAILED, String.format("渲染模板失败，表名：%s ；templateName：%s", tableMetadata.getTableName(), templateName), e);

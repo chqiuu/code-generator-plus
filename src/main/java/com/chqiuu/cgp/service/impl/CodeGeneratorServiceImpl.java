@@ -77,6 +77,16 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
+    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, boolean isPlus, List<TableEntity> allTables) {
+        for (TableEntity table : allTables) {
+            if (table.getTableName().equals(tableName)) {
+                //生成代码
+                return getTableCodePreview(driverClassEnum, rootPackage, moduleName, author, table, table.getColumns(), isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+            }
+        }
+        return null;
+    }
+
     public List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author, String tableName, boolean isPlus) {
         //查询表信息
         TableEntity table = queryTable(connect, tableName.trim());
@@ -85,7 +95,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         }
         //查询列信息
         List<ColumnEntity> columns = queryColumns(connect, tableName);
-        //生成代码
+        // 生成代码
         return getTableCodePreview(connect.getDriverClassEnum(), rootPackage, moduleName, author, table, columns, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
     }
 

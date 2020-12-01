@@ -195,11 +195,19 @@ public class CodeGeneratorController extends BaseController {
     })
     @GetMapping("/preview")
     public Result<List<CodePreviewDTO>> preview(String codePackage, String rootPackage, String moduleName, String author, String table, boolean isPlus) {
+        List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
+        if (null == list) {
+            throw new UserException(ResultEnum.FAILED, "未找到对应都表！");
+        }
+        DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType((String) getSession().getAttribute("dbType"));
+        if (null == driverClassEnum) {
+            throw new UserException(ResultEnum.FAILED, "数据库类型有误！");
+        }
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
             rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
-        return Result.ok(codeGeneratorService.preview(getConnect(), rootPackage, moduleName, author, table, isPlus));
+        return Result.ok(codeGeneratorService.preview(driverClassEnum, rootPackage, moduleName, author, table, isPlus, list));
     }
 
     @ApiOperation(value = "多表批量生成代码", notes = "多表批量生成代码")

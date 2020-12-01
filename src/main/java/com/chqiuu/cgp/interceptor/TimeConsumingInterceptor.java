@@ -40,7 +40,7 @@ public class TimeConsumingInterceptor extends HandlerInterceptorAdapter {
         // 从HttpServletRequest获取开始时间
         Long startTime = (Long) request.getAttribute("_startTime");
         // 打印接口信息及耗时
-        log.info("SessionId: {} {} {}；耗时：{}s", request.getSession().getId(), ServletUtil.getClientIP(request, ""), getFullUrl(request), ((endTime - startTime) * 1.000) / 1000);
+        log.info("SessionId: {} {}；耗时：{}s", ServletUtil.getClientIP(request, ""), getFullUrl(request), ((endTime - startTime) * 1.000) / 1000);
     }
 
     /**

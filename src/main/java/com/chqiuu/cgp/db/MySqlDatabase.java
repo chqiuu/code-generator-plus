@@ -2,10 +2,12 @@ package com.chqiuu.cgp.db;
 
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.SQLAlterTableStatement;
 import com.alibaba.druid.sql.ast.statement.SQLColumnDefinition;
 import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
 import com.alibaba.druid.sql.ast.statement.SQLTableElement;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlPrimaryKey;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAlterTableOption;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chqiuu.cgp.connect.BaseConnect;
@@ -72,6 +74,8 @@ public class MySqlDatabase extends BaseDatabase {
     public List<TableEntity> getTableList(String createTableSqls) {
         List<SQLStatement> stmtList = SQLUtils.parseStatements(createTableSqls, JdbcConstants.MYSQL);
         List<TableEntity> tableList = new ArrayList<>();
+        // 表名
+        List<TableEntity> tableNameList = new ArrayList<>();
         for (SQLStatement sqlStatement : stmtList) {
             if (sqlStatement instanceof MySqlCreateTableStatement) {
                 // 获取表对象
@@ -79,7 +83,7 @@ public class MySqlDatabase extends BaseDatabase {
                 TableEntity tableEntity = new TableEntity();
                 tableEntity.setTableName(stmt.getTableSource().getExpr().toString().replace("`", ""));
                 if (null == stmt.getComment()) {
-                    tableEntity.setTableComment(tableEntity.getTableName() + "Comment");
+                    tableEntity.setTableComment(tableEntity.getTableName());
                 } else {
                     tableEntity.setTableComment(stmt.getComment().toString().replace("'", ""));
                 }
@@ -137,8 +141,33 @@ public class MySqlDatabase extends BaseDatabase {
                 }
                 tableEntity.setColumns(columns);
                 tableList.add(tableEntity);
+            } else if (sqlStatement instanceof SQLAlterTableStatement) {
+                //  alter table a comment 'XX表';
+                // 从alter table 中获取表comment
+                SQLAlterTableStatement alterTableStatement = (SQLAlterTableStatement) sqlStatement;
+                TableEntity tableNameEntity = new TableEntity();
+                tableNameEntity.setTableName(alterTableStatement.getTableName());
+                alterTableStatement.getItems().forEach(i -> {
+                    String comment = "COMMENT";
+                    if (i instanceof MySqlAlterTableOption) {
+                        MySqlAlterTableOption tableOption = (MySqlAlterTableOption) i;
+                        if (comment.equals(tableOption.getName())) {
+                            tableNameEntity.setTableComment(tableOption.getValue().toString());
+                        }
+                    }
+                });
+                tableNameList.add(tableNameEntity);
             }
         }
+        tableList.forEach(t -> {
+            if (t.getTableName().equals((t.getTableComment()))) {
+                tableNameList.forEach(n -> {
+                    if (n.getTableName().equals(t.getTableName())) {
+                        t.setTableComment(n.getTableComment().trim().replace("'",""));
+                    }
+                });
+            }
+        });
         return tableList;
     }
 }

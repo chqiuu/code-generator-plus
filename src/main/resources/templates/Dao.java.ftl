@@ -12,6 +12,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 /**
  * ${comment}数据持久层
  *
@@ -39,10 +41,10 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     /**
      * ${comment}分页查询
      * @param pageInfo      分页控件
-     * @param pageQuery       分页查询对象
+     * @param query       分页查询对象
      * @return ${comment}列表
      */
-    IPage${r'<'}${classNameUpperCase}ListDTO> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDTO> pageInfo, @Param("query") ${classNameUpperCase}PageQuery pageQuery);
+    IPage${r'<'}${classNameUpperCase}ListDTO> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDTO> pageInfo, @Param("query") ${classNameUpperCase}PageQuery query);
 }
 <#else>
 package ${codePackage}.dao;

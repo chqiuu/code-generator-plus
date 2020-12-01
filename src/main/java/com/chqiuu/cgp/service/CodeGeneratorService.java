@@ -58,15 +58,18 @@ public interface CodeGeneratorService {
     /**
      * 生成代码预览
      *
-     * @param connect     数据库连接
+     *
+     * @param driverClassEnum
      * @param rootPackage 包名
      * @param moduleName  模块名
      * @param author      创建人
      * @param tableName   生成代码的表
      * @param isPlus      是否为MyBatis-Plus
+     * @param allTables       所有表
      * @return 生成代码预览
      */
-    List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author, String tableName, boolean isPlus);
+    List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, boolean isPlus, List<TableEntity> allTables);
+    //List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author, String tableName, boolean isPlus);
 
     /**
      * 生成代码

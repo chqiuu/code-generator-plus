@@ -25,6 +25,7 @@ import org.springframework.web.util.UrlPathHelper;
 import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
@@ -40,7 +41,10 @@ import springfox.documentation.swagger2.web.Swagger2Controller;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Swagger2 前端API配置
@@ -67,6 +71,7 @@ public class Swagger2Config {
                 .enable(properties.isSwaggerEnable())
                 .apiInfo(apiInfo())
                 .select()
+                .apis(RequestHandlerSelectors.basePackage("com.chqiuu.cgp.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -97,7 +102,7 @@ public class Swagger2Config {
      * SwaggerUI资源访问
      *
      * @param servletContext ServletContext
-     * @param order order
+     * @param order          order
      * @return SimpleUrlHandlerMapping
      * @throws Exception 若资源位置未配置则会抛出异常
      */

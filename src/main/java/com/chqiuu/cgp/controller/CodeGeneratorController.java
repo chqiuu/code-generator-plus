@@ -1,5 +1,6 @@
 package com.chqiuu.cgp.controller;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
 import com.chqiuu.cgp.common.base.BaseController;
 import com.chqiuu.cgp.common.domain.Result;
@@ -12,6 +13,8 @@ import com.chqiuu.cgp.db.enums.DriverClassEnum;
 import com.chqiuu.cgp.dto.CodePreviewDTO;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
+import com.chqiuu.cgp.vo.CodePreviewInputVO;
+import com.chqiuu.cgp.vo.ConnectDatabaseInputVO;
 import com.chqiuu.cgp.vo.GeneratorVO;
 import com.chqiuu.cgp.vo.SqlVO;
 import io.swagger.annotations.*;
@@ -24,8 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+
+import static cn.hutool.core.date.DatePattern.PURE_DATETIME_MS_PATTERN;
 
 /**
  * 代码生成器控制类
@@ -38,39 +44,19 @@ import java.util.List;
 @RequestMapping("/generator")
 @Api(value = "/generator", tags = "代码生成器控制类")
 public class CodeGeneratorController extends BaseController {
-
     private final CodeGeneratorService codeGeneratorService;
 
-    /**
-     * 连接数据库
-     *
-     * @param dbType   数据库类型
-     * @param server   服务器地址
-     * @param port     端口号
-     * @param database 数据库名
-     * @param username 登录名
-     * @param password 密码
-     * @return 连接是否成功
-     */
     @ApiOperation(value = "第一步：连接数据库", notes = "连接数据库")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "dbType", value = "数据库类型", paramType = "query", required = true),
-            @ApiImplicitParam(name = "server", value = "服务器地址", paramType = "query", required = true),
-            @ApiImplicitParam(name = "port", value = "端口号", paramType = "query", required = true),
-            @ApiImplicitParam(name = "database", value = "数据库名", paramType = "query", required = true),
-            @ApiImplicitParam(name = "username", value = "登录名", paramType = "query", required = true),
-            @ApiImplicitParam(name = "password", value = "密码", paramType = "query", required = true),
-    })
-    @GetMapping("/connectDatabase")
-    public Result<String> connectDatabase(@RequestParam(value = "dbType", defaultValue = "mysql") String dbType,
-                                          String server, Integer port, String database, String username, String password) {
+    @PostMapping("/connectDatabase")
+    public Result<String> connectDatabase(@Validated @RequestBody ConnectDatabaseInputVO vo) {
+        String dbType = StrUtil.isBlank(vo.getDbType()) ? "MySQL" : vo.getDbType();
         DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType(dbType);
         if (null == driverClassEnum) {
             return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "数据库类型无效！");
         }
         BaseConnect connect;
         try {
-            connect = codeGeneratorService.connectDatabase(driverClassEnum, server, port, database, username, password);
+            connect = codeGeneratorService.connectDatabase(driverClassEnum, vo.getServer(), vo.getPort(), vo.getDatabase(), vo.getUsername(), vo.getPassword());
         } catch (Exception e) {
             return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, e.getMessage());
         }
@@ -86,9 +72,8 @@ public class CodeGeneratorController extends BaseController {
         }
     }
 
+
     @ApiOperation(value = "导入数据库脚本", notes = "导入数据库脚本")
-    @ApiImplicitParams({@ApiImplicitParam(name = "sql", value = "数据库脚本", paramType = "query", required = true),
-    })
     @PostMapping("/importSql")
     public Result<String> importSql(@RequestBody SqlVO vo) {
         DriverClassEnum driverClassEnum = DriverClassEnum.getByDbType(vo.getDbType());
@@ -132,7 +117,7 @@ public class CodeGeneratorController extends BaseController {
         byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getTables(), list);
         HttpServletResponse response = getResponse();
         response.reset();
-        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), new Date().toLocaleString()));
+        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), LocalDateTimeUtil.format(LocalDateTime.now(),PURE_DATETIME_MS_PATTERN)));
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-typeeam; charset=UTF-8");
         IOUtils.write(data, response.getOutputStream());
@@ -143,7 +128,7 @@ public class CodeGeneratorController extends BaseController {
      * 数据库表列表模糊查询
      */
     @ApiOperation(value = "数据库表列表模糊查询", notes = "数据库表列表模糊查询")
-    @ApiImplicitParams({@ApiImplicitParam(name = "tableName", value = "表名", paramType = "query", required = false),
+    @ApiImplicitParams({@ApiImplicitParam(name = "tableName", value = "表名", dataType = "string", dataTypeClass = String.class, paramType = "query", required = false),
     })
     @GetMapping("/queryTableList")
     public Result<List<TableEntity>> queryList(String tableName) {
@@ -156,11 +141,11 @@ public class CodeGeneratorController extends BaseController {
      */
     @ApiOperation(value = "单表生成代码", notes = "单表生成代码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", paramType = "query", required = true),
-            @ApiImplicitParam(name = "table", value = "表名", paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
+            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "table", value = "表名", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
     })
     @GetMapping("/code")
     public void code(String codePackage, String rootPackage, String moduleName, String author, String table,
@@ -186,15 +171,8 @@ public class CodeGeneratorController extends BaseController {
     }
 
     @ApiOperation(value = "预览生成的代码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", paramType = "query", required = true),
-            @ApiImplicitParam(name = "table", value = "表名", paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
-    })
     @GetMapping("/preview")
-    public Result<List<CodePreviewDTO>> preview(String codePackage, String rootPackage, String moduleName, String author, String table, boolean isPlus) {
+    public Result<List<CodePreviewDTO>> preview(@Validated CodePreviewInputVO vo) {
         List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
         if (null == list) {
             throw new UserException(ResultEnum.FAILED, "未找到对应都表！");
@@ -203,20 +181,20 @@ public class CodeGeneratorController extends BaseController {
         if (null == driverClassEnum) {
             throw new UserException(ResultEnum.FAILED, "数据库类型有误！");
         }
-        if (StrUtil.isNotBlank(codePackage)) {
-            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
-            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
+        if (StrUtil.isNotBlank(vo.getCodePackage())) {
+            vo.setModuleName(vo.getCodePackage().substring(vo.getCodePackage().lastIndexOf(".") + 1));
+            vo.setRootPackage(vo.getCodePackage().substring(0, vo.getCodePackage().lastIndexOf(".")));
         }
-        return Result.ok(codeGeneratorService.preview(driverClassEnum, rootPackage, moduleName, author, table, isPlus, list));
+        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName(), vo.getAuthor(), vo.getTable(), vo.getIsPlus(), list));
     }
 
     @ApiOperation(value = "多表批量生成代码", notes = "多表批量生成代码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", paramType = "query", required = true),
-            @ApiImplicitParam(name = "tables", value = "表名数组", defaultValue = "a,b,c", paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
+            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "tables", value = "表名数组", defaultValue = "a,b,c", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
     })
     @GetMapping("/codes")
     public void codes(String codePackage, String rootPackage, String moduleName, String author, String tables,
@@ -229,7 +207,7 @@ public class CodeGeneratorController extends BaseController {
         byte[] data = codeGeneratorService.generatorCode(getConnect(), rootPackage, moduleName, author, tableNames, isPlus);
         HttpServletResponse response = getResponse();
         response.reset();
-        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", rootPackage, new Date().toLocaleString()));
+        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", rootPackage, LocalDateTimeUtil.format(LocalDateTime.now(),PURE_DATETIME_MS_PATTERN)));
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-typeeam; charset=UTF-8");
         IOUtils.write(data, response.getOutputStream());
@@ -254,10 +232,10 @@ public class CodeGeneratorController extends BaseController {
      */
     @ApiOperation(value = "批量生成所有表代码", notes = "批量生成所有表代码")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", paramType = "query", required = true),
+            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
     })
     @GetMapping("/codeAll")
     public void codeAll(String codePackage, String rootPackage, String moduleName, String author,

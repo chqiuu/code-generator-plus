@@ -4,9 +4,16 @@ import com.chqiuu.cgp.common.domain.Result;
 import com.chqiuu.cgp.common.domain.ResultEnum;
 import com.chqiuu.cgp.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -14,7 +21,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import java.util.Objects;
+import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 /**
  * 全局异常处理器
@@ -30,8 +38,15 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UserException.class)
     public Result<String> handleUserException(UserException e) {
-        log.error(e.getMessage(), e);
         return Result.failed(e.getResultEnum(), e.getMessage());
+    }
+
+    /**
+     * 没有访问权限
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public Result<String> handleAccessDeniedException(AccessDeniedException e) {
+        return Result.failed(ResultEnum.PERMISSION_DENIED);
     }
 
     /**
@@ -39,12 +54,35 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Result<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return getResult(Objects.requireNonNull(Objects.requireNonNull(e.getBindingResult().getFieldError()).getCode())
-                , Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
+        List<ObjectError> errors = e.getBindingResult().getAllErrors();
+        StringBuffer errorMsg = new StringBuffer();
+        for (ObjectError error : errors) {
+            errorMsg.append(error.getDefaultMessage()).append(";");
+        }
+
+        FieldError fieldError = e.getBindingResult().getFieldError();
+        if (null == fieldError) {
+            return Result.failed(ResultEnum.FAILED, errorMsg);
+        }
+        if (null == fieldError.getCode()) {
+            return Result.failed(ResultEnum.FAILED, "未知错误！");
+        }
+        if (null == fieldError.getDefaultMessage()) {
+            return getResult(fieldError.getCode(), errorMsg);
+        }
+       /*
+        Map<String, String> msgMap = new HashMap<>();
+        msgMap.put("field", fieldError.getField());
+        msgMap.put("errorMessage", fieldError.getDefaultMessage());
+        return getResult(fieldError.getCode(), msgMap);
+        返回消息对象，可精确到字段
+        */
+        return getResult(fieldError.getCode(), fieldError.getDefaultMessage());
     }
 
     /**
      * ValidationException
+     * 参数验证失败
      */
     @ExceptionHandler(ValidationException.class)
     public Result<String> handleValidationException(ValidationException e) {
@@ -55,6 +93,7 @@ public class GlobalExceptionHandler {
     /**
      * ConstraintViolationException
      * 接口中多参数格式校验时候调用
+     * 参数验证失败
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public Result<String> handleConstraintViolationException(ConstraintViolationException e) {
@@ -74,21 +113,47 @@ public class GlobalExceptionHandler {
         return Result.failed(ResultEnum.FAILED, "路径不存在，请检查路径是否正确");
     }
 
+    @ExceptionHandler(DuplicateKeyException.class)
+    public Result<String> handleDuplicateKeyException(DuplicateKeyException e) {
+        return Result.failed(ResultEnum.FAILED, "数据重复，请检查后提交");
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Result<String> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return Result.failed(ResultEnum.FAILED, "不支持当前请求方法：" + e.getMessage());
+    }
+
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Result<String> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
-        return Result.failed(ResultEnum.FAILED, "ContentType类型有误");
+        return Result.failed(ResultEnum.FAILED, "不支持当前媒体类型，ContentType类型有误");
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Result<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         e.printStackTrace();
-        log.error(e.getMessage(), e);
-        return Result.failed(ResultEnum.FAILED, e.getMessage());
+        return Result.failed(ResultEnum.FAILED, "参数解析失败");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Result<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return Result.failed(ResultEnum.FAILED, "缺少请求参数");
+    }
+
+    @ExceptionHandler(BindException.class)
+    public Result<String> handleBindException(BindException e) {
+        log.error("参数绑定失败", e);
+        BindingResult result = e.getBindingResult();
+        FieldError error = result.getFieldError();
+        String field = error.getField();
+        String code = error.getDefaultMessage();
+        String message = String.format("%s:%s", field, code);
+        return Result.failed(ResultEnum.FAILED, "参数绑定失败=" + message);
     }
 
 
     /**
      * 其他未知类型错误
+     * selectByUserId
      *
      * @param e Exception
      * @return
@@ -107,8 +172,7 @@ public class GlobalExceptionHandler {
      * @param errorMessage 错误消息
      * @return 错误消息及代码
      */
-    private Result<String> getResult(String code, String errorMessage) {
-        Result<String> result;
+    private Result<String> getResult(String code, Object errorMessage) {
         switch (code) {
             case "NotNull":
                 // 验证注解的元素值不是null 任意类型
@@ -119,21 +183,16 @@ public class GlobalExceptionHandler {
                 验证注解的元素值不为空（不为null、去除首位空格后长度为0），不同于@NotEmpty，@NotBlank只应用于字符串且在比较时会去除字符串的首位空格
                 CharSequence子类型
                  */
-                result = Result.failed(ResultEnum.PARAM_EMPTY_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, errorMessage);
             case "URL":
-                result = Result.failed(ResultEnum.URL_FORMAL_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.URL_FORMAL_ERROR, errorMessage);
             case "Email":
-                result = Result.failed(ResultEnum.EMAIL_FORMAL_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.EMAIL_FORMAL_ERROR, errorMessage);
             case "MobileNumber":
-                result = Result.failed(ResultEnum.MOBILE_FORMAL_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.MOBILE_FORMAL_ERROR, errorMessage);
             case "Range":
                 // 验证注解的元素值在最小值和最大值之间 BigDecimal,BigInteger,CharSequence, byte, short, int, long等原子类型和包装类型
-                result = Result.failed(ResultEnum.RANGE_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.RANGE_ERROR, errorMessage);
             case "Size":
                 // 验证注解的元素值的在min和max（包含）指定区间之内，如字符长度、集合大小 字符串、Collection、Map、数组等
             case "Length":
@@ -142,16 +201,13 @@ public class GlobalExceptionHandler {
                 // 验证注解的元素值（日期类型）比当前时间早 java.util.Date,java.util.Calendar;Joda Time类库的日期类型
             case "Future":
                 // 验证注解的元素值（日期类型）比当前时间晚 java.util.Date,java.util.Calendar;Joda Time类库的日期类型
-                result = Result.failed(ResultEnum.OVER_RANGE_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.OVER_RANGE_ERROR, errorMessage);
             case "Pattern":
                 // 验证注解的元素值与指定的正则表达式匹配 String，任何CharSequence的子类型
-                result = Result.failed(ResultEnum.PARAM_FORMAL_ERROR, errorMessage);
-                break;
+                return Result.failed(ResultEnum.PARAM_FORMAL_ERROR, errorMessage);
             default:
-                result = Result.failed(ResultEnum.FAILED, errorMessage);
                 break;
         }
-        return result;
+        return Result.failed(ResultEnum.FAILED, errorMessage);
     }
 }

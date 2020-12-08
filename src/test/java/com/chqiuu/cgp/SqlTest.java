@@ -92,7 +92,7 @@ public class SqlTest {
                 "  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',\n" +
                 "  PRIMARY KEY (`declaration_id`)\n" +
                 ") ENGINE=InnoDB AUTO_INCREMENT=1265486604411813891 DEFAULT CHARSET=utf8mb4 COMMENT='基地申报信息表';";
-        String dbType = JdbcConstants.MYSQL;
+        String dbType = JdbcConstants.MYSQL.toString();
         // 格式化输出
         String result = SQLUtils.format(sql, dbType);
         BaseDatabase database = new DatabaseFactory().create(DriverClassEnum.MYSQL);

@@ -69,7 +69,6 @@ public interface CodeGeneratorService {
      * @return 生成代码预览
      */
     List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, boolean isPlus, List<TableEntity> allTables);
-    //List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author, String tableName, boolean isPlus);
 
     /**
      * 生成代码

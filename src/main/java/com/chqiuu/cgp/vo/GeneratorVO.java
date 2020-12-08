@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class GeneratorVO implements Serializable {
      * 带生成的数据库表列表
      */
     @Valid
+    @Size(min = 1,message = "必须先选择一张表")
     @ApiModelProperty(value = "带生成的数据库表列表")
     private List<GeneratorTableVO> tables;
 }

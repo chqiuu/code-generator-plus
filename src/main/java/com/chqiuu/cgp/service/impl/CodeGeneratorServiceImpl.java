@@ -401,7 +401,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     /**
-     * 获取字符串中最后一个单词
+     * 获取字符串中最后一个单词，若最好单词为info则忽略，向前移一个单词
      *
      * @param tableName 表名
      * @return 字符串中最后一个单词
@@ -410,6 +410,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         if (StrUtil.isBlank(tableName)) {
             return "";
         }
+        tableName = tableName.replace("_info", "");
         if (tableName.contains("_")) {
             return tableName.substring(tableName.lastIndexOf("_") + 1);
         }

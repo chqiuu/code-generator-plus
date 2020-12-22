@@ -54,7 +54,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         //设置首页地址
-        registry.addViewController("/").setViewName("redirect:/static/element/");
+        registry.addViewController("/").setViewName("redirect:/static/ant-vue/index.html");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
@@ -64,14 +64,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 new TimeConsumingInterceptor())
                 // 需拦截的URI配置
                 .addPathPatterns("/**")
-                // 不需拦截的URI配置
-                .excludePathPatterns("/swagger/**", "/static/**", "/resource/**");
+                // 不需拦截的URI配置  "/swagger/**", "/static/**", "/resource/**"
+                .excludePathPatterns("/swagger/**", "/resource/**");
     }
 
     @Bean
     public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryCustomizer() {
         return container -> {
-            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/static/index.html");
+            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/static/ant-vue/index.html");
             container.addErrorPages(error404Page);
         };
     }

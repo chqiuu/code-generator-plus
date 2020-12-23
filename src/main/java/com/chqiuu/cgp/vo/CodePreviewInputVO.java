@@ -36,6 +36,12 @@ public class CodePreviewInputVO implements Serializable {
     @NotNull(message = "表名不能为空")
     @ApiModelProperty(value = "表名")
     private String table;
+    /**
+     * Controller中URL映射名称，如：/admin/user。用于 Controller中@RequestMapping注解
+     */
+    @NotNull(message = "Controller中URL映射名称不能为空")
+    @ApiModelProperty(value = "Controller中URL映射名称")
+    private String mappingName;
 
     @NotNull(message = "是否为MyBatis-Plus不能为空")
     @ApiModelProperty(value = "是否为MyBatis-Plus")

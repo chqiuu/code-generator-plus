@@ -77,17 +77,19 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
-    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, boolean isPlus, List<TableEntity> allTables) {
+    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
+            , String author, String tableName, String mappingName, boolean isPlus, List<TableEntity> allTables) {
         for (TableEntity table : allTables) {
             if (table.getTableName().equals(tableName)) {
                 //生成代码
-                return getTableCodePreview(driverClassEnum, rootPackage, moduleName, author, table, table.getColumns(), isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                return getTableCodePreview(driverClassEnum, rootPackage, moduleName, author, mappingName, table, table.getColumns(), isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
             }
         }
         return null;
     }
 
-    public List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author, String tableName, boolean isPlus) {
+    public List<CodePreviewDTO> preview(BaseConnect connect, String rootPackage, String moduleName, String author
+            , String tableName, String mappingName, boolean isPlus) {
         //查询表信息
         TableEntity table = queryTable(connect, tableName.trim());
         if (table == null) {
@@ -96,12 +98,14 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         //查询列信息
         List<ColumnEntity> columns = queryColumns(connect, tableName);
         // 生成代码
-        return getTableCodePreview(connect.getDriverClassEnum(), rootPackage, moduleName, author, table, columns, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+        return getTableCodePreview(connect.getDriverClassEnum(), rootPackage, moduleName, author, mappingName, table, columns, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
     }
 
-    private List<CodePreviewDTO> getTableCodePreview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table, List<ColumnEntity> columns, boolean isPlus, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+    private List<CodePreviewDTO> getTableCodePreview(DriverClassEnum driverClassEnum, String rootPackage
+            , String moduleName, String author, String mappingName, TableEntity table, List<ColumnEntity> columns
+            , boolean isPlus, boolean mapQueryEnabled, boolean lombokDataEnabled) {
         // 获取表生成代码元数据信息
-        TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, table, columns, isPlus, mapQueryEnabled, lombokDataEnabled);
+        TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, mapQueryEnabled, lombokDataEnabled);
         List<CodePreviewDTO> list = new ArrayList<>();
         // 模板列表
         for (String templateName : CODE_FILE_TEMPLATES) {
@@ -128,19 +132,19 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
-    public byte[] generatorCode(BaseConnect connect, String rootPackage, String moduleName, String author, String[] tableNames, boolean isPlus) {
+    public byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isPlus) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zip = new ZipOutputStream(outputStream)) {
-            for (String tableName : tableNames) {
+            for (GeneratorTableVO tableVO : tables) {
                 //查询表信息
-                TableEntity table = queryTable(connect, tableName.trim());
+                TableEntity table = queryTable(connect, tableVO.getTableName().trim());
                 if (table == null) {
-                    throw new UserException(ResultEnum.FAILED, "未找到指定数据库表，" + tableName);
+                    throw new UserException(ResultEnum.FAILED, "未找到指定数据库表，" + tableVO.getTableName());
                 }
                 //查询列信息
-                List<ColumnEntity> columns = queryColumns(connect, tableName);
+                List<ColumnEntity> columns = queryColumns(connect, tableVO.getTableName());
                 //生成代码
-                generatorCode(connect.getDriverClassEnum(), rootPackage, moduleName, author, table, columns, zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                generatorCode(connect.getDriverClassEnum(), rootPackage, tableVO.getModule(), author, tableVO.getMappingName(), table, columns, zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -162,11 +166,12 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param mapQueryEnabled   是否启用map查询功能
      * @param lombokDataEnabled 是否启用@Data注解
      */
-    private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table
+    private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
+            , String author, String mappingName, TableEntity table
             , List<ColumnEntity> columns, ZipOutputStream zip, boolean isPlus, boolean mapQueryEnabled
             , boolean lombokDataEnabled) throws NullPointerException {
         // 获取表生成代码元数据信息
-        TableMetadataDTO dto = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, table, columns, isPlus, mapQueryEnabled, lombokDataEnabled);
+        TableMetadataDTO dto = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, mapQueryEnabled, lombokDataEnabled);
         // 根据模型数据生成代码文件
         generateFiles(dto, zip);
     }
@@ -185,7 +190,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param lombokDataEnabled 是否启用@Data注解
      * @return 元数据信息
      */
-    private TableMetadataDTO getTableMetadata(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, TableEntity table, List<ColumnEntity> columns, boolean isPlus, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+    private TableMetadataDTO getTableMetadata(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
+            , String author, String mappingName, TableEntity table, List<ColumnEntity> columns, boolean isPlus
+            , boolean mapQueryEnabled, boolean lombokDataEnabled) {
         TableMetadataDTO dto = new TableMetadataDTO();
         dto.setTableName(table.getTableName());
         dto.setComment(StrUtil.isEmpty(table.getTableComment()) ? table.getTableName()
@@ -248,8 +255,12 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         dto.setRootPackage(rootPackage);
         dto.setModuleName(moduleName);
         dto.setCodePackage(String.format("%s.%s", rootPackage, moduleName));
-        // URI修改为缩写
-        dto.setPathName(String.format("/%s/%s", moduleName, getLastWord(dto.getTableName())));
+        if (StrUtil.isEmpty(mappingName)) {
+            // URI修改为缩写 Controller 中 @RequestMapping("${mappingName}")
+            dto.setMappingName(String.format("/%s/%s", moduleName, getLastWord(dto.getTableName())));
+        } else {
+            dto.setMappingName(mappingName);
+        }
         dto.setAuthor(author);
         dto.setPlusEnabled(isPlus ? 1 : 0);
         dto.setMapQueryEnabled(mapQueryEnabled ? 1 : 0);
@@ -441,13 +452,14 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     @Override
     public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus) {
         List<TableEntity> list = queryTableList(connect, null);
-        List<String> tableNameList = new ArrayList<>();
+        List<GeneratorTableVO> tables = new ArrayList<>();
         for (TableEntity entity : list) {
-            tableNameList.add(entity.getTableName());
+            GeneratorTableVO tableVO = new GeneratorTableVO();
+            tableVO.setTableName(entity.getTableName());
+            tableVO.setModule(moduleName);
+            tables.add(tableVO);
         }
-        String[] tableNames = new String[tableNameList.size()];
-        tableNameList.toArray(tableNames);
-        return generatorCode(connect, rootPackage, moduleName, author, tableNames, isPlus);
+        return generatorCode(connect, rootPackage, author, tables, isPlus);
     }
 
     @Override
@@ -458,7 +470,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 for (TableEntity table : allTables) {
                     if (table.getTableName().equals(t.getTableName())) {
                         //生成代码
-                        generatorCode(driverClassEnum, rootPackage, t.getModule(), author, table, table.getColumns(), zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                        generatorCode(driverClassEnum, rootPackage, t.getModule(), author, t.getMappingName(), table, table.getColumns(), zip, isPlus, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
                     }
                 }
             });

@@ -117,7 +117,7 @@ public class CodeGeneratorController extends BaseController {
         byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getTables(), list);
         HttpServletResponse response = getResponse();
         response.reset();
-        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), LocalDateTimeUtil.format(LocalDateTime.now(),PURE_DATETIME_MS_PATTERN)));
+        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), LocalDateTimeUtil.format(LocalDateTime.now(), PURE_DATETIME_MS_PATTERN)));
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-typeeam; charset=UTF-8");
         IOUtils.write(data, response.getOutputStream());
@@ -136,40 +136,6 @@ public class CodeGeneratorController extends BaseController {
         return Result.ok(codeGeneratorService.queryTableList(getConnect(), tableName));
     }
 
-    /**
-     * 生成代码
-     */
-    @ApiOperation(value = "单表生成代码", notes = "单表生成代码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "table", value = "表名", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
-    })
-    @GetMapping("/code")
-    public void code(String codePackage, String rootPackage, String moduleName, String author, String table,
-                     boolean isPlus) {
-        if (StrUtil.isNotBlank(codePackage)) {
-            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
-            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
-        }
-        String[] tableNames = new String[1];
-        tableNames[0] = table;
-        byte[] data = new byte[0];
-        try {
-            data = codeGeneratorService.generatorCode(getConnect(), rootPackage, moduleName, author, tableNames, isPlus);
-            HttpServletResponse response = getResponse();
-            response.reset();
-            response.setHeader("Content-Disposition", "attachment; filename=code-" + table + ".zip");
-            response.addHeader("Content-Length", "" + data.length);
-            response.setContentType("application/octet-typeeam; charset=UTF-8");
-            IOUtils.write(data, response.getOutputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @ApiOperation(value = "预览生成的代码")
     @GetMapping("/preview")
     public Result<List<CodePreviewDTO>> preview(@Validated CodePreviewInputVO vo) {
@@ -185,34 +151,9 @@ public class CodeGeneratorController extends BaseController {
             vo.setModuleName(vo.getCodePackage().substring(vo.getCodePackage().lastIndexOf(".") + 1));
             vo.setRootPackage(vo.getCodePackage().substring(0, vo.getCodePackage().lastIndexOf(".")));
         }
-        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName(), vo.getAuthor(), vo.getTable(), vo.getIsPlus(), list));
+        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName()
+                , vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), list));
     }
-
-    @ApiOperation(value = "多表批量生成代码", notes = "多表批量生成代码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "tables", value = "表名数组", defaultValue = "a,b,c", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
-    })
-    @GetMapping("/codes")
-    public void codes(String codePackage, String rootPackage, String moduleName, String author, String tables,
-                      boolean isPlus) throws IOException {
-        if (StrUtil.isNotBlank(codePackage)) {
-            moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
-            rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
-        }
-        String[] tableNames = tables.replaceAll(" ", "").replaceAll("   ", "").split(",");
-        byte[] data = codeGeneratorService.generatorCode(getConnect(), rootPackage, moduleName, author, tableNames, isPlus);
-        HttpServletResponse response = getResponse();
-        response.reset();
-        response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", rootPackage, LocalDateTimeUtil.format(LocalDateTime.now(),PURE_DATETIME_MS_PATTERN)));
-        response.addHeader("Content-Length", "" + data.length);
-        response.setContentType("application/octet-typeeam; charset=UTF-8");
-        IOUtils.write(data, response.getOutputStream());
-    }
-
 
     /**
      * 从Session中获取数据库连接

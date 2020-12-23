@@ -8,6 +8,11 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
+/**
+ * 脚本生成录入表信息
+ *
+ * @author chqiu
+ */
 @Data
 @ApiModel(value = "脚本生成录入表信息")
 public class GeneratorTableVO implements Serializable {
@@ -32,5 +37,10 @@ public class GeneratorTableVO implements Serializable {
     @NotNull(message = "表所属模块不能为空")
     @ApiModelProperty(value = "表所属模块")
     private String module;
-
+    /**
+     * Controller中URL映射名称，如：/admin/user。用于 Controller中@RequestMapping注解
+     */
+    @NotNull(message = "Controller中URL映射名称不能为空")
+    @ApiModelProperty(value = "Controller中URL映射名称")
+    private String mappingName;
 }

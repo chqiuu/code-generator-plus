@@ -36,7 +36,7 @@ public class TableMetadataDTO implements Serializable {
      */
     private ColumnDto pk;
     /**
-     * 表的列名(不包含主键)
+     * 表的列信息(不包含主键)
      */
     private List<ColumnDto> columns;
     /**
@@ -60,7 +60,7 @@ public class TableMetadataDTO implements Serializable {
      */
     private String rootPackage = "com.chqiuu";
     /**
-     * 模块名称
+     * 所属模块名称
      */
     private String moduleName;
     /**
@@ -68,9 +68,9 @@ public class TableMetadataDTO implements Serializable {
      */
     private String codePackage;
     /**
-     * URI修改为缩写
+     * Controller中URL映射名称，如：/admin/user。用于 Controller中@RequestMapping注解
      */
-    private String pathName;
+    private String mappingName;
     /**
      * 作者
      */
@@ -92,7 +92,7 @@ public class TableMetadataDTO implements Serializable {
      */
     private int lombokDataEnabled;
     /**
-     * 排除字段
+     * 排除显示的字段
      */
     private String exclusionShowColumns = "is_deleted,del_time,del_user,create_time,update_time,gmt_create,gmt_modified";
     /**

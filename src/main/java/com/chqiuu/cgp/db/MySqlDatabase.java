@@ -1,11 +1,9 @@
 package com.chqiuu.cgp.db;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.statement.SQLAlterTableStatement;
-import com.alibaba.druid.sql.ast.statement.SQLColumnDefinition;
-import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
-import com.alibaba.druid.sql.ast.statement.SQLTableElement;
+import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlPrimaryKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlAlterTableOption;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
@@ -74,7 +72,7 @@ public class MySqlDatabase extends BaseDatabase {
     public List<TableEntity> getTableList(String createTableSqls) {
         List<SQLStatement> stmtList = SQLUtils.parseStatements(createTableSqls, JdbcConstants.MYSQL);
         List<TableEntity> tableList = new ArrayList<>();
-        // 表名
+        // 表名列表，从alter table 中获取表备注
         List<TableEntity> tableNameList = new ArrayList<>();
         for (SQLStatement sqlStatement : stmtList) {
             if (sqlStatement instanceof MySqlCreateTableStatement) {
@@ -147,15 +145,21 @@ public class MySqlDatabase extends BaseDatabase {
                 SQLAlterTableStatement alterTableStatement = (SQLAlterTableStatement) sqlStatement;
                 TableEntity tableNameEntity = new TableEntity();
                 tableNameEntity.setTableName(alterTableStatement.getTableName());
-                alterTableStatement.getItems().forEach(i -> {
-                    String comment = "COMMENT";
-                    if (i instanceof MySqlAlterTableOption) {
-                        MySqlAlterTableOption tableOption = (MySqlAlterTableOption) i;
-                        if (comment.equals(tableOption.getName())) {
-                            tableNameEntity.setTableComment(tableOption.getValue().toString());
+                String comment = "COMMENT";
+                for (int i = 0; i < alterTableStatement.getTableOptions().size(); i++) {
+                    SQLAssignItem sqlAssignItem = alterTableStatement.getTableOptions().get(i);
+                    tableNameEntity.setTableComment(sqlAssignItem.getValue().toString());
+                }
+                if (StrUtil.isEmpty(tableNameEntity.getTableComment())){
+                    alterTableStatement.getItems().forEach(i -> {
+                        if (i instanceof MySqlAlterTableOption) {
+                            MySqlAlterTableOption tableOption = (MySqlAlterTableOption) i;
+                            if (comment.equals(tableOption.getName())) {
+                                tableNameEntity.setTableComment(tableOption.getValue().toString());
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 tableNameList.add(tableNameEntity);
             }
         }
@@ -163,7 +167,11 @@ public class MySqlDatabase extends BaseDatabase {
             if (t.getTableName().equals((t.getTableComment()))) {
                 tableNameList.forEach(n -> {
                     if (n.getTableName().equals(t.getTableName())) {
-                        t.setTableComment(n.getTableComment().trim().replace("'",""));
+                        if (StrUtil.isEmpty(n.getTableComment())) {
+                            t.setTableComment(n.getTableName());
+                        } else {
+                            t.setTableComment(n.getTableComment().trim().replace("'", ""));
+                        }
                     }
                 });
             }

@@ -48,7 +48,7 @@ import java.util.List;
  */
 @Validated
 @RestController
-@RequestMapping("${pathName}")
+@RequestMapping("${mappingName}")
 @Api(value = "${commentEscape}", tags = "${commentEscape}")
 @AllArgsConstructor
 public class ${classNameUpperCase}Controller extends BaseController{

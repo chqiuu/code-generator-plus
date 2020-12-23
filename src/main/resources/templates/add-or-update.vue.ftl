@@ -52,7 +52,7 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.${pk.attrNameLowerCase}) {
             this.$http({
-              url: this.$http.adornUrl(`/${moduleName}/${pathName}/info/${r'${'}this.dataForm.${pk.attrNameLowerCase}${r'}'}`),
+              url: this.$http.adornUrl(`/${moduleName}/${mappingName}/info/${r'${'}this.dataForm.${pk.attrNameLowerCase}${r'}'}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
@@ -72,7 +72,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/${moduleName}/${pathName}/${r'${'}!this.dataForm.${pk.attrNameLowerCase} ? 'save' : 'update'${r'}'}`),
+              url: this.$http.adornUrl(`/${moduleName}/${mappingName}/${r'${'}!this.dataForm.${pk.attrNameLowerCase} ? 'save' : 'update'${r'}'}`),
               method: 'post',
               data: this.$http.adornData({
             <#list columns as column>

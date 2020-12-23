@@ -141,13 +141,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BindException.class)
     public Result<String> handleBindException(BindException e) {
-        log.error("参数绑定失败", e);
+        String defaultMessage = "参数绑定失败";
         BindingResult result = e.getBindingResult();
         FieldError error = result.getFieldError();
-        String field = error.getField();
-        String code = error.getDefaultMessage();
-        String message = String.format("%s:%s", field, code);
-        return Result.failed(ResultEnum.FAILED, "参数绑定失败=" + message);
+        if (error != null) {
+            defaultMessage = error.getDefaultMessage();
+        }
+        return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, defaultMessage);
     }
 
 

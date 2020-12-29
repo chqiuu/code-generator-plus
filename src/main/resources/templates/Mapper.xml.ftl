@@ -44,7 +44,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             </#if>
         </#list>
         <choose>
-            <when test="sortType=='${pk.attrNameLowerCase}'">
+            <when test="sortParam=='${pk.attrNameLowerCase}'">
                 <choose>
                     <when test="sortord=='asc'">
                         ORDER BY ${acronymLowerCase}.`${pk.columnName}` asc
@@ -91,7 +91,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             </#if>
         </#list>
         <choose>
-            <when test="sortType=='${pk.attrNameLowerCase}'">
+            <when test="sortParam=='${pk.attrNameLowerCase}'">
                 <choose>
                     <when test="sortord=='asc'">
                         ORDER BY ${acronymLowerCase}.`${pk.columnName}` asc

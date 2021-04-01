@@ -138,7 +138,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         UPDATE `${tableName}`
         <set>
             <#list columns as column>
-                <if test="${column.attrNameLowerCase} != null<#if column.attrType == 'String'> and ${column.attrNameLowerCase} != ''</#if>">`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}<#if column?has_next>,</#if></if>
+                <if test="${column.attrNameLowerCase} != null">`${column.columnName}` = ${r'#{'}${column.attrNameLowerCase}${r'}'}<#if column?has_next>,</#if></if>
             </#list>
         </set>
         WHERE `${pk.columnName}` = ${r'#{'}${pk.attrNameLowerCase}${r'}'}

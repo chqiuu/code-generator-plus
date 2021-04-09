@@ -9,6 +9,7 @@ const GitRevision = new GitRevisionPlugin()
 const buildDate = JSON.stringify(new Date().toLocaleString())
 
 // const isProd = process.env.NODE_ENV === 'production'
+// const isDev = process.env.NODE_ENV === 'development'
 const isUseCDN = process.env.IS_USE_CDN === 'true'
 const isAnalyz = process.env.IS_ANALYZ === 'true'
 

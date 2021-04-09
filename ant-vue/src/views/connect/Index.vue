@@ -44,7 +44,7 @@
                     v-decorator="[
                       'server',
                       {
-                        initialValue: '127.0.0.1',
+                        initialValue: dbServer,
                         rules: [
                           { required: true, message: '请输入服务器地址！' }
                         ]
@@ -72,7 +72,7 @@
                     v-decorator="[
                       'database',
                       {
-                        initialValue: 'mysql',
+                        initialValue: dbName,
                         rules: [{ required: true, message: '请输入数据库名！' }]
                       }
                     ]"
@@ -84,7 +84,7 @@
                     v-decorator="[
                       'username',
                       {
-                        initialValue: 'root',
+                        initialValue: dbUser,
                         rules: [{ required: true, message: '请输入登录名！' }]
                       }
                     ]"
@@ -96,7 +96,7 @@
                     v-decorator="[
                       'password',
                       {
-                        initialValue: 'root',
+                        initialValue: dbPass,
                         rules: [{ required: true, message: '请输入登录密码！' }]
                       }
                     ]"
@@ -177,144 +177,164 @@
 </template>
 
 <script>
-  import CONNECT_API from '@/api/connect'
-
-  export default {
-    name: 'ConnectPage',
-    data: function () {
-      return {
-        connectDatabaseForm: this.$form.createForm(this, {
-          name: 'connect-database-form',
-        }),
-        importSqlForm: this.$form.createForm(this, { name: 'import-sql-form' }),
-        spinning: false,
-        dbType: 'MySQL',
-        dbPort: 3306,
-        dbTypes: [
-          {
-            type: 'MySQL',
-            port: 3306,
-            isShow: true,
-          },
-          {
-            type: 'SQLServer',
-            port: 1433,
-            isShow: true,
-          },
-          {
-            type: 'Oracle',
-            port: 1521,
-            isShow: true,
-          },
-          {
-            type: 'SQLite',
-            port: '',
-            isShow: false,
-          },
-          {
-            type: 'H2',
-            port: '',
-            isShow: false,
-          },
-        ],
+import CONNECT_API from '@/api/connect'
+export default {
+  name: 'ConnectPage',
+  data: function () {
+    return {
+      connectDatabaseForm: this.$form.createForm(this, {
+        name: 'connect-database-form',
+      }),
+      importSqlForm: this.$form.createForm(this, { name: 'import-sql-form' }),
+      spinning: false,
+      dbType: 'MySQL',
+      dbServer: '127.0.0.1',
+      dbPort: 3306,
+      dbName: 'mysql',
+      dbUser: 'root',
+      dbPass: 'root',
+      dbTypes: [
+        {
+          type: 'MySQL',
+          port: 3306,
+          isShow: true,
+        },
+        {
+          type: 'SQLServer',
+          port: 1433,
+          isShow: true,
+        },
+        {
+          type: 'Oracle',
+          port: 1521,
+          isShow: true,
+        },
+        {
+          type: 'SQLite',
+          port: '',
+          isShow: false,
+        },
+        {
+          type: 'H2',
+          port: '',
+          isShow: false,
+        },
+      ],
+    }
+  },
+  components: {},
+  mounted: function () {
+    // 实例被挂载后调
+    this.$nextTick(function () {
+      const isDev = process.env.NODE_ENV === 'development'
+      if (isDev) {
+        // 测试环境默认数据库连接
+        this.dbServer = '192.168.1.204'
+        this.dbPort = 3309
+        this.dbName = 'wechat_oa'
+        this.dbUser = 'test_user'
+        this.dbPass = 'test_user'
       }
+    })
+  },
+  methods: {
+    onChangeDbType (e) {
+      // 数据库默认端口自动补全
+      this.dbTypes.forEach(d => {
+        if (d.type === e.target.value) {
+          this.dbPort = d.port
+        }
+      })
     },
-    components: {},
-    mounted () {
+    async handleConnectDatabaseSubmit (e) {
+      // 使用that记录this 防止 this.$router 报错
+      const that = this
+      this.spinning = true
+      e.preventDefault()
+      this.connectDatabaseForm.validateFields((err, values) => {
+        // 验证通过执行请求
+        if (!err) {
+          try {
+            CONNECT_API.connectDatabase({ ...values })
+            this.spinning = false
+            // this.$confirm({
+            //   title: '恭喜你数据库连接成功，是否开始生成代码？',
+            //   type: 'success',
+            //   okText: '确定',
+            //   cancelText: '取消',
+            //   onOk () {
+            //     // 跳转到生成代码页面
+            //     that.$router.push({ path: '/code/index' })
+            //   },
+            // })
+
+                // 跳转到生成代码页面
+                that.$router.push({ path: '/code/index' })
+          } catch (error) {
+            this.$notification.error({
+              message: '错误',
+              description: '数据连接失败：' + error,
+              duration: 3,
+            })
+          } finally {
+            this.spinning = false
+          }
+        }
+      })
+      this.spinning = false
     },
-    methods: {
-      onChangeDbType (e) {
-        // 数据库默认端口自动补全
-        this.dbTypes.forEach(d => {
-          if (d.type === e.target.value) {
-            this.dbPort = d.port
-          }
-        })
-      },
-      async handleConnectDatabaseSubmit (e) {
-        // 使用that记录this 防止 this.$router 报错
-        const that = this
-        this.spinning = true
-        e.preventDefault()
-        this.connectDatabaseForm.validateFields((err, values) => {
-          // 验证通过执行请求
-          if (!err) {
-            try {
-              CONNECT_API.connectDatabase({ ...values })
-              this.spinning = false
-              this.$confirm({
-                title: '恭喜你数据库连接成功，是否开始生成代码？',
-                type: 'success',
-                okText: '确定',
-                cancelText: '取消',
-                onOk () {
-                  // 跳转到生成代码页面
-                  that.$router.push({ path: '/code/index' })
-                },
-              })
-            } catch (error) {
-              this.$notification.error({
-                message: '错误',
-                description: '数据连接失败：' + error,
-                duration: 3,
-              })
-            } finally {
-              this.spinning = false
-            }
-          }
-        })
-        this.spinning = false
-      },
-      handleConnectDatabaseReset () {
-        // 重置连接数据库输入框
-        this.connectDatabaseForm.resetFields()
-      },
-      handleImportSqlSubmit (e) {
-        // 使用that记录this 防止 this.$router 报错
-        const that = this
-        this.spinning = true
-        e.preventDefault()
-        this.importSqlForm.validateFields((err, values) => {
-          // 验证通过执行请求
-          if (!err) {
-            try {
-              CONNECT_API.importSql({ ...values })
-              this.spinning = false
-              this.$confirm({
-                title: '恭喜你SQL导入成功，是否开始生成代码？',
-                type: 'success',
-                okText: '确定',
-                cancelText: '取消',
-                onOk () {
-                  // 跳转到生成代码页面
-                  that.$router.push({ path: '/code/index' })
-                },
-              })
-            } catch (error) {
-              this.$notification.error({
-                message: '错误',
-                description: 'SQL导入失败：' + error,
-                duration: 3,
-              })
-            } finally {
-              this.spinning = false
-            }
-          }
-        })
-        this.spinning = false
-      },
-      handleImportSqlReset () {
-        // 重置导入SQL输入框
-        this.importSqlForm.resetFields()
-      },
+    handleConnectDatabaseReset () {
+      // 重置连接数据库输入框
+      this.connectDatabaseForm.resetFields()
     },
-  }
+    handleImportSqlSubmit (e) {
+      // 使用that记录this 防止 this.$router 报错
+      const that = this
+      this.spinning = true
+      e.preventDefault()
+      this.importSqlForm.validateFields((err, values) => {
+        // 验证通过执行请求
+        if (!err) {
+          try {
+            CONNECT_API.importSql({ ...values })
+            this.spinning = false
+            // this.$confirm({
+            //   title: '恭喜你SQL导入成功，是否开始生成代码？',
+            //   type: 'success',
+            //   okText: '确定',
+            //   cancelText: '取消',
+            //   onOk () {
+            //     // 跳转到生成代码页面
+            //     that.$router.push({ path: '/code/index' })
+            //   },
+            // })
+                // 跳转到生成代码页面
+                that.$router.push({ path: '/code/index' })
+          } catch (error) {
+            this.$notification.error({
+              message: '错误',
+              description: 'SQL导入失败：' + error,
+              duration: 3,
+            })
+          } finally {
+            this.spinning = false
+          }
+        }
+      })
+      this.spinning = false
+    },
+    handleImportSqlReset () {
+      // 重置导入SQL输入框
+      this.importSqlForm.resetFields()
+    },
+  },
+}
 </script>
 
 <style lang="less" scoped>
-  .spin-content {
-    border: 1px solid #91d5ff;
-    background-color: #e6f7ff;
-    padding: 30px;
-  }
+.spin-content {
+  border: 1px solid #91d5ff;
+  background-color: #e6f7ff;
+  padding: 30px;
+}
 </style>

@@ -38,7 +38,7 @@ public class GeneratorVO implements Serializable {
      * 带生成的数据库表列表
      */
     @Valid
-    @Size(min = 1,message = "必须先选择一张表")
+    @Size(min = 1, message = "必须先选择一张表")
     @ApiModelProperty(value = "带生成的数据库表列表")
     private List<GeneratorTableVO> tables;
 }

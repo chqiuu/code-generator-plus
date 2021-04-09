@@ -5,6 +5,7 @@ import java.util.Date;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import com.alibaba.fastjson.JSONObject;
 
 <#if lombokDataEnabled == 1>
 import lombok.Data;

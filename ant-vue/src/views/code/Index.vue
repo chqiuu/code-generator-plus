@@ -91,17 +91,17 @@
             <!--              <editable-cell :text="text" @change="onMappingNameCellChange(record.tableName, 'mappingName', $event)"/>-->
             <!--            </template>-->
             <span slot="mappingName" slot-scope="text, record">
-                          <editable-cell
-                            :value="text"
-                            @change="onMappingNameCellChange(record.tableName, 'mappingName', $event)"
-                          />
-                        </span>
+              <editable-cell
+                :value="text"
+                @change="onMappingNameCellChange(record.tableName, 'mappingName', $event)"
+              />
+            </span>
             <span slot="action" slot-scope="text, record">
               <template>
                 <a-button
                   @click="handlePreviewTable(record)"
                 >查看字段信息</a-button>
-                <a-divider type="vertical"/>
+                <a-divider type="vertical" />
                 <a-button
                   type="primary"
                   @click="handlePreviewCode(record)"
@@ -118,7 +118,6 @@
       :after-close="setModalSetModuleAfterClose"
       @ok="handleSetModuleOk"
     >
-
       <a-form>
         <a-form-item label="模块名">
           <a-input
@@ -170,10 +169,9 @@
           :item="item"
           :index="index"
           :tab="item.fileName"
-        >
-        </a-tab-pane>
+        />
       </a-tabs>
-      <div id="code-preview" style="min-height: 700px;height: 100%;width: 100%;"/>
+      <div id="code-preview" style="min-height: 700px;height: 100%;width: 100%;" />
     </a-modal>
   </div>
 </template>
@@ -377,6 +375,7 @@ export default {
     },
     handleSetModuleOk (e) {
       // 批量设置模块名
+      console.info('批量设置模块名')
       this.modalSetModuleVisible = false
       this.selectedRowKeys.forEach(key => {
         this.tables[key].module = this.moduleName
@@ -529,10 +528,10 @@ export default {
         })
         return
       }
+
       // 当前选中的表列表
       const selectedTables = []
       this.selectedRowKeys.forEach(key => {
-        this.tables[key].module = this.moduleName
         selectedTables.push(this.tables[key])
       })
 

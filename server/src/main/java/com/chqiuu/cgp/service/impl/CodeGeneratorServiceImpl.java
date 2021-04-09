@@ -253,6 +253,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             rootPackage = "com.chqiuu";
         }
         dto.setRootPackage(rootPackage);
+        dto.setCommonPackage(rootPackage.endsWith(".modules") ? rootPackage.substring(0, rootPackage.length() - 8) : rootPackage);
         dto.setModuleName(moduleName);
         dto.setCodePackage(String.format("%s.%s", rootPackage, moduleName));
         if (StrUtil.isEmpty(mappingName)) {

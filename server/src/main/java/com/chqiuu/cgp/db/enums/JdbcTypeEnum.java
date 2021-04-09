@@ -48,7 +48,7 @@ public enum JdbcTypeEnum {
     /**
      * JSON格式
      */
-    JSON("JSON", "JsonObject"),
+    JSON("JSON", "JSONObject"),
 
     /**
      * Integer类型

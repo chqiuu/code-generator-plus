@@ -5,14 +5,15 @@ import java.util.Date;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import com.alibaba.fastjson.JSONObject;
 
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ${rootPackage}.common.validator.group.Default;
-import ${rootPackage}.common.validator.group.Update;
+import ${commonPackage}.common.validator.group.Default;
+import ${commonPackage}.common.validator.group.Update;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;

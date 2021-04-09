@@ -1,5 +1,6 @@
 package com.chqiuu.cgp.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -59,6 +60,12 @@ public class TableMetadataDTO implements Serializable {
      * 项目主包名
      */
     private String rootPackage = "com.chqiuu";
+    /**
+     * 项目公共类包名 如：com.chqiuu.common 主包名去掉.modules
+     * 若主包名为com.chqiuu.modules 公共类包名 com.chqiuu.common
+     * 若主包名为com.chqiuu 公共类包名 com.chqiuu.common
+     */
+    private String commonPackage;
     /**
      * 所属模块名称
      */

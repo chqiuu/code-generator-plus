@@ -5,6 +5,7 @@ import java.util.Date;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
+import com.alibaba.fastjson.JSONObject;
 
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.annotation.IdType;

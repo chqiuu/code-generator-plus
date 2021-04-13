@@ -1,5 +1,5 @@
 package ${codePackage}.service.impl;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +31,7 @@ import ${codePackage}.service.${classNameUpperCase}Service;
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends ServiceImpl${r'<'}${classNameUpperCase}Mapper, ${classNameUpperCase}Entity></#if> implements ${classNameUpperCase}Service ${r'{'}

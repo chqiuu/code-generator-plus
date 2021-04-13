@@ -182,7 +182,7 @@ public abstract class BaseConnect {
      * @param clazz 对象
      * @param <T>   泛型
      * @return 指定对象
-     * @throws Exception
+     * @throws SQLException 异常
      */
     private <T> List<T> convertMetaData(ResultSet rs, Class<T> clazz) throws SQLException, IllegalAccessException, InstantiationException {
         List<T> tList = new ArrayList<T>();
@@ -208,6 +208,8 @@ public abstract class BaseConnect {
                     field.set(t, rs.getDouble(name));
                 } else if (field.getType().equals(BigDecimal.class)) {
                     field.set(t, rs.getBigDecimal(name));
+                } else if (field.getType().equals(Date.class)) {
+                    field.set(t, rs.getDate(name));
                 } else {
                     field.set(t, rs.getObject(name));
                 }

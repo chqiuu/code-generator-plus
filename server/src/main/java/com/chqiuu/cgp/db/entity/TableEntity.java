@@ -3,6 +3,7 @@ package com.chqiuu.cgp.db.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -89,17 +90,17 @@ public class TableEntity implements Serializable {
      * 表的创建时间
      * `CREATE_TIME` datetime(0) DEFAULT NULL,
      */
-    private Date createTime;
+    private LocalDateTime createTime;
     /**
      * 表的更新时间
      * `UPDATE_TIME` datetime(0) DEFAULT NULL,
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
     /**
      * 表的检查时间
      * `CHECK_TIME` datetime(0) DEFAULT NULL,
      */
-    private Date checkTime;
+    private LocalDateTime checkTime;
     /**
      * 表的字符校验编码集
      * `TABLE_COLLATION` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,

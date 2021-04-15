@@ -12,7 +12,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap id="BaseResultMap" type="${codePackage}.entity.${classNameUpperCase}Entity">
         <#list columns as column>
-        <result property="${column.attrNameLowerCase}" column="${column.columnName}"/>
+        <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
         </#list>
     </resultMap>
 
@@ -91,9 +91,9 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             </#if>
         </#list>
         <choose>
-            <when test="sortParam=='${pk.attrNameLowerCase}'">
+            <when test="query.sortParam=='${pk.attrNameLowerCase}'">
                 <choose>
-                    <when test="sortord=='asc'">
+                    <when test="query.sortord=='asc'">
                         ORDER BY ${acronymLowerCase}.`${pk.columnName}` asc
                     </when>
                     <otherwise>
@@ -105,7 +105,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 <#if column.columnName == 'create_time'>
             <otherwise>
                 <choose>
-                    <when test="sortord=='asc'">
+                    <when test="query.sortord=='asc'">
                         ORDER BY ${acronymLowerCase}.`create_time` asc
                     </when>
                     <otherwise>

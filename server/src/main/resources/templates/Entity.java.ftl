@@ -5,8 +5,11 @@ import java.util.Date;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
-import com.alibaba.fastjson.JSONObject;
 
+<#if column.attrType == 'JSONObject'>
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+</#if>
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -53,7 +56,8 @@ public class ${classNameUpperCase}Entity implements Serializable</#if>${r'{'}
     @TableLogic
         </#if>
     </#if>
-    @ApiModelProperty(value = "${column.commentEscape}")
+    @ApiModelProperty(value = "${column.commentEscape}")<#if column.attrType == 'JSONObject'>
+    @TableField(typeHandler = FastjsonTypeHandler.class)</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
     </#list>
     <#if lombokDataEnabled == 0>

@@ -3,13 +3,11 @@ package ${codePackage}.entity;
 import java.io.Serializable;
 import java.util.Date;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.math.BigDecimal;
-
-<#if column.attrType == 'JSONObject'>
+import io.swagger.annotations.ApiModelProperty;<#if hasBigDecimalAttr==1 >
+import java.math.BigDecimal;</#if><#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-</#if>
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;</#if>
+
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

@@ -237,6 +237,14 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             if ("is_deleted".equalsIgnoreCase(column.getColumnName())) {
                 dto.setLogicDelete(1);
             }
+            // 是否存在 BigDecimal 字段
+            if ("BigDecimal".equalsIgnoreCase(columnDto.getAttrType())) {
+                dto.setHasBigDecimalAttr(1);
+            }
+            // 是否存在 JSON 格式字段
+            if ("JSONObject".equalsIgnoreCase(columnDto.getAttrType())) {
+                dto.setHasJsonAttr(1);
+            }
             columsList.add(columnDto);
         }
         dto.setColumns(columsList);

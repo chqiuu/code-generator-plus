@@ -251,7 +251,7 @@ export default {
       const that = this
       this.spinning = true
       e.preventDefault()
-      this.connectDatabaseForm.validateFields((err, values) => {
+     this.connectDatabaseForm.validateFields((err, values) => {
         // 验证通过执行请求
         if (!err) {
           try {
@@ -267,9 +267,10 @@ export default {
             //     that.$router.push({ path: '/code/index' })
             //   },
             // })
-
+            setTimeout(function () {
                 // 跳转到生成代码页面
                 that.$router.push({ path: '/code/index' })
+            }, 800)
           } catch (error) {
             this.$notification.error({
               message: '错误',

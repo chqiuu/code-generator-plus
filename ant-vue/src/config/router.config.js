@@ -41,7 +41,7 @@ export const asyncRouterMap = [
         path: '/connect/index',
         name: 'connect',
         component: () => import('@/views/connect/Index'),
-        meta: { title: 'menu.connect.default', keepAlive: false, permission: ['dashboard'] },
+        meta: { title: 'menu.connect.default', keepAlive: true, permission: ['dashboard'] },
       }, {
         path: '/code/index',
         name: 'code',

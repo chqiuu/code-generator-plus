@@ -3,9 +3,10 @@ package ${codePackage}.dto;
 import java.io.Serializable;
 import java.util.Date;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.math.BigDecimal;
+import io.swagger.annotations.ApiModelProperty;<#if hasBigDecimalAttr==1 >
+import java.math.BigDecimal;</#if><#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;</#if>
 
 <#if lombokDataEnabled == 1>
 import lombok.Data;
@@ -32,7 +33,8 @@ public class ${classNameUpperCase}DetailDTO implements Serializable${r'{'}
     /**
      * ${column.comment} ${column.columnDetail}
      */
-    @ApiModelProperty(value = "${column.commentEscape}")
+    @ApiModelProperty(value = "${column.commentEscape}")<#if column.attrType == 'JSONObject'>
+    @TableField(typeHandler = FastjsonTypeHandler.class)</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
 </#list>
 <#if lombokDataEnabled == 0>

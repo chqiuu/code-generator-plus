@@ -1,4 +1,3 @@
-// with polyfills
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 
@@ -66,7 +65,6 @@ window.umi_plugin_ant_themeVar = themeConfig.theme
 
 // Global imports
 Vue.use(PageLoading)
-
 
 Vue.config.productionTip = false
 

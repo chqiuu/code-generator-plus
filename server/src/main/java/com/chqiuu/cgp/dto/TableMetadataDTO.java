@@ -85,19 +85,27 @@ public class TableMetadataDTO implements Serializable {
     /**
      * 是否存在逻辑删除字段 is_deleted
      */
-    private int logicDelete;
+    private Integer logicDelete = 0;
     /**
      * 是否为MyBatis-Plus
      */
-    private int plusEnabled;
+    private Integer plusEnabled = 0;
     /**
      * 是否启用map查询功能
      */
-    private int mapQueryEnabled;
+    private Integer mapQueryEnabled = 0;
     /**
      * 是否启用@Data注解
      */
-    private int lombokDataEnabled;
+    private Integer lombokDataEnabled = 0;
+    /**
+     * 是否存在 BigDecimal 字段
+     */
+    private Integer hasBigDecimalAttr = 0;
+    /**
+     * 是否存在 JSON 格式字段
+     */
+    private Integer hasJsonAttr = 0;
     /**
      * 排除显示的字段
      */

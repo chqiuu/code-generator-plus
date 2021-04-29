@@ -1,17 +1,14 @@
 package com.chqiuu.cgp.config;
 
-
-import com.github.xiaoymin.knife4j.spring.model.MarkdownFiles;
-import com.github.xiaoymin.knife4j.spring.web.Knife4jController;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.plugin.core.PluginRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,15 +26,18 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.RequestHandlerProvider;
 import springfox.documentation.spring.web.DocumentationCache;
 import springfox.documentation.spring.web.json.Json;
 import springfox.documentation.spring.web.json.JsonSerializer;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.*;
+import springfox.documentation.swagger.web.ApiResourceController;
+import springfox.documentation.swagger.web.SecurityConfiguration;
+import springfox.documentation.swagger.web.SwaggerResource;
+import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
-import springfox.documentation.swagger2.web.Swagger2Controller;
+import springfox.documentation.swagger2.web.Swagger2ControllerWebMvc;
+import springfox.documentation.swagger2.web.WebMvcSwaggerTransformationFilter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +45,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 /**
  * Swagger2 前端API配置
@@ -55,6 +57,8 @@ import java.util.Map;
 @Configuration
 // @EnableSwagger2注解要开启Swagger功能
 @EnableSwagger2
+@AutoConfigureAfter({WebMvcConfig.class})
+@AllArgsConstructor
 public class Swagger2Config {
 
     /**
@@ -62,8 +66,7 @@ public class Swagger2Config {
      */
     private static final String DEFAULT_PATH = "/swagger";
 
-    @Autowired
-    private GeneratorProperties properties;
+    private final GeneratorProperties properties;
 
     @Bean
     public Docket createRestApi() {
@@ -71,7 +74,7 @@ public class Swagger2Config {
                 .enable(properties.isSwaggerEnable())
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.chqiuu.cgp.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.chqiuu.cgp"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -85,18 +88,6 @@ public class Swagger2Config {
                 .version("1.0.0").license("Apache 2.0").licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
                 .build();
     }
-
-    @Bean
-    UiConfiguration uiConfig() {
-        return new UiConfiguration(true
-                , true,
-                1, 1, ModelRendering.MODEL
-                , true, DocExpansion.LIST, false,
-                null, OperationsSorter.ALPHA,
-                true, TagsSorter.ALPHA,
-                null);
-    }
-
 
     /**
      * SwaggerUI资源访问
@@ -147,34 +138,27 @@ public class Swagger2Config {
     @ApiIgnore
     @RequestMapping(DEFAULT_PATH)
     public static class SwaggerResourceController implements InitializingBean {
-        @Autowired
-        private ApiResourceController apiResourceController;
-        @Autowired
-        private Environment environment;
-        @Autowired
-        private DocumentationCache documentationCache;
-        @Autowired
-        private ServiceModelToSwagger2Mapper mapper;
-        @Autowired
-        private JsonSerializer jsonSerializer;
-        private Swagger2Controller swagger2Controller;
-        @Autowired
-        private List<RequestHandlerProvider> handlerProviders;
-        @Autowired
-        private ObjectProvider<MarkdownFiles> markdownFilesObjectProvider;
-        private Knife4jController knife4jController;
+        private final ApiResourceController apiResourceController;
+        private final DocumentationCache documentationCache;
+        private final ServiceModelToSwagger2Mapper mapper;
+        private final JsonSerializer jsonSerializer;
+        private final PluginRegistry<WebMvcSwaggerTransformationFilter, DocumentationType> transformations;
+        private static final String HAL_MEDIA_TYPE = "application/hal+json";
+        private Swagger2ControllerWebMvc swagger2ControllerWebMvc;
 
-        @Override
-        public void afterPropertiesSet() {
-            swagger2Controller = new Swagger2Controller(environment, documentationCache, mapper, jsonSerializer);
-            knife4jController = new Knife4jController(environment, mapper, documentationCache, jsonSerializer, handlerProviders, markdownFilesObjectProvider);
+        public SwaggerResourceController(ApiResourceController apiResourceController, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper, JsonSerializer jsonSerializer, PluginRegistry<WebMvcSwaggerTransformationFilter, DocumentationType> transformations) {
+            this.apiResourceController = apiResourceController;
+            this.documentationCache = documentationCache;
+            this.mapper = mapper;
+            this.jsonSerializer = jsonSerializer;
+            this.transformations = transformations;
         }
 
-        /**
-         * Swagger API首页地址
-         *
-         * @return 首页地址
-         */
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            swagger2ControllerWebMvc = new Swagger2ControllerWebMvc(documentationCache, mapper, jsonSerializer, transformations);
+        }
+
         @RequestMapping
         public ModelAndView index() {
             return new ModelAndView("redirect:" + DEFAULT_PATH + "/doc.html");
@@ -198,20 +182,12 @@ public class Swagger2Config {
             return apiResourceController.swaggerResources();
         }
 
-        @RequestMapping(value = "/v2/api-docs", method = RequestMethod.GET, produces = {"application/json", "application/hal+json"})
+        @RequestMapping(value = "/v2/api-docs", method = RequestMethod.GET, produces = {APPLICATION_JSON_VALUE, HAL_MEDIA_TYPE})
         @ResponseBody
         public ResponseEntity<Json> getDocumentation(
                 @RequestParam(value = "group", required = false) String swaggerGroup,
                 HttpServletRequest servletRequest) {
-            return swagger2Controller.getDocumentation(swaggerGroup, servletRequest);
-        }
-
-        @RequestMapping(value = "/v2/api-docs-ext", method = RequestMethod.GET, produces = {"application/json", "application/hal+json"})
-        @ResponseBody
-        public ResponseEntity<Json> apiSorts(
-                @RequestParam(value = "group", required = false) String swaggerGroup,
-                HttpServletRequest servletRequest) {
-            return knife4jController.apiSorts(swaggerGroup, servletRequest);
+            return swagger2ControllerWebMvc.getDocumentation(swaggerGroup, servletRequest);
         }
     }
 }

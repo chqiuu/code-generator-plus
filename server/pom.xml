@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.4</version>
+        <version>2.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.chqiuu</groupId>
@@ -16,22 +16,19 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.4.4</spring-boot.version>
+        <spring-boot.version>2.4.5</spring-boot.version>
         <spring-security-taglibs.version>5.4.1</spring-security-taglibs.version>
         <!--这个版本比较稳定 1.1.22-->
-        <druid-spring-boot-starter.version>1.2.5</druid-spring-boot-starter.version>
+        <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
         <mybatis-plus-boot-starter.version>3.4.2</mybatis-plus-boot-starter.version>
-        <!--这个版本比较稳定 2.0.5 高版本会报错-->
-        <knife4j-spring-boot-starter.version>2.0.5</knife4j-spring-boot-starter.version>
-
-
+        <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
         <slf4j.version>1.7.30</slf4j.version>
         <httpclient.version>4.5.13</httpclient.version>
         <nlp-lang.version>1.7.8</nlp-lang.version>
-        <fastjson.version>1.2.75</fastjson.version>
-        <hutool.version>5.6.2</hutool.version>
+        <fastjson.version>1.2.76</fastjson.version>
+        <hutool.version>5.6.4</hutool.version>
         <poi.version>3.17</poi.version>
-        <easyexcel.version>2.2.3</easyexcel.version>
+        <easyexcel.version>2.2.8</easyexcel.version>
         <flying-saucer-pdf.version>9.1.20</flying-saucer-pdf.version>
         <itextpdf.version>5.5.13.1</itextpdf.version>
         <itext-asian.version>5.2.0</itext-asian.version>

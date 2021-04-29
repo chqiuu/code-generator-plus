@@ -246,7 +246,7 @@ export default {
         }
       })
     },
-    async handleConnectDatabaseSubmit (e) {
+     handleConnectDatabaseSubmit (e) {
       // 使用that记录this 防止 this.$router 报错
       const that = this
       this.spinning = true
@@ -267,10 +267,12 @@ export default {
             //     that.$router.push({ path: '/code/index' })
             //   },
             // })
+            console.log('connectDatabase 1')
             setTimeout(function () {
                 // 跳转到生成代码页面
                 that.$router.push({ path: '/code/index' })
             }, 800)
+            console.log('connectDatabase 2')
           } catch (error) {
             this.$notification.error({
               message: '错误',
@@ -279,9 +281,11 @@ export default {
             })
           } finally {
             this.spinning = false
+            console.log('connectDatabase finally')
           }
         }
       })
+            console.log('connectDatabase finally2')
       this.spinning = false
     },
     handleConnectDatabaseReset () {

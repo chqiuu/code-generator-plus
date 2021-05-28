@@ -42,6 +42,8 @@
         <mssql-jdbc.version>6.4.0.jre8</mssql-jdbc.version>
         <postgresql.version>42.0.0</postgresql.version>
 
+        <webmagic.version>0.7.4</webmagic.version>
+
         <commons-fileupload.version>1.4</commons-fileupload.version>
         <commons-text.version>1.8</commons-text.version>
         <commons-io.version>2.6</commons-io.version>
@@ -143,6 +145,39 @@
             <version>${hutool.version}</version>
         </dependency>
         <!--hutool end-->
+
+
+        <dependency>
+            <groupId>us.codecraft</groupId>
+            <artifactId>webmagic-core</artifactId>
+            <version>${webmagic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>us.codecraft</groupId>
+            <artifactId>webmagic-extension</artifactId>
+            <version>${webmagic.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- webmagic-selenium 对selenium支持 -->
+        <dependency>
+            <groupId>us.codecraft</groupId>
+            <artifactId>webmagic-selenium</artifactId>
+            <version>${webmagic.version}</version>
+        </dependency>
+
 
         <!--slf4j begin-->
         <dependency>

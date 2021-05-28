@@ -1,17 +1,20 @@
 package com.chqiuu.cgp.connect;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
+/**
+ * Hikari 连接器
+ *
+ * @author chqiu
+ */
 @Slf4j
 public class HikariConnect extends BaseConnect {
     private DataSource dataSource;
@@ -48,11 +51,11 @@ public class HikariConnect extends BaseConnect {
         }
     }
 
-    public HikariConnect(DriverClassEnum driverClass, String url, String username, String password) throws Exception {
+    public HikariConnect(DriverClassEnum driverClass, String url, String username, String password) {
         this.setDataSource(driverClass, url, username, password);
     }
 
-    public HikariConnect(String driverClassName, String url, String username, String password) throws Exception {
+    public HikariConnect(String driverClassName, String url, String username, String password) {
         DriverClassEnum driverClass = DriverClassEnum.getByDriverCLass(driverClassName);
         assert driverClass != null;
         this.setDataSource(driverClass, url, username, password);
@@ -68,45 +71,27 @@ public class HikariConnect extends BaseConnect {
      * @param username    数据库用户名
      * @param password    数据库登录密码
      */
-    public HikariConnect(DriverClassEnum driverClass, String server, Integer port, String database, String username, String password) throws Exception {
+    public HikariConnect(DriverClassEnum driverClass, String server, Integer port, String database, String username, String password) {
         assert driverClass != null;
         this.setDataSource(driverClass, driverClass.getUrl(server, port, database), username, password);
     }
 
-    private void setDataSource(DriverClassEnum driverClass, String url, String username, String password) throws Exception {
-        Map<String, String> properties = new HashMap<String, String>();
+    private void setDataSource(DriverClassEnum driverClass, String url, String username, String password) {
         this.driverClass = driverClass;
-        properties.put("driverClassName", driverClass.getDriverCLass());
-        properties.put("url", url);
+        HikariConfig config = new HikariConfig();
+        config.setMaximumPoolSize(5);
+        config.setDriverClassName(driverClass.getDriverCLass());
+        config.setJdbcUrl(url);
         if (null != username) {
-            properties.put("username", username);
+            config.setUsername(username);
         }
         if (null != password) {
-            properties.put("password", password);
+            config.setPassword(password);
         }
-        properties.put("initialSize", "1");
-        properties.put("maxActive", "300");
-        properties.put("maxWait", "600000");
-        properties.put("timeBetweenEvictionRunsMillis", "600000");
-        properties.put("minEvictableIdleTimeMillis", "300000");
         if (driverClass.getValidationQuery() != null) {
-            properties.put("validationQuery", driverClass.getValidationQuery());
+            config.setConnectionTestQuery(driverClass.getValidationQuery());
         }
-        properties.put("testWhileIdle", "false");
-        properties.put("testOnBorrow", "false");
-        properties.put("testOnReturn", "false");
-        properties.put("poolPreparedStatements", "false");
-        properties.put("maxPoolPreparedStatementPerConnectionSize", "200");
-        properties.put("removeAbandoned", "true");
-        properties.put("removeAbandonedTimeout", "180");
-        properties.put("logAbandoned", "true");
-        properties.put("init", "true");
-
-        DruidDataSource dataSource = new DruidDataSource();
-        // 失败重连 true为不尝试重连
-        dataSource.setBreakAfterAcquireFailure(true);
-        DruidDataSourceFactory.config(dataSource, properties);
-        this.setDataSource(dataSource);
+        this.setDataSource(new HikariDataSource(config));
     }
 
 
@@ -125,13 +110,13 @@ public class HikariConnect extends BaseConnect {
         return driverClass;
     }
 
-    public void setDataSource(DataSource dataSource) throws Exception {
+    public void setDataSource(DataSource dataSource) {
         if (dataSource != null) {
             // 参数不为空加载自定义配置
             this.dataSource = dataSource;
         } else {
             // 连接为空加载默认配置
-            this.dataSource = DruidDataSourceFactory.createDataSource(properties);
+            this.dataSource = new HikariDataSource(new HikariConfig(properties));
         }
     }
 }

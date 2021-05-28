@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -184,16 +185,16 @@ public abstract class BaseConnect {
      * @return 指定对象
      * @throws SQLException 异常
      */
-    private <T> List<T> convertMetaData(ResultSet rs, Class<T> clazz) throws SQLException, IllegalAccessException, InstantiationException {
+    private <T> List<T> convertMetaData(ResultSet rs, Class<T> clazz) throws SQLException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         List<T> tList = new ArrayList<T>();
         T t = null;
         while (rs.next()) {
-            t = clazz.newInstance();
+            t = clazz.getDeclaredConstructor().newInstance();
             ResultSetMetaData rsmd = rs.getMetaData();
             int count = rsmd.getColumnCount();
             for (int i = 1; i <= count; i++) {
                 String name = rsmd.getColumnName(i);
-                Field field = getDeclaredFieldIgnoreCase(clazz, StringUtils.uncapitalize(WordUtils.capitalizeFully(name, new char[]{'_'}).replace("_", "")));
+                Field field = getDeclaredFieldIgnoreCase(clazz, StringUtils.uncapitalize(WordUtils.capitalizeFully(name, '_').replace("_", "")));
                 if (null == field) {
                     continue;
                 }

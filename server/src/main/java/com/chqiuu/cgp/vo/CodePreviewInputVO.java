@@ -46,4 +46,8 @@ public class CodePreviewInputVO implements Serializable {
     @NotNull(message = "是否为MyBatis-Plus不能为空")
     @ApiModelProperty(value = "是否为MyBatis-Plus")
     private Boolean isPlus;
+
+    @NotNull(message = "请设置需要生成的方法列表")
+    @ApiModelProperty(value = "需要生成的方法列表")
+    private String[] genMethods;
 }

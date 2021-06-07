@@ -29,6 +29,16 @@
                     </a-checkbox>
                   </a-form-item>
                 </a-col>
+                
+                <a-col :md="24" :sm="48">
+                  <a-form-item label="选择生成方法">
+                    <a-checkbox :indeterminate="indeterminate" :checked="checkGenMethodAll" @change="onCheckGenMethodAllChange">
+                    全选
+                    </a-checkbox>
+                    <a-checkbox-group v-model="queryParam.genMethods" :options="genMethodOptions" @change="onGenMethodChange" />
+                  </a-form-item>
+                </a-col>
+                
                 <a-col :md="8" :sm="24">
                   <a-form-item>
                     <a-tooltip
@@ -300,6 +310,19 @@ const EditableCell = {
     },
   },
 }
+// 需要生成方法的选型
+// const genMethodOptions = [
+//   { label: '', value: 'add' },
+//   { label: 'update', value: 'update' },
+//   { label: 'insertIgnore', value: 'insertIgnore' },
+//   { label: 'replace', value: 'replace' },
+//   { label: 'getDetailById', value: 'getDetailById' },
+//   { label: 'getList', value: 'getList' },
+//   { label: 'getPage', value: 'getPage' },
+// ];
+const genMethodOptions = ['add', 'update', 'insertIgnore','replace','getDetailById', 'getList', 'getPage'];
+// 默认选中项
+const defaultGenMethodCheckedList = ['add', 'update', 'getDetailById', 'getList', 'getPage'];
 
 export default {
   name: 'GeneratorPage',
@@ -309,6 +332,10 @@ export default {
         name: 'generate-term-form',
       }),
       spinning: false,
+      indeterminate: true,
+      // 是否全选
+      checkGenMethodAll: false,
+      genMethodOptions,
       // 数据库表显示字段定义
       columns: columns,
       // 数据库表显示数据
@@ -336,6 +363,7 @@ export default {
         rootPackage: 'com.chqiuu',
         author: 'chqiuu',
         isPlus: true,
+        genMethods: defaultGenMethodCheckedList,
       },
       selectedRowKeys: [],
     }
@@ -372,6 +400,15 @@ export default {
     },
     setModalSetModuleAfterClose () {
       this.modalSetModuleVisible = false
+    },
+     onGenMethodChange(checkedGenMethodList) {
+      this.indeterminate = !!checkedGenMethodList.length && checkedGenMethodList.length < genMethodOptions.length;
+      this.checkGenMethodAll = checkedGenMethodList.length === genMethodOptions.length;
+    },
+    onCheckGenMethodAllChange(e) {
+      this.queryParam.genMethods= e.target.checked ?  this.genMethodOptions : []
+     this.indeterminate= false
+      this. checkGenMethodAll= e.target.checked
     },
     handleSetModuleOk (e) {
       // 批量设置模块名
@@ -448,6 +485,7 @@ export default {
           table: row.tableName,
           mappingName: row.mappingName,
           isPlus: this.queryParam.isPlus,
+          genMethods: this.queryParam.genMethods,
         })
         this.$notification.success({
           message: '成功',

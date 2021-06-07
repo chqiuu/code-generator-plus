@@ -22,29 +22,54 @@ import java.util.Map;
  */
 @Repository
 public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpperCase}Entity> {
-
+    <#if generalMethod??>
+        <#if generalMethod.insertIgnoreEnabled==1>
     /**
-     * 根据唯一ID获取详细信息
-     *
-     * @param ${pk.attrNameLowerCase} ${pk.comment}
-     * @return 详细信息
-     */
+    * 插入数据，如果中已经存在相同的记录，则忽略当前新数据
+    *
+    * @param entity 实体类对象
+    * @return 影响条数
+    */
+    @Insert("${r'<'}script>INSERT IGNORE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}${r'}'}, </if></#list></trim>${r'<'}/script>")
+    int insertIgnore(${classNameUpperCase}Entity entity);
+        </#if>
+        <#if generalMethod.replaceEnabled==1>
+    /**
+    * 替换数据，如果中已经存在相同的记录，则覆盖旧数据
+    *
+    * @param entity 实体类对象
+    * @return 影响条数
+    */
+    @Insert("${r'<'}script>REPLACE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}${r'}'}, </if></#list></trim>${r'<'}/script>")
+    int replace(${classNameUpperCase}Entity entity);
+        </#if>
+        <#if generalMethod.getDetailByIdEnabled==1>
+    /**
+    * 根据唯一ID获取详细信息
+    *
+    * @param ${pk.attrNameLowerCase} ${pk.comment}
+    * @return 详细信息
+    */
     ${classNameUpperCase}DetailDTO getDetailById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
-
+        </#if>
+        <#if generalMethod.getListEnabled==1>
     /**
     * ${comment}列表查询
     * @param query       查询对象
     * @return ${comment}列表
     */
     List${r'<'}${classNameUpperCase}ListDTO> getList(@Param("query") ${classNameUpperCase}ListQuery query);
-
+        </#if>
+        <#if generalMethod.getPageEnabled==1>
     /**
-     * ${comment}分页查询
-     * @param pageInfo      分页控件
-     * @param query       分页查询对象
-     * @return ${comment}列表
-     */
+    * ${comment}分页查询
+    * @param pageInfo      分页控件
+    * @param query       分页查询对象
+    * @return ${comment}列表
+    */
     IPage${r'<'}${classNameUpperCase}ListDTO> getPage(@Param("pg") Page${r'<'}${classNameUpperCase}ListDTO> pageInfo, @Param("query") ${classNameUpperCase}PageQuery query);
+        </#if>
+    </#if>
 }
 <#else>
 package ${codePackage}.dao;

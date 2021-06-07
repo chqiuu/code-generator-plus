@@ -114,7 +114,7 @@ public class CodeGeneratorController extends BaseController {
         if (null == driverClassEnum) {
             throw new UserException(ResultEnum.FAILED, "数据库类型有误！");
         }
-        byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getTables(), list);
+        byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getGenMethods(), vo.getTables(), list);
         HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), LocalDateTimeUtil.format(LocalDateTime.now(), PURE_DATETIME_MS_PATTERN)));
@@ -137,8 +137,8 @@ public class CodeGeneratorController extends BaseController {
     }
 
     @ApiOperation(value = "预览生成的代码")
-    @GetMapping("/preview")
-    public Result<List<CodePreviewDTO>> preview(@Validated CodePreviewInputVO vo) {
+    @PostMapping("/preview")
+    public Result<List<CodePreviewDTO>> preview(@Validated @RequestBody CodePreviewInputVO vo) {
         List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
         if (null == list) {
             throw new UserException(ResultEnum.FAILED, "未找到对应都表！");
@@ -152,7 +152,7 @@ public class CodeGeneratorController extends BaseController {
             vo.setRootPackage(vo.getCodePackage().substring(0, vo.getCodePackage().lastIndexOf(".")));
         }
         return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName()
-                , vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), list));
+                , vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), vo.getGenMethods(), list));
     }
 
     /**
@@ -179,13 +179,12 @@ public class CodeGeneratorController extends BaseController {
             @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
     })
     @GetMapping("/codeAll")
-    public void codeAll(String codePackage, String rootPackage, String moduleName, String author,
-                        boolean isPlus) throws Exception {
+    public void codeAll(String codePackage, String rootPackage, String moduleName, String author, boolean isPlus, String[] genMethods) throws Exception {
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
             rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
-        byte[] data = codeGeneratorService.generatorCodeAll(getConnect(), rootPackage, moduleName, author, isPlus);
+        byte[] data = codeGeneratorService.generatorCodeAll(getConnect(), rootPackage, moduleName, author, isPlus, genMethods);
         HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=\"code-" + new Date().toLocaleString() + ".zip\"");

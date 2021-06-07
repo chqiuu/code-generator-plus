@@ -81,6 +81,8 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
      */
     List<${classNameUpperCase}Entity> getAll();
 <#elseif plusEnabled == 1>
+ <#if generalMethod??>
+  <#if generalMethod.getDetailByIdEnabled==1>
     /**
      * 根据唯一ID获取详细信息
      *
@@ -88,21 +90,24 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
      * @return 详细信息
      */
     ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase});
-
+</#if>
+        <#if generalMethod.getListEnabled==1>
     /**
     * ${comment}列表查询
     * @param query       查询对象
     * @return ${comment}列表
     */
     List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query);
-
+ </#if>
+        <#if generalMethod.getPageEnabled==1>
     /**
      * ${comment}分页查询
      * @param query       分页查询对象
      * @return ${comment}列表（带分页）
      */
     IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query);
-
+        </#if>
+ </#if>
   <#if logicDelete == 1>
     /**
      * 删除

@@ -1,6 +1,5 @@
 package com.chqiuu.cgp.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -90,6 +89,10 @@ public class TableMetadataDTO implements Serializable {
      * 是否为MyBatis-Plus
      */
     private Integer plusEnabled = 0;
+    /**
+     * 是否生成通用方法
+     */
+    private GeneralMethodEnabledDTO generalMethod;
     /**
      * 是否启用map查询功能
      */

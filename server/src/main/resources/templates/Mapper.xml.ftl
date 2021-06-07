@@ -17,13 +17,16 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     </resultMap>
 
 <#if plusEnabled == 1>
+    <#if generalMethod??>
+        <#if generalMethod.getDetailByIdEnabled==1>
     <!--根据唯一ID获取详细信息-->
     <select id="getDetailById" resultType="${codePackage}.dto.${classNameUpperCase}DetailDTO">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
         FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}
     </select>
-
+        </#if>
+        <#if generalMethod.getListEnabled==1>
     <!--${comment}列表查询-->
     <select id="getList" parameterType="${codePackage}.query.${classNameUpperCase}ListQuery"
             resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
@@ -70,7 +73,8 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             </#list>
         </choose>
     </select>
-
+        </#if>
+        <#if generalMethod.getPageEnabled==1>
     <!--${comment}分页查询-->
     <select id="getPage" parameterType="${codePackage}.query.${classNameUpperCase}PageQuery"
             resultType="${codePackage}.dto.${classNameUpperCase}ListDTO">
@@ -117,6 +121,8 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             </#list>
         </choose>
     </select>
+        </#if>
+    </#if>
 <#else>
     <!--插入数据-->
     <insert id="insert" parameterType="${codePackage}.entity.${classNameUpperCase}Entity"<#if pk.extra?? && pk.extra == 'auto_increment'> useGeneratedKeys="true" keyProperty="${pk.attrNameLowerCase}"</#if>>

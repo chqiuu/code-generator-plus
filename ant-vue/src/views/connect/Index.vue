@@ -104,7 +104,7 @@
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
                   <a-button type="primary" html-type="submit">
-                    提交
+                    开始连接
                   </a-button>
                   <a-button
                     :style="{ marginLeft: '8px' }"
@@ -229,11 +229,17 @@ export default {
       const isDev = process.env.NODE_ENV === 'development'
       if (isDev) {
         // 测试环境默认数据库连接
-        this.dbServer = '192.168.1.204'
-        this.dbPort = 3309
-        this.dbName = 'wechat_oa'
-        this.dbUser = 'test_user'
-        this.dbPass = 'test_user'
+        this.dbServer = '127.0.0.1'
+        this.dbPort = 3306
+        this.dbName = 'spider'
+        this.dbUser = 'root'
+        this.dbPass = 'root'
+      
+        // this.dbServer = '192.168.1.204'
+        // this.dbPort = 3309
+        // this.dbName = 'wechat_oa'
+        // this.dbUser = 'test_user'
+        // this.dbPass = 'test_user'
       }
     })
   },
@@ -271,12 +277,12 @@ export default {
             setTimeout(function () {
                 // 跳转到生成代码页面
                 that.$router.push({ path: '/code/index' })
-            }, 800)
+            }, 1200)
             console.log('connectDatabase 2')
           } catch (error) {
             this.$notification.error({
               message: '错误',
-              description: '数据连接失败：' + error,
+              description: '数据连接失败：' + error+'，请检查配置项是否正确！',
               duration: 3,
             })
           } finally {

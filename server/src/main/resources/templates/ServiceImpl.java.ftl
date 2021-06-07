@@ -118,22 +118,27 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
     }
 
 <#elseif plusEnabled == 1>
+    <#if generalMethod??>
+        <#if generalMethod.getDetailByIdEnabled==1>
     @Override
     public ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getDetailById(${pk.attrNameLowerCase});
     }
-
+        </#if>
+        <#if generalMethod.getListEnabled==1>
     @Override
     public List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query) {
         return this.baseMapper.getList(query);
     }
-
+        </#if>
+        <#if generalMethod.getPageEnabled==1>
     @Override
     public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query) {
         Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(query.getCurrent(), query.getSize());
         return this.baseMapper.getPage(pageInfo, query);
     }
-
+        </#if>
+    </#if>
     <#if logicDelete == 1>
     @Override
     public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long operatorId) {

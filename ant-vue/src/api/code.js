@@ -38,7 +38,7 @@ export default {
    * @param {string} params.isPlus
    * @returns {*}
    */
-  preview (params) {
-    return get('/generator/preview', params)
+  preview (data) {
+    return post('/generator/preview', data)
   },
 }

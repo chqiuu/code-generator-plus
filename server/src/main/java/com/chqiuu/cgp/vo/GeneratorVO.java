@@ -10,6 +10,9 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @author chqiu
+ */
 @Data
 @ApiModel(value = "脚本生成录入信息")
 public class GeneratorVO implements Serializable {
@@ -41,4 +44,8 @@ public class GeneratorVO implements Serializable {
     @Size(min = 1, message = "必须先选择一张表")
     @ApiModelProperty(value = "带生成的数据库表列表")
     private List<GeneratorTableVO> tables;
+
+    @NotNull(message = "请设置需要生成的方法列表")
+    @ApiModelProperty(value = "需要生成的方法列表")
+    private String[] genMethods;
 }

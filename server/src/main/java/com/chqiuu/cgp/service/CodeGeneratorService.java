@@ -68,7 +68,7 @@ public interface CodeGeneratorService {
      * @param allTables       所有表
      * @return 生成代码预览
      */
-    List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, String mappingName, boolean isPlus, List<TableEntity> allTables);
+    List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables);
 
     /**
      * 生成代码
@@ -80,7 +80,7 @@ public interface CodeGeneratorService {
      * @param isPlus      是否为MyBatis-Plus
      * @return 字节码
      */
-    byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isPlus);
+    byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isPlus, String[] genMethods);
 
     /**
      * 生成全部表代码
@@ -92,19 +92,20 @@ public interface CodeGeneratorService {
      * @param isPlus      是否为MyBatis-Plus
      * @return 字节码
      */
-    byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus);
+    byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus, String[] genMethods);
 
     /**
      * 多表批量生成代码
      *
-     * @param driverClassEnum
+     * @param driverClassEnum 数据库类型
      * @param rootPackage     项目主包名
      * @param author          创建人
      * @param isPlus          是否为MyBatis-Plus
      * @param tables          需要生成的表
+     * @param genMethods      需要生成的方法
      * @param allTables       所有表
      * @return 字节码
      */
-    byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, List<GeneratorTableVO> tables, List<TableEntity> allTables);
+    byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, String[] genMethods, List<GeneratorTableVO> tables, List<TableEntity> allTables);
 
 }

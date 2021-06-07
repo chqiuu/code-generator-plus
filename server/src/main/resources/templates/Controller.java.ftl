@@ -54,44 +54,51 @@ public class ${classNameUpperCase}Controller extends BaseController{
 private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
 
 <#if plusEnabled == 1>
+    <#if generalMethod??>
+        <#if generalMethod.getDetailByIdEnabled==1>
     @ApiOperation(value = "根据唯一ID获取详细信息", notes = "根据唯一ID获取详细信息")
     @GetMapping("/detail/{${pk.attrNameLowerCase}}")
     public Result${r'<'}${classNameUpperCase}DetailDTO> detail(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
-    return Result.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
+        return Result.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
     }
-
+        </#if>
+        <#if generalMethod.getListEnabled==1>
     @ApiOperation(value = "${commentEscape}列表查询", notes = "${commentEscape}列表查询")
     @GetMapping("/list")
     public Result${r'<List<'}${classNameUpperCase}ListDTO>> list(${classNameUpperCase}ListQuery query) {
-    return Result.ok(${classNameLowerCase}Service.getList(query));
+        return Result.ok(${classNameLowerCase}Service.getList(query));
     }
-
+        </#if>
+        <#if generalMethod.getPageEnabled==1>
     @ApiOperation(value = "${commentEscape}分页查询", notes = "${commentEscape}分页查询")
     @GetMapping("/page")
     public Result${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery query) {
-    return Result.ok(${classNameLowerCase}Service.getPage(query));
+        return Result.ok(${classNameLowerCase}Service.getPage(query));
     }
-
+        </#if>
+        <#if generalMethod.addEnabled==1>
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
     @PostMapping("/add")
     public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
-    ${classNameUpperCase}Entity entity = vo.convertToEntity();
-    entity.set${pk.attrNameUpperCase}(null);
-    ${classNameLowerCase}Service.save(entity);
-    return Result.ok(entity.get${pk.attrNameUpperCase}());
+        ${classNameUpperCase}Entity entity = vo.convertToEntity();
+        entity.set${pk.attrNameUpperCase}(null);
+        ${classNameLowerCase}Service.save(entity);
+        return Result.ok(entity.get${pk.attrNameUpperCase}());
     }
-
+        </#if>
+        <#if generalMethod.updateEnabled==1>
     @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
     @PostMapping("/update")
     public Result${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
     ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
-    if (null == entity) {
-    return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
+        if (null == entity) {
+            return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
+        }
+        ${classNameLowerCase}Service.updateById(vo.convertToEntity());
+        return Result.ok();
     }
-    ${classNameLowerCase}Service.updateById(vo.convertToEntity());
-    return Result.ok();
-    }
-
+        </#if>
+    </#if>
     @ApiOperation(value = "根据唯一ID删除${commentEscape}", notes = "根据唯一ID删除${commentEscape}")
     @ApiImplicitParams({
     @ApiImplicitParam(name = "${pk.attrNameLowerCase}", value = "${pk.comment}", paramType = "path"),
@@ -100,9 +107,9 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     public Result${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
     UserOnlineDTO user = getOnlineUser();
     ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
-    if (null == entity) {
-    return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
-    }
+        if (null == entity) {
+            return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
+        }
     //TODO 其他限制删除条件
     <#if logicDelete == 1>
         return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));

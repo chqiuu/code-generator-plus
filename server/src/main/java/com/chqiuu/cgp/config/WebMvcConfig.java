@@ -65,7 +65,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 // 需拦截的URI配置
                 .addPathPatterns("/**")
                 // 不需拦截的URI配置  "/swagger/**", "/static/**", "/resource/**"
-                .excludePathPatterns("/swagger/**", "/resource/**");
+                .excludePathPatterns("/swagger/**", "/static/**", "/resource/**");
     }
 
     @Bean

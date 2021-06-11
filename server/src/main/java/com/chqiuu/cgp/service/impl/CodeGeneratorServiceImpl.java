@@ -66,11 +66,23 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {
         BaseDatabase database = new DatabaseFactory().create(connect.getDriverClassEnum());
-        List<TableEntity> list = database.queryTableList(connect, tableName);
-        list.forEach(t -> {
-            t.setColumns(database.queryColumns(connect, t.getTableName()));
+        List<TableEntity> tables = database.queryTableList(connect, tableName);
+        tables.forEach(table -> {
+            // 定义警告信息
+            List<String> warningMessages = new ArrayList<>();
+            if (StrUtil.isEmpty(table.getTableComment())) {
+                warningMessages.add("表注释为空，不利于生成代码注释！");
+            }
+            List<ColumnEntity> columns = database.queryColumns(connect, table.getTableName());
+            columns.forEach(column -> {
+                if (StrUtil.isEmpty(column.getColumnComment())) {
+                    warningMessages.add(String.format("字段【%s】注释为空，不利于属性注释及参数校验提示信息的生成！", column.getColumnName()));
+                }
+            });
+            table.setColumns(columns);
+            table.setWarningMessages(warningMessages);
         });
-        return list;
+        return tables;
     }
 
     @Override

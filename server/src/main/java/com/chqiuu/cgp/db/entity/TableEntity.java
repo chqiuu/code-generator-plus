@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -121,6 +120,10 @@ public class TableEntity implements Serializable {
      * `TABLE_COMMENT` varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''
      */
     private String tableComment;
+    /**
+     * 警告信息列表
+     */
+    private List<String> warningMessages;
     /**
      * 字段列表
      */

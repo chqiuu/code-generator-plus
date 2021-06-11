@@ -11,6 +11,7 @@ import com.alibaba.druid.sql.dialect.oracle.ast.stmt.OraclePrimaryKey;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
 
@@ -23,6 +24,11 @@ import java.util.List;
  * @author chqiu
  */
 public class OracleDatabase extends BaseDatabase {
+
+    @Override
+    public List<SchemataEntity> queryDatabaseList(BaseConnect connect) {
+        return connect.queryList("select name AS schema_name from v$database", SchemataEntity.class);
+    }
 
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {

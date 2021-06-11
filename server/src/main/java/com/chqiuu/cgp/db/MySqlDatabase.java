@@ -10,6 +10,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStateme
 import com.alibaba.druid.util.JdbcConstants;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,11 @@ import java.util.List;
  * @author chqiu
  */
 public class MySqlDatabase extends BaseDatabase {
+
+    @Override
+    public List<SchemataEntity> queryDatabaseList(BaseConnect connect) {
+        return connect.queryList("SELECT `catalog_name`, `schema_name`, `default_character_set_name`, `default_collation_name`, `sql_path` FROM information_schema.SCHEMATA", SchemataEntity.class);
+    }
 
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {

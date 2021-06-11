@@ -9,6 +9,7 @@ import com.chqiuu.cgp.connect.HikariConnect;
 import com.chqiuu.cgp.db.BaseDatabase;
 import com.chqiuu.cgp.db.DatabaseFactory;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
@@ -54,6 +55,12 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         } else {
             return connect;
         }
+    }
+
+    @Override
+    public List<SchemataEntity> queryDatabaseList(BaseConnect connect) {
+        BaseDatabase database = new DatabaseFactory().create(connect.getDriverClassEnum());
+        return database.queryDatabaseList(connect);
     }
 
     @Override

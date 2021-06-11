@@ -29,17 +29,25 @@
                     </a-checkbox>
                   </a-form-item>
                 </a-col>
-                
+
                 <a-col :md="24" :sm="48">
                   <a-form-item label="选择生成方法">
-                    <a-checkbox :indeterminate="indeterminate" :checked="checkGenMethodAll" @change="onCheckGenMethodAllChange">
-                    全选
+                    <a-checkbox
+                      :indeterminate="indeterminate"
+                      :checked="checkGenMethodAll"
+                      @change="onCheckGenMethodAllChange"
+                    >
+                      全选
                     </a-checkbox>
-                    <a-checkbox-group v-model="queryParam.genMethods" :options="genMethodOptions" @change="onGenMethodChange" />
+                    <a-checkbox-group
+                      v-model="queryParam.genMethods"
+                      :options="genMethodOptions"
+                      @change="onGenMethodChange"
+                    />
                   </a-form-item>
                 </a-col>
-                
-                <a-col :md="8" :sm="24">
+
+                <a-col :md="8" :sm="48">
                   <a-form-item>
                     <a-tooltip
                       placement="bottom"
@@ -55,10 +63,31 @@
                       title="给选中的表生成代码，文件格式ZIP"
                       arrow-point-at-center
                     >
-                      <a-button style="margin-left: 8px" type="primary" @click="handleGenerateSubmit">
+                      <a-button
+                        style="margin-left: 8px"
+                        type="primary"
+                        @click="handleGenerateSubmit"
+                      >
                         生成代码
                       </a-button>
                     </a-tooltip>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="16" :sm="48" :hidden="hiddenSwitchDatabaseSelect">
+                  <a-form-item label="切换数据库">
+                    <a-select
+                      :default-value="this.$route.params.dbName"
+                      style="width: 130px"
+                      @change="handleSwitchDatabaseChange"
+                    >
+                      <a-select-option
+                        v-for="database in databases"
+                        :key="database.schemaName"
+                      >
+                        {{ database.schemaName }}
+                      </a-select-option>
+                    </a-select>
+                    【当前链接：{{ this.$route.params.dbType }} {{ this.$route.params.dbServer }}:{{ this.$route.params.dbPort }} {{ this.$route.params.dbName }}】
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -94,16 +123,26 @@
             </span>
             <span slot="module" slot-scope="text">
               <a style="font-weight: 600">
-                {{ text === null || text === '' || text === undefined || text.length === 0 ? '-' : text }}
+                {{
+                  text === null ||
+                    text === "" ||
+                    text === undefined ||
+                    text.length === 0
+                    ? "-"
+                    : text
+                }}
               </a>
             </span>
-            <!--            <template slot="mappingName" slot-scope="text, record">-->
-            <!--              <editable-cell :text="text" @change="onMappingNameCellChange(record.tableName, 'mappingName', $event)"/>-->
-            <!--            </template>-->
             <span slot="mappingName" slot-scope="text, record">
               <editable-cell
                 :value="text"
-                @change="onMappingNameCellChange(record.tableName, 'mappingName', $event)"
+                @change="
+                  onMappingNameCellChange(
+                    record.tableName,
+                    'mappingName',
+                    $event
+                  )
+                "
               />
             </span>
             <span slot="action" slot-scope="text, record">
@@ -181,13 +220,16 @@
           :tab="item.fileName"
         />
       </a-tabs>
-      <div id="code-preview" style="min-height: 700px;height: 100%;width: 100%;" />
+      <div
+        id="code-preview"
+        style="min-height: 700px;height: 100%;width: 100%;"
+      />
     </a-modal>
   </div>
 </template>
 
 <script>
-import CODE_API from '@/api/code'
+import API from '@/api/index'
 import * as monaco from 'monaco-editor'
 
 const columns = [
@@ -295,8 +337,7 @@ const EditableCell = {
       },
     },
   },
-  created: function () {
-  },
+  created: function () {},
   methods: {
     handleChange (e) {
       this.$emit('change', e.target.value)
@@ -311,18 +352,24 @@ const EditableCell = {
   },
 }
 // 需要生成方法的选型
-// const genMethodOptions = [
-//   { label: '', value: 'add' },
-//   { label: 'update', value: 'update' },
-//   { label: 'insertIgnore', value: 'insertIgnore' },
-//   { label: 'replace', value: 'replace' },
-//   { label: 'getDetailById', value: 'getDetailById' },
-//   { label: 'getList', value: 'getList' },
-//   { label: 'getPage', value: 'getPage' },
-// ];
-const genMethodOptions = ['add', 'update', 'insertIgnore','replace','getDetailById', 'getList', 'getPage'];
+const genMethodOptions = [
+  'add',
+  'update',
+  'insertIgnore',
+  'replace',
+  'getDetailById',
+  'getList',
+  'getPage',
+]
+
 // 默认选中项
-const defaultGenMethodCheckedList = ['add', 'update', 'getDetailById', 'getList', 'getPage'];
+const defaultGenMethodCheckedList = [
+  'add',
+  'update',
+  'getDetailById',
+  'getList',
+  'getPage',
+]
 
 export default {
   name: 'GeneratorPage',
@@ -342,6 +389,10 @@ export default {
       tables: [],
       // 模块名称
       moduleName: null,
+      // 是否显示切换数据库下拉框
+      hiddenSwitchDatabaseSelect: true,
+      // 数据库列表
+      databases: [],
       // 当前预览的表名
       previewTableName: null,
       // 批量设置表所属模块弹出框是否显示
@@ -372,19 +423,32 @@ export default {
     EditableCell,
   },
   created () {
+    // 加载完成后执行
     this.fetchTableStructure()
+    this.initSwitchDatabaseSelect()
   },
-  mounted () {
+  mounted: function () {
+    // 实例被挂载后调
+    this.$nextTick(function () {})
   },
   methods: {
+    async initSwitchDatabaseSelect () {
+      const connectType = this.$route.params.connectType
+      if (connectType === 'db') {
+        this.hiddenSwitchDatabaseSelect = false
+        this.databases = await API.getAllDatabaseList()
+      }
+    },
     async fetchTableStructure () {
       this.spinning = true
       try {
-        this.tables = await CODE_API.getAllTableList()
+        this.tables = await API.getAllTableList()
       } catch (error) {
         this.$notification.error({
           message: '错误',
-          description: '获取数据库表失败：【'.concat(error).concat('】，即将跳转到到数据源设置页面'),
+          description: '获取数据库表失败：【'
+            .concat(error)
+            .concat('】，即将跳转到到数据源设置页面'),
           duration: 3,
         })
         setTimeout(() => {
@@ -401,14 +465,45 @@ export default {
     setModalSetModuleAfterClose () {
       this.modalSetModuleVisible = false
     },
-     onGenMethodChange(checkedGenMethodList) {
-      this.indeterminate = !!checkedGenMethodList.length && checkedGenMethodList.length < genMethodOptions.length;
-      this.checkGenMethodAll = checkedGenMethodList.length === genMethodOptions.length;
+    onGenMethodChange (checkedGenMethodList) {
+      this.indeterminate =
+        !!checkedGenMethodList.length &&
+        checkedGenMethodList.length < genMethodOptions.length
+      this.checkGenMethodAll =
+        checkedGenMethodList.length === genMethodOptions.length
     },
-    onCheckGenMethodAllChange(e) {
-      this.queryParam.genMethods= e.target.checked ?  this.genMethodOptions : []
-     this.indeterminate= false
-      this. checkGenMethodAll= e.target.checked
+    onCheckGenMethodAllChange (e) {
+      this.queryParam.genMethods = e.target.checked
+        ? this.genMethodOptions
+        : []
+      this.indeterminate = false
+      this.checkGenMethodAll = e.target.checked
+    },
+    async handleSwitchDatabaseChange (value) {
+      // 切换数据库
+      try {
+        const result = await API.connectDatabase({
+          dbType: this.$route.params.dbType,
+          server: this.$route.params.dbServer,
+          port: this.$route.params.dbPort,
+          database: value,
+          username: this.$route.params.dbUser,
+          password: this.$route.params.dbPass,
+        })
+        // 加载表列表
+        this.fetchTableStructure()
+        this.$notification.success({
+          message: '成功',
+          description: '切换数据库成功',
+          duration: 3,
+        })
+      } catch (error) {
+        this.$notification.error({
+          message: '错误',
+          description: error,
+          duration: 3,
+        })
+      }
     },
     handleSetModuleOk (e) {
       // 批量设置模块名
@@ -417,13 +512,19 @@ export default {
       this.selectedRowKeys.forEach(key => {
         this.tables[key].module = this.moduleName
         if (this.tables[key].mappingName === undefined) {
-          this.tables[key].mappingName = this.getMappingName(this.tables[key].tableName, this.moduleName)
+          this.tables[key].mappingName = this.getMappingName(
+            this.tables[key].tableName,
+            this.moduleName,
+          )
         }
       })
     },
     getMappingName (tableName, moduleName) {
       // Controller中URL映射名称，如：/admin/user。用于 Controller中@RequestMapping注解
-      return '/'.concat(moduleName).concat('/').concat(this.getLastWord(tableName))
+      return '/'
+        .concat(moduleName)
+        .concat('/')
+        .concat(this.getLastWord(tableName))
     },
     getLastWord (tableName) {
       // 获取字符串中最后一个单词，若最好单词为info则忽略，向前移一个单词
@@ -478,7 +579,7 @@ export default {
       try {
         this.monacoEditor && this.monacoEditor.dispose()
         this.previewTableName = row.tableName + '表生成代码预览'
-        const result = await CODE_API.preview({
+        const result = await API.preview({
           rootPackage: this.queryParam.rootPackage,
           moduleName: row.module,
           author: this.queryParam.author,
@@ -603,7 +704,9 @@ export default {
       if (errorMessage !== '') {
         this.$notification.error({
           message: '错误',
-          description: 'URL映射名称不能重复，存在以下重复项：'.concat(errorMessage).concat('请修改后再生成代码'),
+          description: 'URL映射名称不能重复，存在以下重复项：'
+            .concat(errorMessage)
+            .concat('请修改后再生成代码'),
           duration: 10,
         })
         return
@@ -611,7 +714,7 @@ export default {
 
       try {
         this.queryParam.tables = selectedTables
-        await CODE_API.generatorCodes(this.queryParam)
+        await API.generatorCodes(this.queryParam)
         this.$notification.success({
           message: '成功',
           description: '代码下载成功',

@@ -8,6 +8,7 @@ import com.chqiuu.cgp.common.domain.ResultEnum;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.BaseDatabase;
 import com.chqiuu.cgp.db.DatabaseFactory;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
 import com.chqiuu.cgp.dto.CodePreviewDTO;
@@ -65,6 +66,7 @@ public class CodeGeneratorController extends BaseController {
             HttpSession httpSession = getSession();
             httpSession.setAttribute("dbConnect", connect);
             httpSession.setAttribute("allTables", codeGeneratorService.queryTableList(connect, null));
+            httpSession.setAttribute("allDatabases", codeGeneratorService.queryDatabaseList(connect));
             httpSession.setAttribute("dbType", dbType);
             return Result.ok("数据库连接成功");
         } else {
@@ -91,6 +93,17 @@ public class CodeGeneratorController extends BaseController {
         httpSession.setAttribute("dbType", vo.getDbType());
         return Result.ok();
     }
+
+    @ApiOperation(value = "获取数据库", notes = "获取数据库")
+    @GetMapping("/getAllDatabases")
+    public Result<List<SchemataEntity>> getAllDatabases() {
+        List<SchemataEntity> list = (List<SchemataEntity>) getSession().getAttribute("allDatabases");
+        if (null == list) {
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "请先连接数据库！");
+        }
+        return Result.ok(list);
+    }
+
 
     @ApiOperation(value = "获取数据库中的所有表", notes = "获取数据库中的所有表")
     @GetMapping("/getAllTables")

@@ -2,6 +2,7 @@ package com.chqiuu.cgp.service;
 
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
 import com.chqiuu.cgp.dto.CodePreviewDTO;
@@ -27,6 +28,14 @@ public interface CodeGeneratorService {
      * @return 连接是否成功
      */
     BaseConnect connectDatabase(DriverClassEnum driverClassEnum, String server, Integer port, String database, String username, String password) throws Exception;
+
+    /**
+     * 获取数据库列表
+     *
+     * @param connect 数据库连接
+     * @return 数据库列表
+     */
+    List<SchemataEntity> queryDatabaseList(BaseConnect connect);
 
     /**
      * 通过表名模糊查询
@@ -107,5 +116,6 @@ public interface CodeGeneratorService {
      * @return 字节码
      */
     byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, String[] genMethods, List<GeneratorTableVO> tables, List<TableEntity> allTables);
+
 
 }

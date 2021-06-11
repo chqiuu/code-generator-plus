@@ -10,7 +10,7 @@ import bootstrap from './core/bootstrap'
 import {
   ConfigProvider, Icon, Button, Tag, Menu, Dropdown, Avatar, Spin, Result, Form, Tabs, Input, Checkbox, Row,
   Col, Modal, Alert, Divider, notification, message,
-  Radio, Card, InputNumber, Table, Tooltip,
+  Radio, Card, InputNumber, Table, Tooltip, Select,
 } from 'ant-design-vue'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import { PageLoading } from '@/components'
@@ -38,6 +38,7 @@ Vue.use(Form)
 Vue.use(Tabs)
 Vue.use(Input)
 Vue.use(Checkbox)
+Vue.use(Select)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)

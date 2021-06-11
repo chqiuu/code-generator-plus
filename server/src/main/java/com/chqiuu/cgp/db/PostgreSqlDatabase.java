@@ -2,6 +2,7 @@ package com.chqiuu.cgp.db;
 
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +14,11 @@ import java.util.List;
  * @author chqiu
  */
 public class PostgreSqlDatabase extends BaseDatabase {
+    @Override
+    public List<SchemataEntity> queryDatabaseList(BaseConnect connect) {
+        return connect.queryList("SELECT datname AS schema_name FROM pg_database;", SchemataEntity.class);
+    }
+
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {
         StringBuilder sql = new StringBuilder();

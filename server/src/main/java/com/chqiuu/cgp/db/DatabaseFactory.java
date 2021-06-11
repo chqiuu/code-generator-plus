@@ -17,6 +17,8 @@ public class DatabaseFactory {
                 return new OracleDatabase();
             case POSTGRESQL:
                 return new PostgreSqlDatabase();
+            case SQLSERVER:
+                return new SqlServerDatabase();
             default:
                 break;
         }

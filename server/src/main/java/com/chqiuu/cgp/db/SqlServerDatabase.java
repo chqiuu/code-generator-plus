@@ -3,6 +3,7 @@ package com.chqiuu.cgp.db;
 import cn.hutool.core.util.StrUtil;
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 
 import java.util.List;
@@ -13,6 +14,11 @@ import java.util.List;
  * @author chqiu
  */
 public class SqlServerDatabase extends BaseDatabase {
+
+    @Override
+    public List<SchemataEntity> queryDatabaseList(BaseConnect connect) {
+        return connect.queryList("Select name AS schema_name FROM Master..SysDatabases order by Name", SchemataEntity.class);
+    }
 
     @Override
     public List<TableEntity> queryTableList(BaseConnect connect, String tableName) {

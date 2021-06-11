@@ -2,6 +2,7 @@ package com.chqiuu.cgp.db;
 
 import com.chqiuu.cgp.connect.BaseConnect;
 import com.chqiuu.cgp.db.entity.ColumnEntity;
+import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 
 import java.util.List;
@@ -13,6 +14,13 @@ import java.util.List;
  */
 public abstract class BaseDatabase {
 
+    /**
+     * 获取数据库列表
+     *
+     * @param connect 数据库连接
+     * @return 数据库列表
+     */
+    public abstract List<SchemataEntity> queryDatabaseList(BaseConnect connect);
     /**
      * 根据创建数据库表脚本生成表对象列表
      *
@@ -47,4 +55,5 @@ public abstract class BaseDatabase {
      * @return 数据库表列表
      */
     public abstract List<TableEntity> getTableList(String createTableSqls);
+
 }

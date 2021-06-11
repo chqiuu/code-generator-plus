@@ -177,7 +177,7 @@
 </template>
 
 <script>
-import CONNECT_API from '@/api/connect'
+import API from '@/api/index'
 export default {
   name: 'ConnectPage',
   data: function () {
@@ -234,7 +234,7 @@ export default {
         this.dbName = 'spider'
         this.dbUser = 'root'
         this.dbPass = 'root'
-      
+
         // this.dbServer = '192.168.1.204'
         // this.dbPort = 3309
         // this.dbName = 'wechat_oa'
@@ -252,46 +252,45 @@ export default {
         }
       })
     },
-     handleConnectDatabaseSubmit (e) {
+    handleConnectDatabaseSubmit (e) {
       // 使用that记录this 防止 this.$router 报错
       const that = this
       this.spinning = true
       e.preventDefault()
-     this.connectDatabaseForm.validateFields((err, values) => {
+      this.connectDatabaseForm.validateFields((err, values) => {
         // 验证通过执行请求
         if (!err) {
           try {
-            CONNECT_API.connectDatabase({ ...values })
+            API.connectDatabase({ ...values })
             this.spinning = false
-            // this.$confirm({
-            //   title: '恭喜你数据库连接成功，是否开始生成代码？',
-            //   type: 'success',
-            //   okText: '确定',
-            //   cancelText: '取消',
-            //   onOk () {
-            //     // 跳转到生成代码页面
-            //     that.$router.push({ path: '/code/index' })
-            //   },
-            // })
-            console.log('connectDatabase 1')
             setTimeout(function () {
-                // 跳转到生成代码页面
-                that.$router.push({ path: '/code/index' })
+              // 跳转到生成代码页面
+              that.$router.push({
+                name: 'code',
+                // path: '/code/index',
+                params: {
+                  connectType: 'db',
+                  dbType: that.dbType,
+                  dbServer: that.dbServer,
+                  dbPort: that.dbPort,
+                  dbName: that.dbName,
+                  dbUser: that.dbUser,
+                  dbPass: that.dbPass,
+                },
+              })
             }, 1200)
-            console.log('connectDatabase 2')
           } catch (error) {
             this.$notification.error({
               message: '错误',
-              description: '数据连接失败：' + error+'，请检查配置项是否正确！',
+              description:
+                '数据连接失败：' + error + '，请检查配置项是否正确！',
               duration: 3,
             })
           } finally {
             this.spinning = false
-            console.log('connectDatabase finally')
           }
         }
       })
-            console.log('connectDatabase finally2')
       this.spinning = false
     },
     handleConnectDatabaseReset () {
@@ -307,20 +306,16 @@ export default {
         // 验证通过执行请求
         if (!err) {
           try {
-            CONNECT_API.importSql({ ...values })
+            API.importSql({ ...values })
             this.spinning = false
-            // this.$confirm({
-            //   title: '恭喜你SQL导入成功，是否开始生成代码？',
-            //   type: 'success',
-            //   okText: '确定',
-            //   cancelText: '取消',
-            //   onOk () {
-            //     // 跳转到生成代码页面
-            //     that.$router.push({ path: '/code/index' })
-            //   },
-            // })
-                // 跳转到生成代码页面
-                that.$router.push({ path: '/code/index' })
+            // 跳转到生成代码页面
+            that.$router.push({
+                name: 'code',
+              // path: '/code/index',
+              params: {
+                connectType: 'sql',
+              },
+            })
           } catch (error) {
             this.$notification.error({
               message: '错误',

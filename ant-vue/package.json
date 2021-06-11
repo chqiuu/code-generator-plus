@@ -15,7 +15,7 @@
   "dependencies": {
     "@ant-design-vue/pro-layout": "^1.0.8",
     "ant-design-vue": "^1.7.5",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.13.0",
     "es6-promise": "^4.2.8",
     "github-markdown-css": "^4.0.0",

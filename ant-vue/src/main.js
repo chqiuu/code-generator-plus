@@ -10,7 +10,7 @@ import bootstrap from './core/bootstrap'
 import {
   ConfigProvider, Icon, Button, Tag, Menu, Dropdown, Avatar, Spin, Result, Form, Tabs, Input, Checkbox, Row,
   Col, Modal, Alert, Divider, notification, message,
-  Radio, Card, InputNumber, Table, Tooltip, Select,
+  Radio, Card, InputNumber, Table, Tooltip, Select, Badge, Popover,
 } from 'ant-design-vue'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import { PageLoading } from '@/components'
@@ -49,6 +49,8 @@ Vue.use(Card)
 Vue.use(InputNumber)
 Vue.use(Table)
 Vue.use(Tooltip)
+Vue.use(Badge)
+Vue.use(Popover)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

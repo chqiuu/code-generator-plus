@@ -22,6 +22,10 @@ public class CodePreviewDTO implements Serializable {
      */
     private String fileName;
     /**
+     * 文件名称（显示名称）
+     */
+    private String showName;
+    /**
      * 文件内容
      */
     private String content;

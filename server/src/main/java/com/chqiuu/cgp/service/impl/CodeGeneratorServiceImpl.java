@@ -151,6 +151,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 CodePreviewDTO codePreview = new CodePreviewDTO();
                 codePreview.setPackageName(tableMetadata.getCodePackage());
                 codePreview.setFileName(templateName);
+                codePreview.setShowName(templateName.replace(".ftl", ""));
                 Template template = configurer.getConfiguration().getTemplate(templateName);
                 template.process(tableMetadata, writer);
                 codePreview.setContent(writer.toString());

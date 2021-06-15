@@ -87,7 +87,11 @@
                         {{ database.schemaName }}
                       </a-select-option>
                     </a-select>
-                    【当前链接：{{ this.$route.params.dbType }} {{ this.$route.params.dbServer }}:{{ this.$route.params.dbPort }} {{ this.$route.params.dbName }}】
+                    【当前链接：{{ this.$route.params.dbType }}
+                    {{ this.$route.params.dbServer }}:{{
+                      this.$route.params.dbPort
+                    }}
+                    {{ this.$route.params.dbName }}】
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -118,6 +122,21 @@
             :data-source="tables"
             :alert="true"
           >
+            <template slot="tableName" slot-scope="text, record">
+              <span>
+                {{ text }}
+                <a-popover title="警告信息" placement="rightTop">
+                  <div
+                    slot="content"
+                    v-for="warningMessage in record.warningMessages"
+                    :key="warningMessage"
+                  >
+                    {{ warningMessage }}
+                  </div>
+                  <a-badge :count="record.warningMessages.length" />
+                </a-popover>
+              </span>
+            </template>
             <span slot="columns" slot-scope="text">
               {{ text.length }}
             </span>
@@ -214,10 +233,10 @@
       >
         <a-tab-pane
           v-for="(item, index) in previewCodeList"
-          :key="item.fileName"
+          :key="item.showName"
           :item="item"
           :index="index"
-          :tab="item.fileName"
+          :tab="item.showName"
         />
       </a-tabs>
       <div
@@ -493,7 +512,7 @@ export default {
         // 加载表列表
         this.fetchTableStructure()
         this.$notification.success({
-          message: '成功',
+          message: '提示',
           description: '切换数据库成功',
           duration: 3,
         })
@@ -589,7 +608,7 @@ export default {
           genMethods: this.queryParam.genMethods,
         })
         this.$notification.success({
-          message: '成功',
+          message: '提示',
           description: '代码获取成功',
           duration: 3,
         })
@@ -602,7 +621,8 @@ export default {
           this.initMonacoEditor()
         }, 100)
         setTimeout(() => {
-          this.codePreviewActiveName = this.previewCodeList[0].fileName
+          // 设置默认选中的卡片名称
+          this.codePreviewActiveName = this.previewCodeList[0].showName
           // 更改editor内容
           this.monacoEditor.setValue(this.previewCodeList[0].content)
           // 触发：格式化文档，更多支持项：editor._actions
@@ -619,7 +639,7 @@ export default {
     handleCodePreviewTabsChange (tab) {
       // 预览代码文件选择
       this.previewCodeList.forEach(row => {
-        if (tab === row.fileName) {
+        if (tab === row.showName) {
           // 更改editor内容
           this.monacoEditor.setValue(row.content)
         }
@@ -716,7 +736,7 @@ export default {
         this.queryParam.tables = selectedTables
         await API.generatorCodes(this.queryParam)
         this.$notification.success({
-          message: '成功',
+          message: '提示',
           description: '代码下载成功',
           duration: 3,
         })

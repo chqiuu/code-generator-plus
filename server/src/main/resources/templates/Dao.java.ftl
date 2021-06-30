@@ -31,7 +31,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     * @param entity 实体类对象
     * @return 影响条数
     */
-    @Insert("${r'<'}script>INSERT IGNORE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}${r'}'}, </if></#list></trim>${r'<'}/script>")
+    @Insert("${r'<'}script>INSERT IGNORE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}<#if column.attrType == 'JSONObject'>, typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>${r'}'}, </if></#list></trim>${r'<'}/script>")
     int insertIgnore(${classNameUpperCase}Entity entity);
         </#if>
         <#if generalMethod.replaceEnabled==1>
@@ -41,7 +41,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     * @param entity 实体类对象
     * @return 影响条数
     */
-    @Insert("${r'<'}script>REPLACE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}${r'}'}, </if></#list></trim>${r'<'}/script>")
+    @Insert("${r'<'}script>REPLACE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}<#if column.attrType == 'JSONObject'>, typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>${r'}'}, </if></#list></trim>${r'<'}/script>")
     int replace(${classNameUpperCase}Entity entity);
         </#if>
         <#if generalMethod.getDetailByIdEnabled==1>

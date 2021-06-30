@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;<#if hasBigDecimalAttr==1 >
 import java.math.BigDecimal;</#if><#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;</#if>
 
 <#if lombokDataEnabled == 1>

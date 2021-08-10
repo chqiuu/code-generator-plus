@@ -42,9 +42,7 @@ public class ${classNameUpperCase}Entity implements Serializable</#if>${r'{'}
     private static final long serialVersionUID = 1L;
 
     <#list columns as column>
-    /**
-     * ${column.comment} ${column.columnDetail}
-     */
+    /** ${column.comment} ${column.columnDetail} */
     <#if plusEnabled == 1><#if column.columnName == pk.columnName>
     <#--设置表主键，并设置ID生成方式-->
     @TableId(value = "${column.columnName}"<#if column.attrType == 'Long'>, type = IdType.ASSIGN_ID<#elseif column.attrType == 'Integer'>, type = IdType.AUTO</#if>)

@@ -31,9 +31,7 @@ public class ${classNameUpperCase}DetailDTO implements Serializable${r'{'}
     private static final long serialVersionUID = 1L;
     //TODO 当您看到这个后您应该自己修改模板增减字段
 <#list columns as column>
-    /**
-     * ${column.comment} ${column.columnDetail}
-     */
+    /** ${column.comment} ${column.columnDetail} */
     @ApiModelProperty(value = "${column.commentEscape}")<#if column.attrType == 'JSONObject'>
     @TableField(typeHandler = FastjsonTypeHandler.class)</#if>
     private ${column.attrType} ${column.attrNameLowerCase};

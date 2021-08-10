@@ -27,33 +27,23 @@ import java.time.LocalDate;
 public class ${classNameUpperCase}PageQuery implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
-    /**
-    * 排序参数
-    */
+    /** 排序参数 */
     @ApiModelProperty(value = "排序参数")
     private String sortParam;
-    /**
-    * 排序方式：正序asc，倒序desc，默认为desc
-    */
+    /** 排序方式：正序asc，倒序desc，默认为desc */
     @ApiModelProperty(value = "排序方式：正序asc，倒序desc，默认为desc")
     private String sortord;
-    /**
-     * 当前页
-     */
+    /** 当前页 */
     @ApiModelProperty(value = "当前页")
     private Integer current = 1;
-    /**
-     * 每页显示条数
-     */
+    /** 每页显示条数 */
     @ApiModelProperty(value = "每页显示条数")
     private Integer size = 10;
 
 //TODO 当您看到这个后您应该自己修改模板增减规则
 <#list columns as column>
     <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
-    /**
-     * ${column.commentEscape} ${column.columnDetail}
-     */
+    /** ${column.commentEscape} ${column.columnDetail} */
     @ApiModelProperty(value = "${column.commentEscape}")
     private ${column.attrType} ${column.attrNameLowerCase};
     </#if>

@@ -39,9 +39,7 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
     <#list columns as column>
         <#if exclusionShowColumns?contains(column.columnName)>
         <#else>
-    /**
-     * ${column.comment} ${column.columnDetail}
-     */
+    /** ${column.comment} ${column.columnDetail} */
             <#if column.columnName == pk.columnName>
     @NotNull(message = "${column.commentEscape}不能为空", groups = Update.class)
             <#else>

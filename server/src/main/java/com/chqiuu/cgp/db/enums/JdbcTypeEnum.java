@@ -22,6 +22,7 @@ public enum JdbcTypeEnum {
     INTERVAL("INTERVAL", "LocalDateTime"),
     TIME("TIME", "LocalDateTime"),
     DATETIME2("DATETIME2", "LocalDateTime"),
+    YEAR("YEAR", "LocalDate"),
 
     /**
      * 字符串类型
@@ -32,23 +33,33 @@ public enum JdbcTypeEnum {
     VARCHAR2("VARCHAR2", "String"),
     NVARCHAR("NVARCHAR", "String"),
     VARCHAR("VARCHAR", "String"),
-    MEDIUMBLOB("MEDIUMBLOB", "String"),
-    LONGBLOB("LONGBLOB", "String"),
     MEDIUMTEXT("MEDIUMTEXT", "String"),
+    TINYTEXT("TINYTEXT", "String"),
     LONGTEXT("LONGTEXT", "String"),
-    CLOB("CLOB", "String"),
-    NCLOB("NCLOB", "String"),
-    BLOB("BLOB", "String"),
-    NBLOB("NBLOB", "String"),
     BFILE("BFILE", "String"),
     XML("XML", "String"),
     IMAGE("IMAGE", "String"),
     TEXT("TEXT", "String"),
 
+    ENUM("ENUM", "String"),
+    SET("SET", "String"),
+
+    TINYBLOB("TINYBLOB", "byte[]"),
+    MEDIUMBLOB("MEDIUMBLOB", "byte[]"),
+    LONGBLOB("LONGBLOB", "byte[]"),
+    CLOB("CLOB", "byte[]"),
+    NCLOB("NCLOB", "byte[]"),
+    BLOB("BLOB", "byte[]"),
+    NBLOB("NBLOB", "byte[]"),
+    BINARY("BINARY", "byte[]"),
+    VARBINARY("VARBINARY", "byte[]"),
     /**
      * JSON格式
      */
     JSON("JSON", "JSONObject"),
+
+    BOOL("BOOL", "Boolean"),
+    BOOLEAN("BOOLEAN", "Boolean"),
 
     /**
      * Integer类型
@@ -58,6 +69,7 @@ public enum JdbcTypeEnum {
     INT("INT", "Integer"),
     TINYINT("TINYINT", "Integer"),
     SMALLINT("SMALLINT", "Integer"),
+    MEDIUMINT("MEDIUMINT", "Integer"),
     BIT("BIT", "Integer"),
     INT_UNSIGNED("INT UNSIGNED", "Integer"),
     TINYINT_UNSIGNED("TINYINT UNSIGNED", "Integer"),
@@ -82,7 +94,7 @@ public enum JdbcTypeEnum {
      */
     BINARY_DOUBLE("BINARY DOUBLE", "Double"),
     NUBINARY_FLOATMBER("NUBINARY FLOATMBER", "Double"),
-    FLOAT("FLOAT", "Double"),
+    FLOAT("FLOAT", "Float"),
     REAL("REAL", "Double"),
     DOUBLE("DOUBLE", "Double");
 

@@ -31,18 +31,9 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: 'menu.home' },
-    redirect: '/welcome/index',
+    redirect: '/connect/index',
     children: [
-      {
-        path: '/welcome/index',
-        name: 'welcome',
-        component: () => import('@/views/welcome/Index'),
-        meta: {
-          title: 'menu.welcome.default',
-          keepAlive: false,
-          permission: ['dashboard'],
-        },
-      },
+
       {
         path: '/connect/index',
         name: 'connect',
@@ -59,6 +50,15 @@ export const asyncRouterMap = [
         component: () => import('@/views/code/Index'),
         meta: {
           title: 'menu.code.default',
+          keepAlive: false,
+          permission: ['dashboard'],
+        },
+      }, {
+        path: '/welcome/index',
+        name: 'welcome',
+        component: () => import('@/views/welcome/Index'),
+        meta: {
+          title: 'menu.welcome.default',
           keepAlive: false,
           permission: ['dashboard'],
         },

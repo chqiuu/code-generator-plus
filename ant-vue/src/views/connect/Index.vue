@@ -225,23 +225,23 @@ export default {
   components: {},
   mounted: function () {
     // 实例被挂载后调
-    this.$nextTick(function () {
-      const isDev = process.env.NODE_ENV === 'development'
-      if (isDev) {
-        // 测试环境默认数据库连接
-        this.dbServer = '127.0.0.1'
-        this.dbPort = 3306
-        this.dbName = 'spider'
-        this.dbUser = 'root'
-        this.dbPass = 'root'
+  //   this.$nextTick(function () {
+  //     const isDev = process.env.NODE_ENV === 'development'
+  //     if (isDev) {
+  //       // 测试环境默认数据库连接
+  //       this.dbServer = '127.0.0.1'
+  //       this.dbPort = 3306
+  //       this.dbName = 'spider'
+  //       this.dbUser = 'root'
+  //       this.dbPass = 'root'
 
-        // this.dbServer = '192.168.1.204'
-        // this.dbPort = 3309
-        // this.dbName = 'wechat_oa'
-        // this.dbUser = 'test_user'
-        // this.dbPass = 'test_user'
-      }
-    })
+  //       // this.dbServer = '192.168.1.204'
+  //       // this.dbPort = 3309
+  //       // this.dbName = 'wechat_oa'
+  //       // this.dbUser = 'test_user'
+  //       // this.dbPass = 'test_user'
+  //     }
+  //   })
   },
   methods: {
     onChangeDbType (e) {
@@ -264,21 +264,16 @@ export default {
             API.connectDatabase({ ...values })
             this.spinning = false
             setTimeout(function () {
+              var obj = { connectType: 'db' }
               // 跳转到生成代码页面
               that.$router.push({
                 name: 'code',
                 // path: '/code/index',
                 params: {
-                  connectType: 'db',
-                  dbType: that.dbType,
-                  dbServer: that.dbServer,
-                  dbPort: that.dbPort,
-                  dbName: that.dbName,
-                  dbUser: that.dbUser,
-                  dbPass: that.dbPass,
+                   ...values, ...obj,
                 },
               })
-            }, 1200)
+            }, 2000)
           } catch (error) {
             this.$notification.error({
               message: '错误',

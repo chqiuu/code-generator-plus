@@ -47,9 +47,9 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
             </#if>
         </#list>
         <choose>
-            <when test="sortParam=='${pk.attrNameLowerCase}'">
+            <when test="query.sortParam=='${pk.attrNameLowerCase}'">
                 <choose>
-                    <when test="sortord=='asc'">
+                    <when test="query.sortord=='asc'">
                         ORDER BY ${acronymLowerCase}.`${pk.columnName}` asc
                     </when>
                     <otherwise>
@@ -61,7 +61,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 <#if column.columnName == 'create_time'>
             <otherwise>
                 <choose>
-                    <when test="sortord=='asc'">
+                    <when test="query.sortord=='asc'">
                         ORDER BY ${acronymLowerCase}.`create_time` asc
                     </when>
                     <otherwise>

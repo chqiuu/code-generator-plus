@@ -76,7 +76,7 @@
                 <a-col :md="16" :sm="48" :hidden="hiddenSwitchDatabaseSelect">
                   <a-form-item label="切换数据库">
                     <a-select
-                      :default-value="this.$route.params.dbName"
+                      :default-value="this.$route.params.database"
                       style="width: 130px"
                       @change="handleSwitchDatabaseChange"
                     >
@@ -87,11 +87,9 @@
                         {{ database.schemaName }}
                       </a-select-option>
                     </a-select>
-                    【当前链接：{{ this.$route.params.dbType }}
-                    {{ this.$route.params.dbServer }}:{{
-                      this.$route.params.dbPort
-                    }}
-                    {{ this.$route.params.dbName }}】
+                    <span>
+                      【当前链接：{{ this.databaseDetails }}】
+                    </span>
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -410,6 +408,7 @@ export default {
       moduleName: null,
       // 是否显示切换数据库下拉框
       hiddenSwitchDatabaseSelect: true,
+      databaseDetails: null,
       // 数据库列表
       databases: [],
       // 当前预览的表名
@@ -455,6 +454,7 @@ export default {
       const connectType = this.$route.params.connectType
       if (connectType === 'db') {
         this.hiddenSwitchDatabaseSelect = false
+        this.databaseDetails = this.$route.params.dbType + ' ' + this.$route.params.server + ':' + this.$route.params.port + ' ' + this.$route.params.database
         this.databases = await API.getAllDatabaseList()
       }
     },
@@ -503,12 +503,14 @@ export default {
       try {
         const result = await API.connectDatabase({
           dbType: this.$route.params.dbType,
-          server: this.$route.params.dbServer,
-          port: this.$route.params.dbPort,
+          server: this.$route.params.server,
+          port: this.$route.params.port,
           database: value,
-          username: this.$route.params.dbUser,
-          password: this.$route.params.dbPass,
+          username: this.$route.params.username,
+          password: this.$route.params.password,
         })
+        this.databaseDetails = this.$route.params.dbType + ' ' + this.$route.params.server + ':' + this.$route.params.port + ' ' + value
+
         // 加载表列表
         this.fetchTableStructure()
         this.$notification.success({

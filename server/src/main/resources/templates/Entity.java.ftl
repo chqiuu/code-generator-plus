@@ -31,10 +31,10 @@ import java.time.LocalDate;
  */
 <#if lombokDataEnabled == 1>
 @Data
-@EqualsAndHashCode(callSuper = true)
 </#if>
 @ApiModel(value = "${commentEscape}")
 <#if plusEnabled == 1>
+@EqualsAndHashCode(callSuper = true)
 @TableName("${tableName}")
 public class ${classNameUpperCase}Entity extends Model${r'<'}${classNameUpperCase}Entity><#else>
 public class ${classNameUpperCase}Entity implements Serializable</#if>${r'{'}

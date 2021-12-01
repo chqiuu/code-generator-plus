@@ -77,7 +77,8 @@ public interface CodeGeneratorService {
      * @param allTables       所有表
      * @return 生成代码预览
      */
-    List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables);
+    List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author
+            , String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables);
 
     /**
      * 生成代码

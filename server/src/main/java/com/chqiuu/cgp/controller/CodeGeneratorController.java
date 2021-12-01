@@ -47,6 +47,12 @@ import static cn.hutool.core.date.DatePattern.PURE_DATETIME_MS_PATTERN;
 public class CodeGeneratorController extends BaseController {
     private final CodeGeneratorService codeGeneratorService;
 
+    @ApiOperation(value = "健康检查", notes = "健康检查")
+    @GetMapping("/health")
+    public Result<String> health() {
+        return Result.ok();
+    }
+    
     @ApiOperation(value = "第一步：连接数据库", notes = "连接数据库")
     @PostMapping("/connectDatabase")
     public Result<String> connectDatabase(@Validated @RequestBody ConnectDatabaseInputVO vo) {
@@ -148,6 +154,7 @@ public class CodeGeneratorController extends BaseController {
         //查询列表数据
         return Result.ok(codeGeneratorService.queryTableList(getConnect(), tableName));
     }
+
 
     @ApiOperation(value = "预览生成的代码")
     @PostMapping("/preview")

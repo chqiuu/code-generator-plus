@@ -47,22 +47,26 @@ public class OracleDatabase extends BaseDatabase {
         return null;
     }
 
+    /**
+     *
+     SELECT A.TABLE_NAME tableName, A.column_name columnname,A.data_type dataType,A.data_length characterMaximumLength
+     , A.DATA_DEFAULT columnDefault,A.data_precision numericPrecision
+     , A.Data_Scale numericScale,A.nullable isNullable,A.CHARACTER_SET_NAME characterSetName,B.comments columnComment
+     , CONCAT(CONCAT(CONCAT(CONCAT(CONCAT('`',A.column_name),'` '),A.data_type),CASE WHEN A.nullable='NO' THEN ' NOT NULL' ELSE '' END), CASE WHEN B.comments IS NULL THEN '' ELSE CONCAT(' COMMENT ',B.comments) END) ddl
+     FROM user_tab_columns A, user_col_comments B
+     WHERE A.Table_Name = B.Table_Name AND A.Column_Name = B.Column_Name AND A.Table_Name = 'DETAILS'
+     * @param connect   数据库连接
+     * @param tableName 待查询表
+     * @return
+     */
     @Override
     public List<ColumnEntity> queryColumns(BaseConnect connect, String tableName) {
-        String sql = String.format("select temp.column_name columnname,\n" +
-                "        temp.data_type dataType,\n" +
-                "        temp.comments columnComment,\n" +
-                "        case temp.constraint_type when 'P' then 'PRI' when 'C' then 'UNI' else '' end \"COLUMNKEY\",\n" +
-                "        '' \"EXTRA\"\n" +
-                "        from (select col.column_id,col.column_name,col.data_type,colc.comments,uc.constraint_type,\n" +
-                "        row_number() over (partition by col.column_name order by uc.constraint_type desc) as row_flg\n" +
-                "        from user_tab_columns col left join user_col_comments colc\n" +
-                "        on colc.table_name = col.table_name and colc.column_name = col.column_name\n" +
-                "        left join user_cons_columns ucc on ucc.table_name = col.table_name\n" +
-                "        and ucc.column_name = col.column_name\n" +
-                "        left join user_constraints uc on uc.constraint_name = ucc.constraint_name\n" +
-                "        where col.table_name = upper('%s')) temp\n" +
-                "        where temp.row_flg = 1 order by temp.column_id", tableName);
+        String sql = String.format("SELECT A.TABLE_NAME tableName, A.column_name columnname,A.data_type dataType,A.data_length characterMaximumLength\n" +
+                "     , A.DATA_DEFAULT columnDefault,A.data_precision numericPrecision\n" +
+                "     , A.Data_Scale numericScale,A.nullable isNullable,A.CHARACTER_SET_NAME characterSetName,B.comments columnComment\n" +
+                "     , CONCAT(CONCAT(CONCAT(CONCAT(CONCAT('`',A.column_name),'` '),A.data_type),CASE WHEN A.nullable='NO' THEN ' NOT NULL' ELSE '' END), CASE WHEN B.comments IS NULL THEN '' ELSE CONCAT(' COMMENT ',B.comments) END) ddl\n" +
+                "     FROM user_tab_columns A, user_col_comments B\n" +
+                "     WHERE A.Table_Name = B.Table_Name AND A.Column_Name = B.Column_Name AND A.Table_Name = '%s'", tableName);
         return connect.queryList(sql, ColumnEntity.class);
     }
 

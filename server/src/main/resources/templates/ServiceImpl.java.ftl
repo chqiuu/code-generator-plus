@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -33,7 +33,7 @@ import ${codePackage}.service.${classNameUpperCase}Service;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends ServiceImpl${r'<'}${classNameUpperCase}Mapper, ${classNameUpperCase}Entity></#if> implements ${classNameUpperCase}Service ${r'{'}
 
 <#if plusEnabled == 0>

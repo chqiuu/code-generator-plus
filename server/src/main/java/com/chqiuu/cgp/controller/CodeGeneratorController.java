@@ -19,7 +19,7 @@ import com.chqiuu.cgp.vo.ConnectDatabaseInputVO;
 import com.chqiuu.cgp.vo.GeneratorVO;
 import com.chqiuu.cgp.vo.SqlVO;
 import io.swagger.annotations.*;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +41,7 @@ import static cn.hutool.core.date.DatePattern.PURE_DATETIME_MS_PATTERN;
  */
 @Validated
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/generator")
 @Api(value = "/generator", tags = "代码生成器控制类")
 public class CodeGeneratorController extends BaseController {

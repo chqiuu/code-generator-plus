@@ -1,6 +1,6 @@
 package com.chqiuu.cgp.config;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -58,7 +58,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 // @EnableSwagger2注解要开启Swagger功能
 @EnableSwagger2
 @AutoConfigureAfter({WebMvcConfig.class})
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Swagger2Config {
 
     /**

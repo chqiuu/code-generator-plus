@@ -14,7 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ${commonPackage}.common.base.BaseController;
@@ -48,7 +48,7 @@ import java.util.List;
 @RestController
 @RequestMapping("${mappingName}")
 @Api(value = "${commentEscape}", tags = "${commentEscape}")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ${classNameUpperCase}Controller extends BaseController{
 
 private final ${classNameUpperCase}Service ${classNameLowerCase}Service;

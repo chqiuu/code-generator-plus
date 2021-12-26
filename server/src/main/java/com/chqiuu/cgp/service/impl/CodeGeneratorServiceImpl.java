@@ -21,7 +21,7 @@ import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
 import com.chqiuu.cgp.vo.GeneratorTableVO;
 import freemarker.template.Template;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.WordUtils;
@@ -42,7 +42,7 @@ import static com.chqiuu.cgp.common.constant.Constant.Public.CODE_FILE_TEMPLATES
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     private final GeneratorProperties properties;
     private final FreeMarkerConfigurer configurer;

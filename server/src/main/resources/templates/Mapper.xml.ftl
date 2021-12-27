@@ -23,7 +23,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <select id="getDetailById" resultType="${codePackage}.dto.${classNameUpperCase}DetailDTO">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
-        FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}
+        FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}<#if logicDelete == 1> AND ${acronymLowerCase}.`is_deleted` = 0</#if>
     </select>
         </#if>
         <#if generalMethod.getListEnabled==1>
@@ -46,6 +46,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 </#if>
             </#if>
         </#list>
+        <#if logicDelete == 1><#--逻辑删除标识--> AND ${acronymLowerCase}.`is_deleted` = 0</#if>
         <choose>
             <when test="query.sortParam=='${pk.attrNameLowerCase}'">
                 <choose>
@@ -94,6 +95,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 </#if>
             </#if>
         </#list>
+        <#if logicDelete == 1><#--逻辑删除标识--> AND ${acronymLowerCase}.`is_deleted` = 0</#if>
         <choose>
             <when test="query.sortParam=='${pk.attrNameLowerCase}'">
                 <choose>

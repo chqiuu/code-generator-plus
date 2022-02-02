@@ -39,7 +39,7 @@
         <sqlite-jdbc.version>3.8.11.2</sqlite-jdbc.version>
         <ojdbc8.version>18.3.0.0</ojdbc8.version>
         <mssql-jdbc.version>6.4.0.jre8</mssql-jdbc.version>
-        <postgresql.version>42.0.0</postgresql.version>
+        <postgresql.version>42.2.25</postgresql.version>
 
         <webmagic.version>0.7.4</webmagic.version>
 

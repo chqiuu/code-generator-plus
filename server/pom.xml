@@ -5,27 +5,27 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.7</version>
+        <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.chqiuu</groupId>
     <artifactId>code-generator-plus</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <name>code-generator-plus</name>
     <description>JAVA项目代码自动生成工具 for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.5.7</spring-boot.version>
+        <spring-boot.version>2.6.2</spring-boot.version>
         <spring-security-taglibs.version>5.4.1</spring-security-taglibs.version>
-        <druid-spring-boot-starter.version>1.2.6</druid-spring-boot-starter.version>
-        <mybatis-plus-boot-starter.version>3.4.2</mybatis-plus-boot-starter.version>
-        <knife4j-spring-boot-starter.version>3.0.2</knife4j-spring-boot-starter.version>
+        <druid-spring-boot-starter.version>1.2.8</druid-spring-boot-starter.version>
+        <mybatis-plus-boot-starter.version>3.5.1</mybatis-plus-boot-starter.version>
+        <knife4j-spring-boot-starter.version>3.0.3</knife4j-spring-boot-starter.version>
         <slf4j.version>1.7.30</slf4j.version>
         <httpclient.version>4.5.13</httpclient.version>
         <nlp-lang.version>1.7.8</nlp-lang.version>
-        <fastjson.version>1.2.76</fastjson.version>
-        <hutool.version>5.6.4</hutool.version>
+        <fastjson.version>1.2.79</fastjson.version>
+        <hutool.version>5.7.20</hutool.version>
         <poi.version>3.17</poi.version>
         <easyexcel.version>2.2.8</easyexcel.version>
         <flying-saucer-pdf.version>9.1.20</flying-saucer-pdf.version>
@@ -34,31 +34,22 @@
         <jsoup.version>1.13.1</jsoup.version>
         <guava.version>30.1-jre</guava.version>
         <zxing.version>3.4.1</zxing.version>
-        <jooq.version>3.13.2</jooq.version>
+        <jooq.version>3.16.2</jooq.version>
 
-        <sqlite-jdbc.version>3.8.11.2</sqlite-jdbc.version>
+        <sqlite-jdbc.version>3.36.0.2</sqlite-jdbc.version>
         <ojdbc8.version>18.3.0.0</ojdbc8.version>
-        <mssql-jdbc.version>6.4.0.jre8</mssql-jdbc.version>
-        <postgresql.version>42.0.0</postgresql.version>
+        <mssql-jdbc.version>10.2.0.jre17</mssql-jdbc.version>
+        <postgresql.version>42.3.2</postgresql.version>
 
-        <webmagic.version>0.7.4</webmagic.version>
+        <webmagic.version>0.7.5</webmagic.version>
 
         <commons-fileupload.version>1.4</commons-fileupload.version>
-        <commons-text.version>1.8</commons-text.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-text.version>1.9</commons-text.version>
+        <commons-io.version>20030203.000550</commons-io.version>
         <commons-email.version>1.5</commons-email.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -68,10 +59,27 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
@@ -182,12 +190,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <!--slf4j end-->
 

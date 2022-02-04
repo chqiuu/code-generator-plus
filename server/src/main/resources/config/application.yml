@@ -7,15 +7,23 @@ spring:
   mvc:
     view:
       suffix: .jsp
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   freemarker:
+    #req访问request
     request-context-attribute: req
+    #后缀名
     suffix: .ftl
     content-type: text/html; charset=UTF-8
     enabled: true
+    #缓存配置
     cache: false
-    template-loader-path: classpath:/templates/
-    charset: UTF-8
+    #模板加载路径 按需配置
+    template-loader-path: classpath:templates/, file:./templates/
+    charset: UTF-8 #编码格式
+    expose-spring-macro-helpers: true
     settings:
+      #数字格式化，无小数点
       number_format: '0.##'
       auto_import: spring.ftl as spring
       default_encoding: UTF-8

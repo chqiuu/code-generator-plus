@@ -549,7 +549,7 @@ export default {
     },
     getLastWord (tableName) {
       // 获取字符串中最后一个单词，若最好单词为info则忽略，向前移一个单词
-      tableName = tableName.replaceAll('_info', '')
+      tableName = tableName.toLowerCase().replaceAll('_info', '')
       if (tableName.search('_') !== -1) {
         return tableName.substring(tableName.lastIndexOf('_') + 1)
       }

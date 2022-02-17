@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import ${commonPackage}.common.validator.group.Default;
 import ${commonPackage}.common.validator.group.Update;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.BeanUtils;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -87,12 +88,7 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
      */
     public ${classNameUpperCase}Entity convertToEntity() {
         ${classNameUpperCase}Entity entity = new ${classNameUpperCase}Entity();
-        <#list columns as column>
-            <#if exclusionShowColumns?contains(column.columnName)>
-            <#else>
-        entity.set${column.attrNameUpperCase}(${column.attrNameLowerCase});
-            </#if>
-        </#list>
+        BeanUtils.copyProperties(this, entity);
         return entity;
     }
 ${r'}'}

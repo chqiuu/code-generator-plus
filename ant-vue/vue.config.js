@@ -136,12 +136,12 @@ const vueConfig = {
         changeOrigin: true,
         onProxyRes: function (proxyRes, req, res) {
           // 代理response事件
-          console.log('res---->\n')
-          console.log(proxyRes.headers)
+          // console.log('res---->\n')
+          // console.log(proxyRes.headers)
         },
         onProxyReq: function (proxyReq, req, res) {
           // 代理requset事件
-          console.log('req---->\n')
+          // console.log('req---->\n')
           delete req.headers.host
         },
         pathRewrite: {

@@ -46,6 +46,7 @@ public class Constant {
         public final static String[] CODE_FILE_TEMPLATES = new String[]{
                 "Entity.java.ftl"
                 , "Controller.java.ftl"
+                , "Converter.java.ftl"
                 , "Service.java.ftl"
                 , "ServiceImpl.java.ftl"
                 , "Dao.java.ftl"
@@ -62,8 +63,6 @@ public class Constant {
          * 初始化ID生成器，调用方式 snowflake.nextId();
          */
         public static Snowflake SNOW_FLAKE = IdUtil.getSnowflake(1, 2);
-
-
     }
 
     /**

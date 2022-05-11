@@ -6,7 +6,7 @@
           <div class="table-page-search-wrapper">
             <a-form layout="inline">
               <a-row :gutter="48">
-                <a-col :md="8" :sm="24">
+                <a-col :md="5" :sm="24">
                   <a-form-item label="项目主包名">
                     <a-input
                       v-model="queryParam.rootPackage"
@@ -14,7 +14,7 @@
                     />
                   </a-form-item>
                 </a-col>
-                <a-col :md="8" :sm="24">
+                <a-col :md="3" :sm="24">
                   <a-form-item label="创建人">
                     <a-input
                       placeholder="请输入创建人。如：chqiuu"
@@ -22,17 +22,43 @@
                     />
                   </a-form-item>
                 </a-col>
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="MyBatis-Plus">
-                    <a-checkbox v-model="queryParam.isPlus">
-                      是否生成MyBatis-Plus模式代码
-                    </a-checkbox>
-                  </a-form-item>
+                <a-col :md="4" :sm="24">
+                  <a-tooltip
+                    title="是否生成MyBatis-Plus模式代码"
+                    arrow-point-at-center
+                  >
+                    <a-form-item label="支持MyBatis-Plus">
+                      <a-switch v-model="queryParam.isPlus" />
+                    </a-form-item>
+                  </a-tooltip>
                 </a-col>
-
-                <a-col :md="24" :sm="48">
+                <a-col :md="3" :sm="24">
+                  <a-tooltip
+                    title="是否使用mapstruct对象转换工具"
+                    arrow-point-at-center
+                  >
+                    <a-form-item label="支持mapstruct">
+                      <a-switch v-model="queryParam.isMapstructEnabled" />
+                    </a-form-item>
+                  </a-tooltip>
+                </a-col>
+                <a-col :md="9" :sm="24">
                   <a-form-item label="选择生成方法">
-                    <a-checkbox
+                    <a-select
+                      mode="multiple"
+                      :size="size"
+                      placeholder="Please select"
+                      :default-value="defaultGenMethodOptions"
+                    >
+                      <a-select-option
+                        v-for="method in genMethodOptions"
+                        :key="method"
+                      >
+                        {{ method }}
+                      </a-select-option>
+                    </a-select>
+
+                    <!-- <a-checkbox
                       :indeterminate="indeterminate"
                       :checked="checkGenMethodAll"
                       @change="onCheckGenMethodAllChange"
@@ -43,7 +69,7 @@
                       v-model="queryParam.genMethods"
                       :options="genMethodOptions"
                       @change="onGenMethodChange"
-                    />
+                    /> -->
                   </a-form-item>
                 </a-col>
 
@@ -87,9 +113,7 @@
                         {{ database.schemaName }}
                       </a-select-option>
                     </a-select>
-                    <span>
-                      【当前链接：{{ this.databaseDetails }}】
-                    </span>
+                    <span> 【当前链接：{{ this.databaseDetails }}】 </span>
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -222,7 +246,7 @@
       :title="previewTableName"
       width="95%"
       :dialog-style="{ top: '20px' }"
-      style="min-height: 700px;height: 100%"
+      style="min-height: 700px; height: 100%"
     >
       <a-tabs
         type="card"
@@ -239,7 +263,7 @@
       </a-tabs>
       <div
         id="code-preview"
-        style="min-height: 700px;height: 100%;width: 100%;"
+        style="min-height: 700px; height: 100%; width: 100%"
       />
     </a-modal>
   </div>
@@ -248,6 +272,7 @@
 <script>
 import API from '@/api/index'
 import * as monaco from 'monaco-editor'
+import { ref } from 'vue'
 
 const columns = [
   {
@@ -380,7 +405,7 @@ const genMethodOptions = [
 ]
 
 // 默认选中项
-const defaultGenMethodCheckedList = [
+const defaultGenMethodOptions = [
   'add',
   'update',
   'getDetailById',
@@ -400,6 +425,7 @@ export default {
       // 是否全选
       checkGenMethodAll: false,
       genMethodOptions,
+      defaultGenMethodOptions,
       // 数据库表显示字段定义
       columns: columns,
       // 数据库表显示数据
@@ -432,7 +458,8 @@ export default {
         rootPackage: 'com.chqiuu',
         author: 'chqiuu',
         isPlus: true,
-        genMethods: defaultGenMethodCheckedList,
+        isMapstructEnabled: true,
+        genMethods: defaultGenMethodOptions,
       },
       selectedRowKeys: [],
     }
@@ -454,7 +481,14 @@ export default {
       const connectType = this.$route.params.connectType
       if (connectType === 'db') {
         this.hiddenSwitchDatabaseSelect = false
-        this.databaseDetails = this.$route.params.dbType + ' ' + this.$route.params.server + ':' + this.$route.params.port + ' ' + this.$route.params.database
+        this.databaseDetails =
+          this.$route.params.dbType +
+          ' ' +
+          this.$route.params.server +
+          ':' +
+          this.$route.params.port +
+          ' ' +
+          this.$route.params.database
         this.databases = await API.getAllDatabaseList()
       }
     },
@@ -484,20 +518,20 @@ export default {
     setModalSetModuleAfterClose () {
       this.modalSetModuleVisible = false
     },
-    onGenMethodChange (checkedGenMethodList) {
-      this.indeterminate =
-        !!checkedGenMethodList.length &&
-        checkedGenMethodList.length < genMethodOptions.length
-      this.checkGenMethodAll =
-        checkedGenMethodList.length === genMethodOptions.length
-    },
-    onCheckGenMethodAllChange (e) {
-      this.queryParam.genMethods = e.target.checked
-        ? this.genMethodOptions
-        : []
-      this.indeterminate = false
-      this.checkGenMethodAll = e.target.checked
-    },
+    // onGenMethodChange(checkedGenMethodList) {
+    //   this.indeterminate =
+    //     !!checkedGenMethodList.length &&
+    //     checkedGenMethodList.length < genMethodOptions.length;
+    //   this.checkGenMethodAll =
+    //     checkedGenMethodList.length === genMethodOptions.length;
+    // },
+    // onCheckGenMethodAllChange(e) {
+    //   this.queryParam.genMethods = e.target.checked
+    //     ? this.genMethodOptions
+    //     : [];
+    //   this.indeterminate = false;
+    //   this.checkGenMethodAll = e.target.checked;
+    // },
     async handleSwitchDatabaseChange (value) {
       // 切换数据库
       try {
@@ -509,7 +543,14 @@ export default {
           username: this.$route.params.username,
           password: this.$route.params.password,
         })
-        this.databaseDetails = this.$route.params.dbType + ' ' + this.$route.params.server + ':' + this.$route.params.port + ' ' + value
+        this.databaseDetails =
+          this.$route.params.dbType +
+          ' ' +
+          this.$route.params.server +
+          ':' +
+          this.$route.params.port +
+          ' ' +
+          value
 
         // 加载表列表
         this.fetchTableStructure()
@@ -607,6 +648,7 @@ export default {
           table: row.tableName,
           mappingName: row.mappingName,
           isPlus: this.queryParam.isPlus,
+          isMapstructEnabled: this.queryParam.isMapstructEnabled,
           genMethods: this.queryParam.genMethods,
         })
         this.$notification.success({
@@ -615,6 +657,7 @@ export default {
           duration: 3,
         })
         this.previewCodeList = result
+        console.info('this.previewCodeList', this.previewCodeList)
         // 显示弹出框
         this.modalPreviewCodeVisible = true
         // 延时加载后面的内容，不然导致编辑器初始化失败

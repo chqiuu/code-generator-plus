@@ -23,6 +23,8 @@ import ${commonPackage}.common.domain.ResultEnum;
 import ${codePackage}.service.${classNameUpperCase}Service;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
+<#if mapstructEnabled == 1>import ${codePackage}.converter.${classNameUpperCase}Converter;</#if>
+
 <#if plusEnabled == 1>
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
@@ -52,6 +54,8 @@ import java.util.List;
 public class ${classNameUpperCase}Controller extends BaseController{
 
 private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
+<#if mapstructEnabled == 1>private final ${classNameUpperCase}Converter ${classNameLowerCase}Converter;</#if>
+
 
 <#if plusEnabled == 1>
     <#if generalMethod??>
@@ -80,7 +84,7 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
     @PostMapping("/add")
     public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
-        ${classNameUpperCase}Entity entity = vo.convertToEntity();
+        <#if mapstructEnabled == 1>${classNameUpperCase}Entity entity = ${classNameLowerCase}Converter.fromInputVO(vo);<#else>${classNameUpperCase}Entity entity = vo.convertToEntity();</#if>
         entity.set${pk.attrNameUpperCase}(null);
         ${classNameLowerCase}Service.save(entity);
         return Result.ok(entity.get${pk.attrNameUpperCase}());
@@ -94,7 +98,7 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
         if (null == entity) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
         }
-        ${classNameLowerCase}Service.updateById(vo.convertToEntity());
+        <#if mapstructEnabled == 1>${classNameLowerCase}Service.updateById(${classNameLowerCase}Converter.fromInputVO(vo));<#else>${classNameLowerCase}Service.updateById(vo.convertToEntity());</#if>
         return Result.ok();
     }
         </#if>

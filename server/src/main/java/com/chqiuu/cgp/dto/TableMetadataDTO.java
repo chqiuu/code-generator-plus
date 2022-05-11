@@ -86,22 +86,6 @@ public class TableMetadataDTO implements Serializable {
      */
     private Integer logicDelete = 0;
     /**
-     * 是否为MyBatis-Plus
-     */
-    private Integer plusEnabled = 0;
-    /**
-     * 是否生成通用方法
-     */
-    private GeneralMethodEnabledDTO generalMethod;
-    /**
-     * 是否启用map查询功能
-     */
-    private Integer mapQueryEnabled = 0;
-    /**
-     * 是否启用@Data注解
-     */
-    private Integer lombokDataEnabled = 0;
-    /**
      * 是否存在 BigDecimal 字段
      */
     private Integer hasBigDecimalAttr = 0;
@@ -113,6 +97,26 @@ public class TableMetadataDTO implements Serializable {
      * 排除显示的字段
      */
     private String exclusionShowColumns = "is_deleted,del_time,del_user,create_time,update_time,gmt_create,gmt_modified";
+    /**
+     * 是否生成通用方法
+     */
+    private GeneralMethodEnabledDTO generalMethod;
+    /**
+     * 是否支持MyBatis-Plus
+     */
+    private Integer plusEnabled = 0;
+    /**
+     * 是否启用map查询功能
+     */
+    private Integer mapQueryEnabled = 0;
+    /**
+     * 是否启用@Data注解
+     */
+    private Integer lombokDataEnabled = 0;
+    /**
+     * 是否启用mapstruct对象转换工具
+     */
+    private Integer mapstructEnabled = 0;
     /**
      * 创建时间
      */

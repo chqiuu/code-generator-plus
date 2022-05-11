@@ -46,6 +46,12 @@ public class CodePreviewInputVO implements Serializable {
     @NotNull(message = "是否为MyBatis-Plus不能为空")
     @ApiModelProperty(value = "是否为MyBatis-Plus")
     private Boolean isPlus;
+    /**
+     * 是否启用mapstruct对象转换工具
+     */
+    @NotNull(message = "是否启用mapstruct对象转换支持不能为空")
+    @ApiModelProperty(value = "是否启用mapstruct对象转换")
+    private Boolean isMapstructEnabled;
 
     @NotNull(message = "请设置需要生成的方法列表")
     @ApiModelProperty(value = "需要生成的方法列表")

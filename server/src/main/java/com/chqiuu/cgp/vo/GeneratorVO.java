@@ -38,6 +38,12 @@ public class GeneratorVO implements Serializable {
     @ApiModelProperty(value = "MyBatis-Plus支持")
     private Boolean isPlus;
     /**
+     * 是否启用mapstruct对象转换工具
+     */
+    @NotNull(message = "是否启用mapstruct对象转换支持不能为空")
+    @ApiModelProperty(value = "是否启用mapstruct对象转换")
+    private Boolean isMapstructEnabled;
+    /**
      * 带生成的数据库表列表
      */
     @Valid

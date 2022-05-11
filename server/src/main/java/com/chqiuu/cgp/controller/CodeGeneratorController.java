@@ -52,7 +52,7 @@ public class CodeGeneratorController extends BaseController {
     public Result<String> health() {
         return Result.ok();
     }
-    
+
     @ApiOperation(value = "第一步：连接数据库", notes = "连接数据库")
     @PostMapping("/connectDatabase")
     public Result<String> connectDatabase(@Validated @RequestBody ConnectDatabaseInputVO vo) {
@@ -133,7 +133,7 @@ public class CodeGeneratorController extends BaseController {
         if (null == driverClassEnum) {
             throw new UserException(ResultEnum.FAILED, "数据库类型有误！");
         }
-        byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getGenMethods(), vo.getTables(), list);
+        byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsPlus(), vo.getIsMapstructEnabled(), vo.getGenMethods(), vo.getTables(), list);
         HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), LocalDateTimeUtil.format(LocalDateTime.now(), PURE_DATETIME_MS_PATTERN)));
@@ -172,7 +172,7 @@ public class CodeGeneratorController extends BaseController {
             vo.setRootPackage(vo.getCodePackage().substring(0, vo.getCodePackage().lastIndexOf(".")));
         }
         return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName()
-                , vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), vo.getGenMethods(), list));
+                , vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), vo.getIsMapstructEnabled(), vo.getGenMethods(), list));
     }
 
     /**
@@ -197,14 +197,15 @@ public class CodeGeneratorController extends BaseController {
             @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
             @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
             @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
+            @ApiImplicitParam(name = "isMapstructEnabled", value = "是否启用mapstruct对象转换", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
     })
     @GetMapping("/codeAll")
-    public void codeAll(String codePackage, String rootPackage, String moduleName, String author, boolean isPlus, String[] genMethods) throws Exception {
+    public void codeAll(String codePackage, String rootPackage, String moduleName, String author, boolean isPlus, boolean isMapstructEnabled, String[] genMethods) throws Exception {
         if (StrUtil.isNotBlank(codePackage)) {
             moduleName = codePackage.substring(codePackage.lastIndexOf(".") + 1);
             rootPackage = codePackage.substring(0, codePackage.lastIndexOf("."));
         }
-        byte[] data = codeGeneratorService.generatorCodeAll(getConnect(), rootPackage, moduleName, author, isPlus, genMethods);
+        byte[] data = codeGeneratorService.generatorCodeAll(getConnect(), rootPackage, moduleName, author, isPlus, isMapstructEnabled, genMethods);
         HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=\"code-" + new Date().toLocaleString() + ".zip\"");

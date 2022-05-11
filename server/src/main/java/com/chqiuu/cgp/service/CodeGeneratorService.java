@@ -81,6 +81,23 @@ public interface CodeGeneratorService {
             , String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables);
 
     /**
+     * 生成代码预览
+     *
+     * @param driverClassEnum    数据库类型
+     * @param rootPackage        包名
+     * @param moduleName         模块名
+     * @param author             创建人
+     * @param tableName          生成代码的表
+     * @param mappingName        Controller中URL映射名称
+     * @param isPlus             是否为MyBatis-Plus
+     * @param isMapstructEnabled 是否启用mapstruct对象转换工具
+     * @param allTables          所有表
+     * @return 生成代码预览
+     */
+    List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author
+            , String tableName, String mappingName, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, List<TableEntity> allTables);
+
+    /**
      * 生成代码
      *
      * @param connect     数据库连接
@@ -90,7 +107,7 @@ public interface CodeGeneratorService {
      * @param isPlus      是否为MyBatis-Plus
      * @return 字节码
      */
-    byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isPlus, String[] genMethods);
+    byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isPlus, boolean isMapstructEnabled, String[] genMethods);
 
     /**
      * 生成全部表代码
@@ -105,18 +122,32 @@ public interface CodeGeneratorService {
     byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus, String[] genMethods);
 
     /**
-     * 多表批量生成代码
+     * 生成全部表代码
      *
-     * @param driverClassEnum 数据库类型
-     * @param rootPackage     项目主包名
-     * @param author          创建人
-     * @param isPlus          是否为MyBatis-Plus
-     * @param tables          需要生成的表
-     * @param genMethods      需要生成的方法
-     * @param allTables       所有表
+     * @param connect            数据库连接
+     * @param rootPackage        包名
+     * @param moduleName         模块名
+     * @param author             创建人
+     * @param isPlus             是否为MyBatis-Plus
+     * @param isMapstructEnabled 是否启用mapstruct对象转换工具
      * @return 字节码
      */
-    byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, String[] genMethods, List<GeneratorTableVO> tables, List<TableEntity> allTables);
+    byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus, boolean isMapstructEnabled, String[] genMethods);
+
+    /**
+     * 多表批量生成代码
+     *
+     * @param driverClassEnum    数据库类型
+     * @param rootPackage        项目主包名
+     * @param author             创建人
+     * @param isPlus             是否为MyBatis-Plus
+     * @param isMapstructEnabled 是否启用mapstruct对象转换工具
+     * @param tables             需要生成的表
+     * @param genMethods         需要生成的方法
+     * @param allTables          所有表
+     * @return 字节码
+     */
+    byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, boolean isMapstructEnabled, String[] genMethods, List<GeneratorTableVO> tables, List<TableEntity> allTables);
 
 
 }

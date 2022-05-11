@@ -81,6 +81,7 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
             </#if>
         </#list>
     </#if>
+    <#if mapstructEnabled == 0>
     /**
      * 输入对象转为实体类
      *
@@ -91,4 +92,5 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
         BeanUtils.copyProperties(this, entity);
         return entity;
     }
+    </#if>
 ${r'}'}

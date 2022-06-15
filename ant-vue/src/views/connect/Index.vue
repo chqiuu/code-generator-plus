@@ -235,11 +235,11 @@ export default {
   //       this.dbUser = 'root'
   //       this.dbPass = 'root'
 
-  //       // this.dbServer = '192.168.1.204'
-  //       // this.dbPort = 3309
-  //       // this.dbName = 'wechat_oa'
-  //       // this.dbUser = 'test_user'
-  //       // this.dbPass = 'test_user'
+        this.dbServer = '192.168.1.204'
+        this.dbPort = 3309
+        this.dbName = 'wechat_oa'
+        this.dbUser = 'test_user'
+        this.dbPass = 'test_user'
   //     }
   //   })
   },

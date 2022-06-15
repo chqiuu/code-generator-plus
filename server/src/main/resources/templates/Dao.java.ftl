@@ -25,6 +25,7 @@ import java.util.Map;
 public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpperCase}Entity> {
     <#if generalMethod??>
         <#if generalMethod.insertIgnoreEnabled==1>
+
     /**
     * 插入数据，如果中已经存在相同的记录，则忽略当前新数据
     *
@@ -35,6 +36,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     int insertIgnore(${classNameUpperCase}Entity entity);
         </#if>
         <#if generalMethod.replaceEnabled==1>
+
     /**
     * 替换数据，如果中已经存在相同的记录，则覆盖旧数据
     *
@@ -45,6 +47,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     int replace(${classNameUpperCase}Entity entity);
         </#if>
         <#if generalMethod.getDetailByIdEnabled==1>
+
     /**
     * 根据唯一ID获取详细信息
     *
@@ -54,6 +57,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     ${classNameUpperCase}DetailDTO getDetailById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
         </#if>
         <#if generalMethod.getListEnabled==1>
+
     /**
     * ${comment}列表查询
     * @param query       查询对象
@@ -62,6 +66,7 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     List${r'<'}${classNameUpperCase}ListDTO> getList(@Param("query") ${classNameUpperCase}ListQuery query);
         </#if>
         <#if generalMethod.getPageEnabled==1>
+
     /**
     * ${comment}分页查询
     * @param pageInfo      分页控件

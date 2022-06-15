@@ -21,7 +21,6 @@ public interface ${classNameUpperCase}Converter {
     */
     ${classNameUpperCase}Entity fromInputVO(${classNameUpperCase}InputVO vo);
 
-
     /**
     * Entity 转 DetailDTO
     *

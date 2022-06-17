@@ -24,7 +24,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <httpclient.version>4.5.13</httpclient.version>
         <nlp-lang.version>1.7.8</nlp-lang.version>
-        <fastjson.version>1.2.79</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <hutool.version>5.7.20</hutool.version>
         <poi.version>3.17</poi.version>
         <easyexcel.version>2.2.8</easyexcel.version>

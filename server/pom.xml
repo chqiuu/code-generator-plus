@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.chqiuu</groupId>
     <artifactId>code-generator-plus</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <name>code-generator-plus</name>
     <description>JAVA项目代码自动生成工具 for Spring Boot</description>
 

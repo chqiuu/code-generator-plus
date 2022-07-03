@@ -121,13 +121,13 @@
           </div>
           <a-alert type="success" show-icon>
             <template slot="message">
-              <span style="margin-right: 12px"
-                >已选择:
+              <span
+                style="margin-right: 12px"
+              >已选择:
                 <a style="font-weight: 600">
                   {{ this.selectedRowKeys.length }}
                 </a>
-                张表</span
-              >
+                张表</span>
             </template>
           </a-alert>
           <a-table
@@ -137,7 +137,7 @@
             :row-key="(record, index) => index"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChangeTable,
+              onChange: onSelectChangeTable
             }"
             :pagination="false"
             :columns="columns"
@@ -166,9 +166,9 @@
               <a style="font-weight: 600">
                 {{
                   text === null ||
-                  text === "" ||
-                  text === undefined ||
-                  text.length === 0
+                    text === "" ||
+                    text === undefined ||
+                    text.length === 0
                     ? "-"
                     : text
                 }}
@@ -188,13 +188,14 @@
             </span>
             <span slot="action" slot-scope="text, record">
               <template>
-                <a-button @click="handlePreviewTable(record)"
-                  >查看字段信息</a-button
-                >
+                <a-button
+                  @click="handlePreviewTable(record)"
+                >查看字段信息</a-button>
                 <a-divider type="vertical" />
-                <a-button type="primary" @click="handlePreviewCode(record)"
-                  >预览代码</a-button
-                >
+                <a-button
+                  type="primary"
+                  @click="handlePreviewCode(record)"
+                >预览代码</a-button>
               </template>
             </span>
           </a-table>
@@ -215,7 +216,7 @@
             placeholder="请输入模块名"
             v-decorator="[
               'module',
-              { rules: [{ required: true, min: 1, message: '请输入模块名' }] },
+              { rules: [{ required: true, min: 1, message: '请输入模块名' }] }
             ]"
             @keyup.enter="handleSetModuleOk"
           />
@@ -269,83 +270,83 @@
 </template>
 
 <script>
-import API from "@/api/index";
-import * as monaco from "monaco-editor";
-import { ref } from "vue";
+import API from '@/api/index'
+import * as monaco from 'monaco-editor'
+import { ref } from 'vue'
 
 const columns = [
   {
-    title: "表名",
-    width: "10%",
-    dataIndex: "tableName",
-    scopedSlots: { customRender: "tableName" },
+    title: '表名',
+    width: '10%',
+    dataIndex: 'tableName',
+    scopedSlots: { customRender: 'tableName' },
     ellipsis: true,
   },
   {
-    title: "字符集",
-    width: "150px",
-    dataIndex: "tableCollation",
-    scopedSlots: { customRender: "tableCollation" },
+    title: '字符集',
+    width: '150px',
+    dataIndex: 'tableCollation',
+    scopedSlots: { customRender: 'tableCollation' },
     ellipsis: true,
   },
   {
-    title: "字段数",
-    dataIndex: "columns",
-    width: "70px",
+    title: '字段数',
+    dataIndex: 'columns',
+    width: '70px',
     sorter: true,
     needTotal: true,
-    scopedSlots: { customRender: "columns" },
+    scopedSlots: { customRender: 'columns' },
   },
   {
-    title: "表注释",
-    dataIndex: "tableComment",
-    width: "30%",
+    title: '表注释',
+    dataIndex: 'tableComment',
+    width: '30%',
     ellipsis: true,
-    scopedSlots: { customRender: "tableComment" },
+    scopedSlots: { customRender: 'tableComment' },
   },
   {
-    title: "所属模块",
-    width: "80px",
-    dataIndex: "module",
-    scopedSlots: { customRender: "module" },
+    title: '所属模块',
+    width: '80px',
+    dataIndex: 'module',
+    scopedSlots: { customRender: 'module' },
   },
   {
-    title: "URL映射名称",
-    width: "170px",
-    dataIndex: "mappingName",
-    scopedSlots: { customRender: "mappingName" },
+    title: 'URL映射名称',
+    width: '170px',
+    dataIndex: 'mappingName',
+    scopedSlots: { customRender: 'mappingName' },
   },
   {
-    title: "操作",
-    dataIndex: "action",
-    width: "210px",
-    scopedSlots: { customRender: "action" },
+    title: '操作',
+    dataIndex: 'action',
+    width: '210px',
+    scopedSlots: { customRender: 'action' },
   },
-];
+]
 
 const innerTableColumns = [
   {
-    title: "字段名",
-    width: "200px",
-    dataIndex: "columnName",
-    scopedSlots: { customRender: "columnName" },
+    title: '字段名',
+    width: '200px',
+    dataIndex: 'columnName',
+    scopedSlots: { customRender: 'columnName' },
     ellipsis: true,
   },
   {
-    title: "字段类型",
-    width: "200px",
-    dataIndex: "columnType",
+    title: '字段类型',
+    width: '200px',
+    dataIndex: 'columnType',
     ellipsis: true,
-    scopedSlots: { customRender: "columnType" },
+    scopedSlots: { customRender: 'columnType' },
   },
   {
-    title: "字段注释",
-    width: "500px",
-    dataIndex: "columnComment",
+    title: '字段注释',
+    width: '500px',
+    dataIndex: 'columnComment',
     ellipsis: true,
-    scopedSlots: { customRender: "columnComment" },
+    scopedSlots: { customRender: 'columnComment' },
   },
-];
+]
 
 const EditableCell = {
   template: `
@@ -365,59 +366,59 @@ const EditableCell = {
   props: {
     value: String,
   },
-  data() {
+  data () {
     return {
       editable: false,
-    };
+    }
   },
   directives: {
     // 获取焦点
     focus: {
       inserted: function (el) {
-        el.focus();
+        el.focus()
       },
     },
   },
   created: function () {},
   methods: {
-    handleChange(e) {
-      this.$emit("change", e.target.value);
+    handleChange (e) {
+      this.$emit('change', e.target.value)
     },
-    check() {
-      this.editable = false;
-      this.$emit("change", this.value);
+    check () {
+      this.editable = false
+      this.$emit('change', this.value)
     },
-    edit() {
-      this.editable = true;
+    edit () {
+      this.editable = true
     },
   },
-};
+}
 // 需要生成方法的选型
 const genMethodOptions = [
-  "add",
-  "update",
-  "insertIgnore",
-  "replace",
-  "getDetailById",
-  "getList",
-  "getPage",
-];
+  'add',
+  'update',
+  'insertIgnore',
+  'replace',
+  'getDetailById',
+  'getList',
+  'getPage',
+]
 
 // 默认选中项
 const defaultGenMethodOptions = [
-  "add",
-  "update",
-  "getDetailById",
-  "getList",
-  "getPage",
-];
+  'add',
+  'update',
+  'getDetailById',
+  'getList',
+  'getPage',
+]
 
 export default {
-  name: "GeneratorPage",
+  name: 'GeneratorPage',
   data: function () {
     return {
       generateTermForm: this.$form.createForm(this, {
-        name: "generate-term-form",
+        name: 'generate-term-form',
       }),
       spinning: false,
       indeterminate: true,
@@ -454,68 +455,68 @@ export default {
       monacoEditor: null,
       // 查询参数
       queryParam: {
-        rootPackage: "com.chqiuu",
-        author: "chqiuu",
+        rootPackage: 'com.chqiuu',
+        author: 'chqiuu',
         isPlus: true,
         isMapstructEnabled: true,
         genMethods: defaultGenMethodOptions,
       },
       selectedRowKeys: [],
-    };
+    }
   },
   components: {
     EditableCell,
   },
-  created() {
+  created () {
     // 加载完成后执行
-    this.fetchTableStructure();
-    this.initSwitchDatabaseSelect();
+    this.fetchTableStructure()
+    this.initSwitchDatabaseSelect()
   },
   mounted: function () {
     // 实例被挂载后调
-    this.$nextTick(function () {});
+    this.$nextTick(function () {})
   },
   methods: {
-    async initSwitchDatabaseSelect() {
-      const connectType = this.$route.params.connectType;
-      if (connectType === "db") {
-        this.hiddenSwitchDatabaseSelect = false;
+    async initSwitchDatabaseSelect () {
+      const connectType = this.$route.params.connectType
+      if (connectType === 'db') {
+        this.hiddenSwitchDatabaseSelect = false
         this.databaseDetails =
           this.$route.params.dbType +
-          " " +
+          ' ' +
           this.$route.params.server +
-          ":" +
+          ':' +
           this.$route.params.port +
-          " " +
-          this.$route.params.database;
-        this.databases = await API.getAllDatabaseList();
+          ' ' +
+          this.$route.params.database
+        this.databases = await API.getAllDatabaseList()
       }
     },
-    async fetchTableStructure() {
-      this.spinning = true;
+    async fetchTableStructure () {
+      this.spinning = true
       try {
-        this.tables = await API.getAllTableList();
+        this.tables = await API.getAllTableList()
       } catch (error) {
         this.$notification.error({
-          message: "错误",
-          description: "获取数据库表失败：【"
+          message: '错误',
+          description: '获取数据库表失败：【'
             .concat(error)
-            .concat("】，即将跳转到到数据源设置页面"),
+            .concat('】，即将跳转到到数据源设置页面'),
           duration: 3,
-        });
+        })
         setTimeout(() => {
           // 跳转到数据源设置页面
-          this.$router.push("/connect/index");
-        }, 3000);
+          this.$router.push('/connect/index')
+        }, 3000)
       } finally {
-        this.spinning = false;
+        this.spinning = false
       }
     },
-    onSelectChangeTable(selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys;
+    onSelectChangeTable (selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys
     },
-    setModalSetModuleAfterClose() {
-      this.modalSetModuleVisible = false;
+    setModalSetModuleAfterClose () {
+      this.modalSetModuleVisible = false
     },
     // onGenMethodChange(checkedGenMethodList) {
     //   this.indeterminate =
@@ -531,7 +532,7 @@ export default {
     //   this.indeterminate = false;
     //   this.checkGenMethodAll = e.target.checked;
     // },
-    async handleSwitchDatabaseChange(value) {
+    async handleSwitchDatabaseChange (value) {
       // 切换数据库
       try {
         const result = await API.connectDatabase({
@@ -541,105 +542,105 @@ export default {
           database: value,
           username: this.$route.params.username,
           password: this.$route.params.password,
-        });
+        })
         this.databaseDetails =
           this.$route.params.dbType +
-          " " +
+          ' ' +
           this.$route.params.server +
-          ":" +
+          ':' +
           this.$route.params.port +
-          " " +
-          value;
+          ' ' +
+          value
 
         // 加载表列表
-        this.fetchTableStructure();
+        this.fetchTableStructure()
         this.$notification.success({
-          message: "提示",
-          description: "切换数据库成功",
+          message: '提示',
+          description: '切换数据库成功',
           duration: 3,
-        });
+        })
       } catch (error) {
         this.$notification.error({
-          message: "错误",
+          message: '错误',
           description: error,
           duration: 3,
-        });
+        })
       }
     },
-    handleSetModuleOk(e) {
+    handleSetModuleOk (e) {
       // 批量设置模块名
-      console.info("批量设置模块名");
-      this.modalSetModuleVisible = false;
-      this.selectedRowKeys.forEach((key) => {
-        this.tables[key].module = this.moduleName;
+      console.info('批量设置模块名')
+      this.modalSetModuleVisible = false
+      this.selectedRowKeys.forEach(key => {
+        this.tables[key].module = this.moduleName
         if (this.tables[key].mappingName === undefined) {
           this.tables[key].mappingName = this.getMappingName(
             this.tables[key].tableName,
-            this.moduleName
-          );
+            this.moduleName,
+          )
         }
-      });
+      })
     },
-    getMappingName(tableName, moduleName) {
+    getMappingName (tableName, moduleName) {
       // Controller中URL映射名称，如：/admin/user。用于 Controller中@RequestMapping注解
-      return "/"
+      return '/'
         .concat(moduleName)
-        .concat("/")
-        .concat(this.getLastWord(tableName));
+        .concat('/')
+        .concat(this.getLastWord(tableName))
     },
-    getLastWord(tableName) {
+    getLastWord (tableName) {
       // 获取字符串中最后一个单词，若最好单词为info则忽略，向前移一个单词
-      tableName = tableName.toLowerCase().replaceAll("_info", "");
-      if (tableName.search("_") !== -1) {
-        return tableName.substring(tableName.lastIndexOf("_") + 1);
+      tableName = tableName.toLowerCase().replaceAll('_info', '')
+      if (tableName.search('_') !== -1) {
+        return tableName.substring(tableName.lastIndexOf('_') + 1)
       }
-      return tableName;
+      return tableName
     },
-    onMappingNameCellChange(tableName, dataIndex, value) {
+    onMappingNameCellChange (tableName, dataIndex, value) {
       // 修改Controller中URL映射名称
-      const tables = [...this.tables];
-      const target = tables.find((item) => item.tableName === tableName);
+      const tables = [...this.tables]
+      const target = tables.find(item => item.tableName === tableName)
       if (target) {
-        target[dataIndex] = value;
-        this.tables = tables;
+        target[dataIndex] = value
+        this.tables = tables
       }
     },
-    handlePreviewTable(record) {
+    handlePreviewTable (record) {
       // 查看字段信息
-      this.previewTableName = record.tableName + " 表字段信息";
-      this.innerTableColumnData = record.columns;
-      this.modalPreviewTableVisible = true;
+      this.previewTableName = record.tableName + ' 表字段信息'
+      this.innerTableColumnData = record.columns
+      this.modalPreviewTableVisible = true
     },
-    setModalPreviewTableAfterClose() {
+    setModalPreviewTableAfterClose () {
       // 关闭预览字段窗口
-      this.modalPreviewTableVisible = false;
-      this.previewTableName = null;
-      this.innerTableColumnData = [];
+      this.modalPreviewTableVisible = false
+      this.previewTableName = null
+      this.innerTableColumnData = []
     },
-    async handlePreviewCode(row) {
+    async handlePreviewCode (row) {
       // 预览代码
       if (row.module == null) {
         // 选中的表没有设置模块名
         this.$notification.error({
-          message: "错误",
-          description: "请给该表指定功能模块名",
+          message: '错误',
+          description: '请给该表指定功能模块名',
           duration: 3,
-        });
+        })
         // 选中该行
         for (let i = 0; i < this.tables.length; i++) {
           if (row.tableName === this.tables[i].tableName) {
-            this.selectedRowKeys.push(i);
-            break;
+            this.selectedRowKeys.push(i)
+            break
           }
         }
         // 弹出设置模块名弹窗
-        this.handleBatchSetModule();
-        return;
+        this.handleBatchSetModule()
+        return
       }
 
       try {
-        this.monacoEditor && this.monacoEditor.dispose();
-        this.previewTableName = row.tableName + "表生成代码预览";
+        this.monacoEditor && this.monacoEditor.dispose()
+        this.previewTableName = row.tableName + '表生成代码预览'
         const result = await API.preview({
           rootPackage: this.queryParam.rootPackage,
           moduleName: row.module,
@@ -649,167 +650,168 @@ export default {
           isPlus: this.queryParam.isPlus,
           isMapstructEnabled: this.queryParam.isMapstructEnabled,
           genMethods: this.queryParam.genMethods,
-        });
+        })
         this.$notification.success({
-          message: "提示",
-          description: "代码获取成功",
+          message: '提示',
+          description: '代码获取成功',
           duration: 3,
-        });
-        this.previewCodeList = result;
+        })
+        this.previewCodeList = result
+        console.info('this.previewCodeList', this.previewCodeList)
         // 显示弹出框
-        this.modalPreviewCodeVisible = true;
+        this.modalPreviewCodeVisible = true
         // 延时加载后面的内容，不然导致编辑器初始化失败
         setTimeout(() => {
           // 初始化编辑器，确保dom已经渲染
-          this.initMonacoEditor();
-        }, 100);
+          this.initMonacoEditor()
+        }, 100)
         setTimeout(() => {
           // 设置默认选中的卡片名称
-          this.codePreviewActiveName = this.previewCodeList[0].showName;
+          this.codePreviewActiveName = this.previewCodeList[0].showName
           // 更改editor内容
-          this.monacoEditor.setValue(this.previewCodeList[0].content);
+          this.monacoEditor.setValue(this.previewCodeList[0].content)
           // 触发：格式化文档，更多支持项：editor._actions
           //  this.monacoEditor.trigger('a', 'editor.action.formatDocument')
-        }, 100);
+        }, 100)
       } catch (error) {
         this.$notification.error({
-          message: "错误",
+          message: '错误',
           description: error,
           duration: 3,
-        });
+        })
       }
     },
-    handleCodePreviewTabsChange(tab) {
+    handleCodePreviewTabsChange (tab) {
       // 预览代码文件选择
-      this.previewCodeList.forEach((row) => {
+      this.previewCodeList.forEach(row => {
         if (tab === row.showName) {
           // 更改editor内容
-          this.monacoEditor.setValue(row.content);
+          this.monacoEditor.setValue(row.content)
         }
-      });
+      })
     },
-    getLanguage(name) {
-      var language = "java";
-      if (name.indexOf(".sql") !== -1) {
-        language = "mysql";
-      } else if (name.indexOf(".xml") !== -1) {
-        language = "xml";
-      } else if (name.indexOf(".vue") !== -1) {
-        language = "typescript";
+    getLanguage (name) {
+      var language = 'java'
+      if (name.indexOf('.sql') !== -1) {
+        language = 'mysql'
+      } else if (name.indexOf('.xml') !== -1) {
+        language = 'xml'
+      } else if (name.indexOf('.vue') !== -1) {
+        language = 'typescript'
       }
-      return language;
+      return language
     },
-    setModalPreviewCodeAfterClose() {
+    setModalPreviewCodeAfterClose () {
       // 关闭预览代码窗口
-      this.modalPreviewCodeVisible = false;
-      this.previewTableName = null;
-      this.previewCodeList = [];
+      this.modalPreviewCodeVisible = false
+      this.previewTableName = null
+      this.previewCodeList = []
     },
-    handleBatchSetModule(e) {
+    handleBatchSetModule (e) {
       if (this.selectedRowKeys.length === 0) {
         this.$notification.warning({
-          message: "提示",
-          description: "请先选择表",
+          message: '提示',
+          description: '请先选择表',
           duration: 3,
-        });
-        return;
+        })
+        return
       }
       // 批量设置模块
-      this.modalSetModuleVisible = true;
+      this.modalSetModuleVisible = true
       setTimeout(() => {
-        document.getElementById("moduleNameInput").focus();
-      }, 10);
+        document.getElementById('moduleNameInput').focus()
+      }, 10)
     },
-    async handleGenerateSubmit(e) {
+    async handleGenerateSubmit (e) {
       // 开始生成代码
       if (this.selectedRowKeys.length === 0) {
         this.$notification.info({
-          message: "提示",
-          description: "请先选择表",
+          message: '提示',
+          description: '请先选择表',
           duration: 3,
-        });
-        return;
+        })
+        return
       }
 
       // 当前选中的表列表
-      const selectedTables = [];
-      this.selectedRowKeys.forEach((key) => {
-        selectedTables.push(this.tables[key]);
-      });
+      const selectedTables = []
+      this.selectedRowKeys.forEach(key => {
+        selectedTables.push(this.tables[key])
+      })
 
-      const mappingNames = [];
+      const mappingNames = []
       for (const key of this.selectedRowKeys) {
         if (this.tables[key].module == null) {
           this.$notification.error({
-            message: "错误",
-            description: "请给需要生成都表设置模块名",
+            message: '错误',
+            description: '请给需要生成都表设置模块名',
             duration: 3,
-          });
+          })
           // 跳转到数据源设置页面
-          this.modalSetModuleVisible = true;
+          this.modalSetModuleVisible = true
           setTimeout(() => {
-            document.getElementById("moduleNameInput").focus();
-          }, 10);
-          return;
+            document.getElementById('moduleNameInput').focus()
+          }, 10)
+          return
         }
-        mappingNames.push(this.tables[key].mappingName);
+        mappingNames.push(this.tables[key].mappingName)
       }
 
       // 检查URL映射名称是否有重复
-      const sortMappingNames = mappingNames.slice().sort();
-      let errorMessage = "";
+      const sortMappingNames = mappingNames.slice().sort()
+      let errorMessage = ''
       for (let i = 0; i < mappingNames.length; i++) {
         if (sortMappingNames[i] === sortMappingNames[i + 1]) {
-          errorMessage = errorMessage.concat(sortMappingNames[i]).concat("，");
+          errorMessage = errorMessage.concat(sortMappingNames[i]).concat('，')
         }
       }
-      console.info("errorMessage", errorMessage);
-      if (errorMessage !== "") {
+      console.info('errorMessage', errorMessage)
+      if (errorMessage !== '') {
         this.$notification.error({
-          message: "错误",
-          description: "URL映射名称不能重复，存在以下重复项："
+          message: '错误',
+          description: 'URL映射名称不能重复，存在以下重复项：'
             .concat(errorMessage)
-            .concat("请修改后再生成代码"),
+            .concat('请修改后再生成代码'),
           duration: 10,
-        });
-        return;
+        })
+        return
       }
 
       try {
-        this.queryParam.tables = selectedTables;
-        await API.generatorCodes(this.queryParam);
+        this.queryParam.tables = selectedTables
+        await API.generatorCodes(this.queryParam)
         this.$notification.success({
-          message: "提示",
-          description: "代码下载成功",
+          message: '提示',
+          description: '代码下载成功',
           duration: 3,
-        });
+        })
       } catch (error) {
         this.$notification.error({
-          message: "错误",
-          description: "代码下载失败" + error,
+          message: '错误',
+          description: '代码下载失败' + error,
           duration: 3,
-        });
+        })
       } finally {
-        this.spinning = false;
+        this.spinning = false
       }
     },
-    initMonacoEditor() {
+    initMonacoEditor () {
       this.monacoEditor = monaco.editor.create(
-        document.getElementById("code-preview"),
+        document.getElementById('code-preview'),
         {
-          value: "", // 编辑器初始显示文字
-          language: "java", // 语言支持自行查阅demo
+          value: '', // 编辑器初始显示文字
+          language: 'java', // 语言支持自行查阅demo
           automaticLayout: true, // 自动布局
-          theme: "vs-dark", // 官方自带三种主题vs, hc-black, or vs-dark
+          theme: 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
           minimap: {
             // 不要小地图
             enabled: false,
           },
-        }
-      );
+        },
+      )
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

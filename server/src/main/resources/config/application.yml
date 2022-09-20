@@ -30,10 +30,6 @@ spring:
       output_encoding: UTF-8
       template_exception_handler: com.chqiuu.cgp.handler.FreemarkerExceptionHandler
 
-logging:
-  file:
-    name: logs\code_log.log
-
 generator:
   map-query-enabled: false
   lombok-data-enabled: true

@@ -389,6 +389,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             IOUtils.write(writer.toString(), zip, "UTF-8");
             zip.closeEntry();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new UserException(ResultEnum.FAILED, String.format("渲染模板失败，表名：%s ；文件名：%s", generator.getTableName(), fileName), e);
         }
     }
@@ -418,6 +419,8 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
         } else if (template.contains("Entity.java.ftl")) {
             return packagePath + "entity" + File.separator + className + "Entity.java";
+        } else if (template.contains("BriefDTO.java.ftl")) {
+            return packagePath + "dto" + File.separator + className + "BriefDTO.java";
         } else if (template.contains("DetailDTO.java.ftl")) {
             return packagePath + "dto" + File.separator + className + "DetailDTO.java";
         } else if (template.contains("ListDTO.java.ftl")) {

@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -82,6 +83,14 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1>extends ISer
      */
     List<${classNameUpperCase}Entity> getAll();
 <#elseif plusEnabled == 1>
+
+    /**
+     * 根据唯一ID获取简要信息
+     *
+     * @param ${pk.attrNameLowerCase} ${pk.comment}
+     * @return 简要信息
+     */
+    ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase});
  <#if generalMethod??>
   <#if generalMethod.getDetailByIdEnabled==1>
 

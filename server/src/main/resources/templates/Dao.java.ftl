@@ -2,6 +2,7 @@
 package ${codePackage}.mapper;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -23,6 +24,13 @@ import java.util.Map;
  */
 @Repository
 public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpperCase}Entity> {
+    /**
+    * 根据唯一ID获取简要信息
+    *
+    * @param ${pk.attrNameLowerCase} ${pk.comment}
+    * @return 简要信息
+    */
+    ${classNameUpperCase}BriefDTO getBriefById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
     <#if generalMethod??>
         <#if generalMethod.insertIgnoreEnabled==1>
 

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -119,6 +120,11 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
         return ${classNameLowerCase}Dao.getAll();
     }
 <#elseif plusEnabled == 1>
+
+    @Override
+    public ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase}) {
+        return this.baseMapper.getBriefById(${pk.attrNameLowerCase});
+    }
     <#if generalMethod??>
         <#if generalMethod.getDetailByIdEnabled==1>
 

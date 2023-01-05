@@ -51,6 +51,7 @@ public class Constant {
                 , "ServiceImpl.java.ftl"
                 , "Dao.java.ftl"
                 , "Mapper.xml.ftl"
+                , "BriefDTO.java.ftl"
                 , "DetailDTO.java.ftl"
                 , "ListDTO.java.ftl"
                 , "InputVO.java.ftl"

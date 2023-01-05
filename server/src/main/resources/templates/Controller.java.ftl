@@ -27,6 +27,7 @@ import ${codePackage}.entity.${classNameUpperCase}Entity;
 
 <#if plusEnabled == 1>
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -97,8 +98,8 @@ public class ${classNameUpperCase}Controller extends BaseController {
     @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
     @PostMapping("/update")
     public Result${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
-        ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
-        if (null == entity) {
+        ${classNameUpperCase}BriefDTO briefDTO = ${classNameLowerCase}Service.getBriefById(vo.get${pk.attrNameUpperCase}());
+        if (null == briefDTO) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
         }
         <#if mapstructEnabled == 1>${classNameLowerCase}Service.updateById(${classNameLowerCase}Converter.fromInputVO(vo));<#else>${classNameLowerCase}Service.updateById(vo.convertToEntity());</#if>
@@ -114,11 +115,11 @@ public class ${classNameUpperCase}Controller extends BaseController {
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
     public Result${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         UserOnlineDTO user = getOnlineUser();
-        ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
-        if (null == entity) {
+        ${classNameUpperCase}BriefDTO briefDTO = ${classNameLowerCase}Service.getBriefById(${pk.attrNameLowerCase});
+        if (null == briefDTO) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
         }
-    //TODO 其他限制删除条件
+        //TODO 其他限制删除条件
     <#if logicDelete == 1>
         return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
     <#else>

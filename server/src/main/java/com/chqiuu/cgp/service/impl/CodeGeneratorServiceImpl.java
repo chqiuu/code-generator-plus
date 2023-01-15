@@ -99,16 +99,16 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
 
     @Override
     public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
-            , String author, String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables) {
-        return preview(driverClassEnum, rootPackage, moduleName, author, tableName, mappingName, isPlus, false, genMethods, allTables);
+            , String author, String tableName, String mappingName, boolean isMyBatisPlus, boolean isLayuimini, String[] genMethods, List<TableEntity> allTables) {
+        return preview(driverClassEnum, rootPackage, moduleName, author, tableName, mappingName, isMyBatisPlus, isLayuimini, false, genMethods, allTables);
     }
 
     @Override
-    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, String mappingName, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, List<TableEntity> allTables) {
+    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, String mappingName, boolean isMyBatisPlus, boolean isLayuimini, boolean isMapstructEnabled, String[] genMethods, List<TableEntity> allTables) {
         for (TableEntity table : allTables) {
             if (table.getTableName().equals(tableName)) {
                 //生成代码
-                return getTableCodePreview(driverClassEnum, rootPackage, moduleName, author, mappingName, table, table.getColumns(), isPlus, isMapstructEnabled, genMethods, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                return getTableCodePreview(driverClassEnum, rootPackage, moduleName, author, mappingName, table, table.getColumns(), isMyBatisPlus, isLayuimini, isMapstructEnabled, genMethods, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
             }
         }
         return null;
@@ -117,9 +117,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
 
     private List<CodePreviewDTO> getTableCodePreview(DriverClassEnum driverClassEnum, String rootPackage
             , String moduleName, String author, String mappingName, TableEntity table, List<ColumnEntity> columns
-            , boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+            , boolean isMyBatisPlus, boolean isLayuimini, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
         // 获取表生成代码元数据信息
-        TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, isMapstructEnabled, genMethods, mapQueryEnabled, lombokDataEnabled);
+        TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isMyBatisPlus, isLayuimini, isMapstructEnabled, genMethods, mapQueryEnabled, lombokDataEnabled);
         List<CodePreviewDTO> list = new ArrayList<>();
         // 模板列表
         for (String templateName : CODE_FILE_TEMPLATES) {
@@ -169,11 +169,17 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         if ("InputVO.java.ftl".equals(templateName) && tableMetadata.getGeneralMethod().getAddEnabled() == 0 && tableMetadata.getGeneralMethod().getUpdateEnabled() == 0) {
             return true;
         }
+        if (tableMetadata.getLayuiminiEnabled() == 0 && templateName.matches("layuimini.*.html.ftl")) {
+            return true;
+        }
+        if (tableMetadata.getVueEnabled() == 0 && templateName.endsWith(".vue.ftl")) {
+            return true;
+        }
         return false;
     }
 
     @Override
-    public byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isPlus, boolean isMapstructEnabled, String[] genMethods) {
+    public byte[] generatorCode(BaseConnect connect, String rootPackage, String author, List<GeneratorTableVO> tables, boolean isMyBatisPlus, boolean isLayuimini, boolean isMapstructEnabled, String[] genMethods) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zip = new ZipOutputStream(outputStream)) {
             for (GeneratorTableVO tableVO : tables) {
@@ -185,7 +191,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 //查询列信息
                 List<ColumnEntity> columns = queryColumns(connect, tableVO.getTableName());
                 //生成代码
-                generatorCode(connect.getDriverClassEnum(), rootPackage, tableVO.getModule(), author, tableVO.getMappingName(), table, columns, zip, isPlus, isMapstructEnabled, genMethods, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                generatorCode(connect.getDriverClassEnum(), rootPackage, tableVO.getModule(), author, tableVO.getMappingName(), table, columns, zip, isMyBatisPlus, isLayuimini, isMapstructEnabled, genMethods, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,16 +209,16 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param table             数据库表名
      * @param columns           字段列表
      * @param zip               压缩
-     * @param isPlus            是否为MyBatis-Plus
+     * @param isMyBatisPlus     是否为MyBatis-Plus
      * @param mapQueryEnabled   是否启用map查询功能
      * @param lombokDataEnabled 是否启用@Data注解
      */
     private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
             , String author, String mappingName, TableEntity table
-            , List<ColumnEntity> columns, ZipOutputStream zip, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled
+            , List<ColumnEntity> columns, ZipOutputStream zip, boolean isMyBatisPlus, boolean isLayuimini, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled
             , boolean lombokDataEnabled) throws NullPointerException {
         // 获取表生成代码元数据信息
-        TableMetadataDTO dto = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, isMapstructEnabled, genMethods, mapQueryEnabled, lombokDataEnabled);
+        TableMetadataDTO dto = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isMyBatisPlus, isLayuimini, isMapstructEnabled, genMethods, mapQueryEnabled, lombokDataEnabled);
         // 根据模型数据生成代码文件
         generateFiles(dto, zip);
     }
@@ -226,13 +232,13 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param author            创建者
      * @param table             数据库表名
      * @param columns           字段列表
-     * @param isPlus            是否为MyBatis-Plus
+     * @param isMyBatisPlus     是否为MyBatis-Plus
      * @param mapQueryEnabled   是否启用map查询功能
      * @param lombokDataEnabled 是否启用@Data注解
      * @return 元数据信息
      */
     private TableMetadataDTO getTableMetadata(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
-            , String author, String mappingName, TableEntity table, List<ColumnEntity> columns, boolean isPlus
+            , String author, String mappingName, TableEntity table, List<ColumnEntity> columns, boolean isMyBatisPlus, boolean isLayuimini
             , boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
         TableMetadataDTO dto = new TableMetadataDTO();
         dto.setTableName(table.getTableName());
@@ -312,7 +318,8 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             dto.setMappingName(mappingName);
         }
         dto.setAuthor(author);
-        dto.setPlusEnabled(isPlus ? 1 : 0);
+        dto.setPlusEnabled(isMyBatisPlus ? 1 : 0);
+        dto.setLayuiminiEnabled(isLayuimini ? 1 : 0);
         dto.setMapstructEnabled(isMapstructEnabled ? 1 : 0);
         GeneralMethodEnabledDTO generalMethod = new GeneralMethodEnabledDTO();
         for (String genMethod : genMethods) {
@@ -441,17 +448,25 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             packagePath = "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + moduleName;
             return packagePath + File.separator + className + "Mapper.xml";
         }
+
+        String classNameLowerCase = className.substring(0, 1).toLowerCase() + className.substring(1);
         if (template.contains("menu.sql.ftl")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "menu" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
+            return "main" + File.separator + "resources" + File.separator + "sql" + File.separator + "menu" + File.separator + "modules" +
+                    File.separator + moduleName + File.separator + className.toLowerCase() + ".sql";
         }
+        String vuePath = "main" + File.separator + "resources" + File.separator + "vue" + File.separator + "modules" + File.separator;
         if (template.contains("index.vue.ftl")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
+            return vuePath + moduleName + File.separator + classNameLowerCase + ".vue";
+        } else if (template.contains("add-or-update.vue.ftl")) {
+            return vuePath + moduleName + File.separator + classNameLowerCase + "-add-or-update.vue";
         }
-        if (template.contains("add-or-update.vue.ftl")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
+        String layuiminiPath = "main" + File.separator + "resources" + File.separator + "layuimini" + File.separator;
+        if (template.contains("layuimini.add.html.ftl")) {
+            return layuiminiPath + moduleName + File.separator + classNameLowerCase + "Add.html";
+        } else if (template.contains("layuimini.edit.html.ftl")) {
+            return layuiminiPath + moduleName + File.separator + classNameLowerCase + "Edit.html";
+        } else if (template.contains("layuimini.table.html.ftl")) {
+            return layuiminiPath + moduleName + File.separator + classNameLowerCase + "Table.html";
         }
         return packagePath;
     }
@@ -538,12 +553,12 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
-    public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus, String[] genMethods) {
-        return generatorCodeAll(connect, rootPackage, moduleName, author, isPlus, false, genMethods);
+    public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isMyBatisPlus, boolean isLayuimini, String[] genMethods) {
+        return generatorCodeAll(connect, rootPackage, moduleName, author, isMyBatisPlus, isLayuimini, false, genMethods);
     }
 
     @Override
-    public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isPlus, boolean isMapstructEnabled, String[] genMethods) {
+    public byte[] generatorCodeAll(BaseConnect connect, String rootPackage, String moduleName, String author, boolean isMyBatisPlus, boolean isLayuimini, boolean isMapstructEnabled, String[] genMethods) {
         List<TableEntity> list = queryTableList(connect, null);
         List<GeneratorTableVO> tables = new ArrayList<>();
         for (TableEntity entity : list) {
@@ -552,18 +567,18 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             tableVO.setModule(moduleName);
             tables.add(tableVO);
         }
-        return generatorCode(connect, rootPackage, author, tables, isPlus, isMapstructEnabled, genMethods);
+        return generatorCode(connect, rootPackage, author, tables, isMyBatisPlus, isLayuimini, isMapstructEnabled, genMethods);
     }
 
     @Override
-    public byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, Boolean isPlus, boolean isMapstructEnabled, String[] genMethods, List<GeneratorTableVO> tables, List<TableEntity> allTables) {
+    public byte[] generatorCodes(DriverClassEnum driverClassEnum, String rootPackage, String author, boolean isMyBatisPlus, boolean isLayuimini, boolean isMapstructEnabled, String[] genMethods, List<GeneratorTableVO> tables, List<TableEntity> allTables) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zip = new ZipOutputStream(outputStream)) {
             tables.forEach(t -> {
                 for (TableEntity table : allTables) {
                     if (table.getTableName().equals(t.getTableName())) {
                         //生成代码
-                        generatorCode(driverClassEnum, rootPackage, t.getModule(), author, t.getMappingName(), table, table.getColumns(), zip, isPlus, isMapstructEnabled, genMethods, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
+                        generatorCode(driverClassEnum, rootPackage, t.getModule(), author, t.getMappingName(), table, table.getColumns(), zip, isMyBatisPlus, isLayuimini, isMapstructEnabled, genMethods, properties.isMapQueryEnabled(), properties.isLombokDataEnabled());
                     }
                 }
             });

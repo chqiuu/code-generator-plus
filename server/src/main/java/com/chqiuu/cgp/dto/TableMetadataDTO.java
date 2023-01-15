@@ -118,6 +118,14 @@ public class TableMetadataDTO implements Serializable {
      */
     private Integer mapstructEnabled = 0;
     /**
+     * 是否启用Vue后台管理功能
+     */
+    private Integer vueEnabled = 0;
+    /**
+     * 是否启用layuimini后台管理功能
+     */
+    private Integer layuiminiEnabled = 0;
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

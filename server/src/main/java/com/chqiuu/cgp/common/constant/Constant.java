@@ -30,8 +30,6 @@ public class Constant {
      * 系统全局变量
      */
     public static class Public {
-
-
         /**
          * 设备验证码缓存前缀
          */
@@ -59,7 +57,10 @@ public class Constant {
                 , "PageQuery.java.ftl"
                 , "menu.sql.ftl"
                 , "index.vue.ftl"
-                , "add-or-update.vue.ftl"};
+                , "add-or-update.vue.ftl"
+                , "layuimini.add.html.ftl"
+                , "layuimini.edit.html.ftl"
+                , "layuimini.table.html.ftl"};
         /**
          * 初始化ID生成器，调用方式 snowflake.nextId();
          */

@@ -37,6 +37,9 @@ public class GeneratorVO implements Serializable {
     @NotNull(message = "MyBatis-Plus支持不能为空")
     @ApiModelProperty(value = "MyBatis-Plus支持")
     private Boolean isPlus;
+    @NotNull(message = "是否为Layuimini不能为空")
+    @ApiModelProperty(value = "是否为Layuimini")
+    private Boolean isLayuimini;
     /**
      * 是否启用mapstruct对象转换工具
      */

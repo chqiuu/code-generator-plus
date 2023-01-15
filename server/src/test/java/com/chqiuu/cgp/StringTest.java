@@ -29,5 +29,8 @@ public class StringTest {
         g = "{\"2\":\"语文\",\"3\":\"数学\",\"4\":\"英语\",\"6\":\"物理\",\"7\":\"化学\",\"11\":\"生物\",\"9\":\"政治思品\",\"8\":\"历史\",\"10\":\"地理\",\"5\":\"科学\",\"20\":\"历史与社会\"}\n";
         k = g.replaceAll("\"", "\\\\\"").replaceAll("\r", " ").replaceAll("\n", " ");
         System.out.println(k);
+
+        String layuiminiPath = "layuimini.add.html.ftl";layuiminiPath = "InputVO.java.ftl";
+        System.out.println(layuiminiPath.matches("layuimini.*.html.ftl"));
     }
 }

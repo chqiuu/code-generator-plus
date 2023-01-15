@@ -32,6 +32,16 @@
                     </a-form-item>
                   </a-tooltip>
                 </a-col>
+                <a-col :md="4" :sm="24">
+                  <a-tooltip
+                    title="是否生成layuimini模式代码"
+                    arrow-point-at-center
+                  >
+                    <a-form-item label="支持layuimini">
+                      <a-switch v-model="queryParam.isLayuimini" />
+                    </a-form-item>
+                  </a-tooltip>
+                </a-col>
                 <a-col :md="3" :sm="24">
                   <a-tooltip
                     title="是否使用mapstruct对象转换工具"
@@ -458,6 +468,7 @@ export default {
         rootPackage: 'com.chqiuu',
         author: 'chqiuu',
         isPlus: true,
+        isLayuimini: false,
         isMapstructEnabled: true,
         genMethods: defaultGenMethodOptions,
       },
@@ -648,6 +659,7 @@ export default {
           table: row.tableName,
           mappingName: row.mappingName,
           isPlus: this.queryParam.isPlus,
+          isLayuimini: this.queryParam.isLayuimini,
           isMapstructEnabled: this.queryParam.isMapstructEnabled,
           genMethods: this.queryParam.genMethods,
         })

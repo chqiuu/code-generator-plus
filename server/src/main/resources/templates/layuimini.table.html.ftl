@@ -193,7 +193,7 @@
                     maxmin: true,
                     shadeClose: true,
                     btnAlign: "c",
-                    area: ['100%', '100%'],
+                    area: ['90%', '95%'],
                     content: '../${moduleName}/${classNameLowerCase}Add.html',
                     btn: ['保存', '取消'],
                     yes: function (index, layero) {
@@ -234,7 +234,7 @@
                     maxmin: true,
                     shadeClose: true,
                     btnAlign: "c",
-                    area: ['100%', '100%'],
+                    area: ['90%', '95%'],
                     content: '../${moduleName}/${classNameLowerCase}Edit.html?${pk.attrNameLowerCase}=' + checkData.${pk.attrNameLowerCase},
                     btn: ['保存', '取消'],
                     success: function (layero, index) {

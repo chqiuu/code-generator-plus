@@ -17,25 +17,22 @@
             <#list columns as column>
                 <#if exclusionShowColumns?contains(column.columnName) || column.columnName == pk.columnName >
                 <#else>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label required">${column.commentEscape}</label>
-                        <div class="layui-input-block">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">${column.commentEscape}</label>
+                <div class="layui-input-block">
                             <#if column.attrType == 'String'>
                                 <#if column.charlength?? && column.charlength < 1000>
-                                    <input id="${column.attrNameLowerCase}" type="text" name="${column.attrNameLowerCase}" lay-verify="required" lay-reqtext="${column.commentEscape}不能为空"
-                                           placeholder="请输入${column.commentEscape}" value="" class="layui-input">
+                    <input id="${column.attrNameLowerCase}" type="text" name="${column.attrNameLowerCase}" lay-verify="required" lay-reqtext="${column.commentEscape}不能为空" placeholder="请输入${column.commentEscape}" value="" class="layui-input">
                                 <#else>
-                                    <textarea id="${column.attrNameLowerCase}" name="${column.attrNameLowerCase}" placeholder="请输入${column.commentEscape}" class="layui-textarea"></textarea>
+                    <textarea id="${column.attrNameLowerCase}" name="${column.attrNameLowerCase}" placeholder="请输入${column.commentEscape}" class="layui-textarea"></textarea>
                                 </#if>
                             <#elseif column.attrType == 'Integer'>
-                                <input id="${column.attrNameLowerCase}" type="number" name="${column.attrNameLowerCase}" lay-verify="required" lay-reqtext="${column.commentEscape}不能为空"
-                                       placeholder="请输入${column.commentEscape}" value="" class="layui-input">
+                    <input id="${column.attrNameLowerCase}" type="number" name="${column.attrNameLowerCase}" lay-verify="required" lay-reqtext="${column.commentEscape}不能为空" placeholder="请输入${column.commentEscape}" value="" class="layui-input">
                             <#elseif column.attrType == 'Long'>
-                                <input id="${column.attrNameLowerCase}" type="number" name="${column.attrNameLowerCase}" lay-verify="required" lay-reqtext="${column.commentEscape}不能为空"
-                                       placeholder="请输入${column.commentEscape}" value="" class="layui-input">
+                    <input id="${column.attrNameLowerCase}" type="number" name="${column.attrNameLowerCase}" lay-verify="required" lay-reqtext="${column.commentEscape}不能为空" placeholder="请输入${column.commentEscape}" value="" class="layui-input">
                             </#if>
-                        </div>
-                    </div>
+                </div>
+            </div>
                 </#if>
             </#list>
             <div class="layui-form-item layui-hide">
@@ -69,7 +66,7 @@
                 <#list columns as column>
                     <#if exclusionShowColumns?contains(column.columnName) || column.columnName == pk.columnName >
                     <#else>
-                    ${column.attrNameLowerCase}: $("#${column.attrNameLowerCase}").val(),
+                ${column.attrNameLowerCase}: $("#${column.attrNameLowerCase}").val(),
                     </#if>
                 </#list>
             }

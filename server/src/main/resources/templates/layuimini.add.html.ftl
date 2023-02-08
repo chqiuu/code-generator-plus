@@ -6,7 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link crossorigin="anonymous" integrity="sha512-omRxviAbZbsRLmYjGYaOjLuafC5Jw17PYyg1eH4XaT5vWx+cOng6t+bq9VyjZBWrUuduYgYuIuD2d3MOz7S2dA==" href="https://lib.baomitu.com/layui/2.7.6/css/layui.min.css" rel="stylesheet">
+    <link href="//cdn.staticfile.org/layui/2.7.6/css/layui.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/css/public.css" media="all">
 </head>
 <body>
@@ -47,7 +47,7 @@
         </form>
     </div>
 </div>
-<script crossorigin="anonymous" integrity="sha512-jVlfkkRyCyrICx3iFs80jgim5Vmg2xVjAdBRCw/E/ZukJPYpjXfTyyiB1Y1gRsBeAC8CJ+jYIk0teYL4qV85gA==" src="https://lib.baomitu.com/layui/2.7.6/layui.min.js"></script>
+<script src="//cdn.staticfile.org/layui/2.7.6/layui.min.js"></script>
 <script src="../../static/js/public.js" charset="utf-8"></script>
 <script>
     layui.use(['jquery', 'form', 'layer', 'table'], function () {
@@ -63,7 +63,7 @@
 
         // 保存草稿
         form.on('submit(add${classNameUpperCase}Btn)', function (data) {
-            var dataTontent = {
+            var dataContent = {
                 <#list columns as column>
                 <#if exclusionShowColumns?contains(column.columnName) || column.columnName == pk.columnName >
                 <#else>
@@ -71,19 +71,19 @@
                 </#if>
                 </#list>
             }
-            add${classNameUpperCase}(dataTontent)
+            add${classNameUpperCase}(dataContent)
             return false;
         });
 
-        function add${classNameUpperCase}(dataTontent) {
-            console.info("add${classNameUpperCase}", dataTontent)
+        function add${classNameUpperCase}(dataContent) {
+            console.info("add${classNameUpperCase}", dataContent)
             $.ajax({
                 url: '../..${mappingName}/add',
                 async: false,
                 type: "post",
                 dataType: "json",
                 headers: {'Content-Type': 'application/json;charset=utf-8'},
-                data: JSON.stringify(dataTontent),
+                data: JSON.stringify(dataContent),
                 success: function (res) {
                     console.log("提交信息", res)
                     if (res.code === 1) {

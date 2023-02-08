@@ -6,9 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link crossorigin="anonymous"
-          integrity="sha512-omRxviAbZbsRLmYjGYaOjLuafC5Jw17PYyg1eH4XaT5vWx+cOng6t+bq9VyjZBWrUuduYgYuIuD2d3MOz7S2dA=="
-          href="https://lib.baomitu.com/layui/2.7.6/css/layui.min.css" rel="stylesheet">
+    <link href="//cdn.staticfile.org/layui/2.7.6/css/layui.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/css/public.css" media="all">
 </head>
 <body>
@@ -60,7 +58,7 @@
                             <button id="data-search-${classNameLowerCase}-btn" type="submit"
                                     class="layui-btn layui-btn-primary layui-border-blue"
                                     lay-submit
-                                    lay-filter="data-search-video-btn"><i class="layui-icon"></i> 搜 索
+                                    lay-filter="data-search-${classNameLowerCase}-btn"><i class="layui-icon"></i> 搜 索
                             </button>
                         </div>
                     </div>
@@ -85,9 +83,7 @@
 
     </div>
 </div>
-<script crossorigin="anonymous"
-        integrity="sha512-jVlfkkRyCyrICx3iFs80jgim5Vmg2xVjAdBRCw/E/ZukJPYpjXfTyyiB1Y1gRsBeAC8CJ+jYIk0teYL4qV85gA=="
-        src="https://lib.baomitu.com/layui/2.7.6/layui.min.js"></script>
+<script src="//cdn.staticfile.org/layui/2.7.6/layui.min.js"></script>
 <script>
     layui.use(['form', 'table', 'laydate'], function () {
         var $ = layui.jquery,

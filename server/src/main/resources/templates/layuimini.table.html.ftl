@@ -118,6 +118,10 @@
             url: '../..${mappingName}/page',
             where: tableWhere,
             toolbar: '#toolbarDemo',
+            request: {
+                pageName: 'current', //页码的参数名称，默认：page
+                limitName: 'size' //每页数据量的参数名，默认：limit
+            },
             parseData: function (res) { //res 即为原始返回的数据
                 return {
                     "code": res.code === 1 ? 0 : res.code, //解析接口状态
@@ -126,24 +130,22 @@
                     "data": res.data.records //解析数据列表
                 };
             },
-            // lineStyle: 'height: 190px;',
+            // lineStyle: 'height: 40px;',
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: '${pk.attrNameLowerCase}', title: 'ID', hide: true},
                 <#list columns as column>
                 <#if exclusionShowColumns?contains(column.columnName) || column.columnName == pk.columnName >
                 <#else>
-                {
-                    field: '${column.attrNameLowerCase}', title: '${column.commentEscape}', minWidth: 150, sort: true
-                },
+                {field: '${column.attrNameLowerCase}', title: '${column.commentEscape}', minWidth: 150, sort: true},
                 </#if>
                 </#list>
                 {field: 'createTime', width: 180, title: '创建时间'},
                 {field: 'updateTime', width: 180, title: '修改时间'},
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left"}
             ]],
-            limits: [10, 15, 20, 25, 50, 100],
-            limit: 15,
+            limits: [20, 50, 100, 200, 500, 1000],
+            limit: 50,
             page: true,
             skin: 'line'
         });

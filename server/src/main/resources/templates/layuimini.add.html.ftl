@@ -16,7 +16,7 @@
     <#list columns as column>
             <#if exclusionShowColumns?contains(column.columnName) || column.columnName == pk.columnName >
             <#else>
-            <div class="layui-form-item">
+            <div class="layui-form-item <#if column.attrType == 'String'><#if column.charlength?? && column.charlength < 1000><#else>layui-form-text</#if>">
             <label class="layui-form-label required">${column.commentEscape}</label>
                 <div class="layui-input-block">
                     <#if column.attrType == 'String'>

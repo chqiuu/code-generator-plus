@@ -200,8 +200,6 @@
                         body.find("#add${classNameUpperCase}Btn").click()
                         //重载表格
                         tableReload()
-                        //最后关闭弹出层
-                        layer.close(index); //如果设定了yes回调，需进行手工关闭
                     },
                     btn3: function (index, layero) {
                         //最后关闭弹出层
@@ -252,8 +250,6 @@
                         body.find("#save${classNameUpperCase}Btn").click()
                         //重载表格
                         tableReload()
-                        //最后关闭弹出层
-                        layer.close(index); //如果设定了yes回调，需进行手工关闭
                     },
                     btn3: function (index, layero) {
                         //最后关闭弹出层

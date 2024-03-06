@@ -5,33 +5,33 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.3</version>
+        <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.chqiuu</groupId>
     <artifactId>code-generator-plus</artifactId>
-    <version>1.0.8</version>
+    <version>1.1.1</version>
     <name>code-generator-plus</name>
     <description>JAVA项目代码自动生成工具 for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.6.3</spring-boot.version>
+        <spring-boot.version>2.6.7</spring-boot.version>
         <spring-security-taglibs.version>5.4.1</spring-security-taglibs.version>
-        <druid-spring-boot-starter.version>1.2.8</druid-spring-boot-starter.version>
+        <druid-spring-boot-starter.version>1.2.9</druid-spring-boot-starter.version>
         <mybatis-plus-boot-starter.version>3.5.1</mybatis-plus-boot-starter.version>
         <knife4j-spring-boot-starter.version>3.0.3</knife4j-spring-boot-starter.version>
         <slf4j.version>1.7.30</slf4j.version>
         <httpclient.version>4.5.13</httpclient.version>
         <nlp-lang.version>1.7.8</nlp-lang.version>
-        <fastjson.version>1.2.79</fastjson.version>
-        <hutool.version>5.7.20</hutool.version>
+        <fastjson.version>2.0.2</fastjson.version>
+        <hutool.version>5.8.0</hutool.version>
         <poi.version>3.17</poi.version>
-        <easyexcel.version>2.2.8</easyexcel.version>
+        <easyexcel.version>3.0.5</easyexcel.version>
         <flying-saucer-pdf.version>9.1.20</flying-saucer-pdf.version>
         <itextpdf.version>5.5.13.1</itextpdf.version>
         <itext-asian.version>5.2.0</itext-asian.version>
-        <jsoup.version>1.13.1</jsoup.version>
+        <jsoup.version>1.14.3</jsoup.version>
         <guava.version>30.1-jre</guava.version>
         <zxing.version>3.4.1</zxing.version>
         <jooq.version>3.16.3</jooq.version>

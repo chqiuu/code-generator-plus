@@ -37,7 +37,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @TableName("${tableName}")
 public class ${classNameUpperCase}Entity extends Model${r'<'}${classNameUpperCase}Entity><#else>
-public class ${classNameUpperCase}Entity implements Serializable</#if>${r'{'}
+public class ${classNameUpperCase}Entity implements Serializable</#if> ${r'{'}
 
     private static final long serialVersionUID = 1L;
 

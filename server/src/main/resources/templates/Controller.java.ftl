@@ -27,6 +27,7 @@ import ${codePackage}.entity.${classNameUpperCase}Entity;
 
 <#if plusEnabled == 1>
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -41,25 +42,24 @@ import java.time.LocalDate;
 import java.util.List;
 </#if>
 /**
-* ${comment}请求处理层
-*
-* @author ${author}
-* @date ${createTime?date("yyyy-MM-dd")}
-*/
+ * ${comment}请求处理层
+ *
+ * @author ${author}
+ * @date ${createTime?date("yyyy-MM-dd")}
+ */
 @Validated
 @RestController
 @RequestMapping("${mappingName}")
 @Api(value = "${commentEscape}", tags = "${commentEscape}")
 @RequiredArgsConstructor
-public class ${classNameUpperCase}Controller extends BaseController{
+public class ${classNameUpperCase}Controller extends BaseController {
 
-private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
-<#if mapstructEnabled == 1>private final ${classNameUpperCase}Converter ${classNameLowerCase}Converter;</#if>
-
-
+    private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
+<#if mapstructEnabled == 1>    private final ${classNameUpperCase}Converter ${classNameLowerCase}Converter;</#if>
 <#if plusEnabled == 1>
     <#if generalMethod??>
         <#if generalMethod.getDetailByIdEnabled==1>
+
     @ApiOperation(value = "根据唯一ID获取详细信息", notes = "根据唯一ID获取详细信息")
     @GetMapping("/detail/{${pk.attrNameLowerCase}}")
     public Result${r'<'}${classNameUpperCase}DetailDTO> detail(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
@@ -67,6 +67,7 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     }
         </#if>
         <#if generalMethod.getListEnabled==1>
+
     @ApiOperation(value = "${commentEscape}列表查询", notes = "${commentEscape}列表查询")
     @GetMapping("/list")
     public Result${r'<List<'}${classNameUpperCase}ListDTO>> list(${classNameUpperCase}ListQuery query) {
@@ -74,6 +75,7 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     }
         </#if>
         <#if generalMethod.getPageEnabled==1>
+
     @ApiOperation(value = "${commentEscape}分页查询", notes = "${commentEscape}分页查询")
     @GetMapping("/page")
     public Result${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery query) {
@@ -81,6 +83,7 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     }
         </#if>
         <#if generalMethod.addEnabled==1>
+
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
     @PostMapping("/add")
     public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
@@ -91,11 +94,12 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     }
         </#if>
         <#if generalMethod.updateEnabled==1>
+
     @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
     @PostMapping("/update")
     public Result${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
-    ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(vo.get${pk.attrNameUpperCase}());
-        if (null == entity) {
+        ${classNameUpperCase}BriefDTO briefDTO = ${classNameLowerCase}Service.getBriefById(vo.get${pk.attrNameUpperCase}());
+        if (null == briefDTO) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
         }
         <#if mapstructEnabled == 1>${classNameLowerCase}Service.updateById(${classNameLowerCase}Converter.fromInputVO(vo));<#else>${classNameLowerCase}Service.updateById(vo.convertToEntity());</#if>
@@ -103,18 +107,19 @@ private final ${classNameUpperCase}Service ${classNameLowerCase}Service;
     }
         </#if>
     </#if>
+
     @ApiOperation(value = "根据唯一ID删除${commentEscape}", notes = "根据唯一ID删除${commentEscape}")
     @ApiImplicitParams({
-    @ApiImplicitParam(name = "${pk.attrNameLowerCase}", value = "${pk.comment}", paramType = "path"),
+        @ApiImplicitParam(name = "${pk.attrNameLowerCase}", value = "${pk.comment}", paramType = "path"),
     })
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
     public Result${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
-    UserOnlineDTO user = getOnlineUser();
-    ${classNameUpperCase}Entity entity = ${classNameLowerCase}Service.getById(${pk.attrNameLowerCase});
-        if (null == entity) {
+        UserOnlineDTO user = getOnlineUser();
+        ${classNameUpperCase}BriefDTO briefDTO = ${classNameLowerCase}Service.getBriefById(${pk.attrNameLowerCase});
+        if (null == briefDTO) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
         }
-    //TODO 其他限制删除条件
+        //TODO 其他限制删除条件
     <#if logicDelete == 1>
         return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
     <#else>

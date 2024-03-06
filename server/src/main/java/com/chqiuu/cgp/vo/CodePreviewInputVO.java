@@ -46,6 +46,9 @@ public class CodePreviewInputVO implements Serializable {
     @NotNull(message = "是否为MyBatis-Plus不能为空")
     @ApiModelProperty(value = "是否为MyBatis-Plus")
     private Boolean isPlus;
+    @NotNull(message = "是否为Layuimini不能为空")
+    @ApiModelProperty(value = "是否为Layuimini")
+    private Boolean isLayuimini;
     /**
      * 是否启用mapstruct对象转换工具
      */

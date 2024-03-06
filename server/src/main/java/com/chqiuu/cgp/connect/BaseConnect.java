@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -211,7 +212,12 @@ public abstract class BaseConnect {
                     field.set(t, rs.getBigDecimal(name));
                 } else if (field.getType().equals(Date.class)) {
                     field.set(t, rs.getDate(name));
+                } else if (field.getType().equals(Timestamp.class)) {
+                    field.set(t, rs.getDate(name));
+                } else if (field.getType().equals(LocalDateTime.class)) {
+                    field.set(t, rs.getObject(name, LocalDateTime.class));
                 } else {
+                    log.info("field.getType() {}", field.getType());
                     field.set(t, rs.getObject(name));
                 }
             }

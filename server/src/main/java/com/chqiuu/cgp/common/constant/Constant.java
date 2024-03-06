@@ -30,8 +30,6 @@ public class Constant {
      * 系统全局变量
      */
     public static class Public {
-
-
         /**
          * 设备验证码缓存前缀
          */
@@ -51,6 +49,7 @@ public class Constant {
                 , "ServiceImpl.java.ftl"
                 , "Dao.java.ftl"
                 , "Mapper.xml.ftl"
+                , "BriefDTO.java.ftl"
                 , "DetailDTO.java.ftl"
                 , "ListDTO.java.ftl"
                 , "InputVO.java.ftl"
@@ -58,6 +57,7 @@ public class Constant {
                 , "PageQuery.java.ftl"
                 , "menu.sql.ftl"
                 , "index.vue.ftl"
+                , "add-or-update.vue.ftl"
                 , "LayuiAdd.html.ftl"
                 , "LayuiDetail.html.ftl"
                 , "LayuiEdit.html.ftl"

@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -21,10 +22,10 @@ import ${codePackage}.query.${classNameUpperCase}PageQuery;
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
  */
-public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends IService${r'<'}${classNameUpperCase}Entity></#if> ${r'{'}
-
+public interface ${classNameUpperCase}Service <#if plusEnabled == 1>extends IService${r'<'}${classNameUpperCase}Entity></#if> ${r'{'}
 <#if plusEnabled == 0>
     <#if pk.extra?? && pk.extra == 'auto_increment'>
+
     /**
      * 插入数据
      *
@@ -33,6 +34,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
      */
     long insert(${classNameUpperCase}Entity entity);
     <#else>
+
     /**
      * 插入数据
      *
@@ -55,9 +57,8 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
      * @return 查询结果
      */
     ${classNameUpperCase}Entity getByPrimary(${classNameUpperCase}Entity entity);
-
-
     <#if mapQueryEnabled == 1>
+
     /**
      * 根据查询条件获取一条记录
      *
@@ -74,6 +75,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
      */
     List${r'<'}${classNameUpperCase}Entity> queryList(Map${r'<'}String, Object> conditions);
     </#if>
+
     /**
      * 查询所有数据
      *
@@ -81,8 +83,17 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
      */
     List<${classNameUpperCase}Entity> getAll();
 <#elseif plusEnabled == 1>
+
+    /**
+     * 根据唯一ID获取简要信息
+     *
+     * @param ${pk.attrNameLowerCase} ${pk.comment}
+     * @return 简要信息
+     */
+    ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase});
  <#if generalMethod??>
   <#if generalMethod.getDetailByIdEnabled==1>
+
     /**
      * 根据唯一ID获取详细信息
      *
@@ -92,6 +103,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
     ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase});
 </#if>
         <#if generalMethod.getListEnabled==1>
+
     /**
     * ${comment}列表查询
     * @param query       查询对象
@@ -100,6 +112,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
     List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query);
  </#if>
         <#if generalMethod.getPageEnabled==1>
+
     /**
      * ${comment}分页查询
      * @param query       分页查询对象
@@ -109,6 +122,7 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1> extends ISe
         </#if>
  </#if>
   <#if logicDelete == 1>
+
     /**
      * 删除
      *

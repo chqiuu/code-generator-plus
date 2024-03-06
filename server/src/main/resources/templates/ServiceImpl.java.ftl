@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 <#if plusEnabled == 1>
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
+import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
@@ -38,8 +39,8 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
 
 <#if plusEnabled == 0>
     private final ${classNameUpperCase}Dao ${classNameLowerCase}Dao;
-
     <#if pk.extra?? && pk.extra == 'auto_increment'>
+
     /**
      * 插入数据
      *
@@ -52,6 +53,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
         return entity.get${pk.attrNameUpperCase}();
     }
     <#else>
+
      /**
      * 插入数据
      *
@@ -84,6 +86,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
         return ${classNameLowerCase}Dao.getByPrimary(entity);
     }
     <#if mapQueryEnabled == 1>
+
     /**
      * 根据查询条件获取一条记录
      *
@@ -116,22 +119,29 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
     public List${r'<'}${classNameUpperCase}Entity> getAll() {
         return ${classNameLowerCase}Dao.getAll();
     }
-
 <#elseif plusEnabled == 1>
+
+    @Override
+    public ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase}) {
+        return this.baseMapper.getBriefById(${pk.attrNameLowerCase});
+    }
     <#if generalMethod??>
         <#if generalMethod.getDetailByIdEnabled==1>
+
     @Override
     public ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getDetailById(${pk.attrNameLowerCase});
     }
         </#if>
         <#if generalMethod.getListEnabled==1>
+
     @Override
     public List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query) {
         return this.baseMapper.getList(query);
     }
         </#if>
         <#if generalMethod.getPageEnabled==1>
+
     @Override
     public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query) {
         Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(query.getCurrent(), query.getSize());
@@ -140,6 +150,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
         </#if>
     </#if>
     <#if logicDelete == 1>
+        
     @Override
     public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long operatorId) {
         ${classNameUpperCase}Entity updateEntity = new ${classNameUpperCase}Entity();

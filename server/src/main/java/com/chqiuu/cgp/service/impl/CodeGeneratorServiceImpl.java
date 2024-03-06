@@ -98,8 +98,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     @Override
-    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
-            , String author, String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables) {
+    public List<CodePreviewDTO> preview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String tableName, String mappingName, boolean isPlus, String[] genMethods, List<TableEntity> allTables) {
         return preview(driverClassEnum, rootPackage, moduleName, author, tableName, mappingName, isPlus, false, genMethods, allTables);
     }
 
@@ -115,9 +114,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
 
-    private List<CodePreviewDTO> getTableCodePreview(DriverClassEnum driverClassEnum, String rootPackage
-            , String moduleName, String author, String mappingName, TableEntity table, List<ColumnEntity> columns
-            , boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+    private List<CodePreviewDTO> getTableCodePreview(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String mappingName, TableEntity table, List<ColumnEntity> columns, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
         // 获取表生成代码元数据信息
         TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, isMapstructEnabled, genMethods, mapQueryEnabled, lombokDataEnabled);
         List<CodePreviewDTO> list = new ArrayList<>();
@@ -207,10 +204,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param mapQueryEnabled   是否启用map查询功能
      * @param lombokDataEnabled 是否启用@Data注解
      */
-    private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
-            , String author, String mappingName, TableEntity table
-            , List<ColumnEntity> columns, ZipOutputStream zip, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled
-            , boolean lombokDataEnabled) throws NullPointerException {
+    private void generatorCode(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String mappingName, TableEntity table, List<ColumnEntity> columns, ZipOutputStream zip, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) throws NullPointerException {
         // 获取表生成代码元数据信息
         TableMetadataDTO dto = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, isMapstructEnabled, genMethods, mapQueryEnabled, lombokDataEnabled);
         // 根据模型数据生成代码文件
@@ -231,13 +225,10 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
      * @param lombokDataEnabled 是否启用@Data注解
      * @return 元数据信息
      */
-    private TableMetadataDTO getTableMetadata(DriverClassEnum driverClassEnum, String rootPackage, String moduleName
-            , String author, String mappingName, TableEntity table, List<ColumnEntity> columns, boolean isPlus
-            , boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
+    private TableMetadataDTO getTableMetadata(DriverClassEnum driverClassEnum, String rootPackage, String moduleName, String author, String mappingName, TableEntity table, List<ColumnEntity> columns, boolean isPlus, boolean isMapstructEnabled, String[] genMethods, boolean mapQueryEnabled, boolean lombokDataEnabled) {
         TableMetadataDTO dto = new TableMetadataDTO();
         dto.setTableName(table.getTableName());
-        dto.setComment(StrUtil.isEmpty(table.getTableComment()) ? table.getTableName()
-                : (table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment()));
+        dto.setComment(StrUtil.isEmpty(table.getTableComment()) ? table.getTableName() : (table.getTableComment().endsWith("表") ? table.getTableComment().substring(0, table.getTableComment().length() - 1) : table.getTableComment()));
         if (StrUtil.isNotBlank(dto.getComment())) {
             dto.setCommentEscape(dto.getComment().replaceAll("\"", "\\\\\"").replaceAll("\r", " ").replaceAll("\n", " "));
         }
@@ -307,7 +298,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         dto.setCodePackage(String.format("%s.%s", rootPackage, moduleName));
         if (StrUtil.isEmpty(mappingName)) {
             // URI修改为缩写 Controller 中 @RequestMapping("${mappingName}")
-            dto.setMappingName(String.format("/%s/%s", moduleName, getLastWord(dto.getTableName())));
+            dto.setMappingName(String.format("/%s/%s", moduleName, dto.getClassNameLowerCase()));
         } else {
             dto.setMappingName(mappingName);
         }
@@ -367,8 +358,7 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             if (checkGenerateFile(tableMetadata, templateStr)) {
                 continue;
             }
-            generateFile(tableMetadata, templateStr, zip, getFileName(templateStr, tableMetadata.getClassNameUpperCase()
-                    , tableMetadata.getRootPackage(), tableMetadata.getModuleName(), tableMetadata.getPlusEnabled()));
+            generateFile(tableMetadata, templateStr, zip, getFileName(templateStr, tableMetadata.getClassNameUpperCase(), tableMetadata.getRootPackage(), tableMetadata.getModuleName(), tableMetadata.getPlusEnabled()));
         }
     }
 
@@ -439,16 +429,25 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             return packagePath + File.separator + className + "Mapper.xml";
         }
         if (template.contains("menu.sql.ftl")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "menu" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
+            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "menu" + File.separator + "modules" + File.separator + moduleName + File.separator + className + ".vue";
         }
         if (template.contains("index.vue.ftl")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + ".vue";
+            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" + File.separator + moduleName + File.separator + className + ".vue";
         }
         if (template.contains("add-or-update.vue.ftl")) {
-            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" +
-                    File.separator + moduleName + File.separator + className.toLowerCase() + "-add-or-update.vue";
+            return "main" + File.separator + "resources" + File.separator + "src" + File.separator + "views" + File.separator + "modules" + File.separator + moduleName + File.separator + className + "-add-or-update.vue";
+        }
+        if (template.contains("LayuiAdd.html.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "static" + File.separator + "page" + File.separator + moduleName + File.separator + className + "Add.html";
+        }
+        if (template.contains("LayuiDetail.html.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "static" + File.separator + "page" + File.separator + moduleName + File.separator + className + "Detail.html";
+        }
+        if (template.contains("LayuiEdit.html.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "static" + File.separator + "page" + File.separator + moduleName + File.separator + className + "Edit.html";
+        }
+        if (template.contains("LayuiTable.html.ftl")) {
+            return "main" + File.separator + "resources" + File.separator + "static" + File.separator + "page" + File.separator + moduleName + File.separator + className + "Table.html";
         }
         return packagePath;
     }

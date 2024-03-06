@@ -58,7 +58,10 @@ public class Constant {
                 , "PageQuery.java.ftl"
                 , "menu.sql.ftl"
                 , "index.vue.ftl"
-                , "add-or-update.vue.ftl"};
+                , "LayuiAdd.html.ftl"
+                , "LayuiDetail.html.ftl"
+                , "LayuiEdit.html.ftl"
+                , "LayuiTable.html.ftl"};
         /**
          * 初始化ID生成器，调用方式 snowflake.nextId();
          */

@@ -131,7 +131,12 @@
             cols: [[
                 {type: "checkbox", width: 50, hide: true},
                 <#list columns as column>
+                <#if column.attrNameLowerCase == 'isDeleted' || column.attrNameLowerCase == 'delTime'>
+                <#elseif  column.attrType == 'LocalDateTime' >
+                {field: '${column.attrNameLowerCase}', title: '${column.commentEscape}', width: 170},
+                <#else>
                 {field: '${column.attrNameLowerCase}', title: '${column.commentEscape}', minWidth: 150},
+                </#if>
                 </#list>
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
             ]],

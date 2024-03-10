@@ -54,7 +54,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         //设置首页地址
-        registry.addViewController("/").setViewName("redirect:/static/ant-vue/index.html");
+        registry.addViewController("/").setViewName("redirect:/static/page/index.html");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 

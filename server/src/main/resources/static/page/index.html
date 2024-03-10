@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>代码生成工具Plus</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../libs/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" href="../libs/layui/adminui/dist/css/admin.css" media="all">
+    <style>
+        .header {
+            height: 59px;
+            border-bottom: 1px solid #404553;
+            background-color: #393d49;
+        }
+
+        .header h1 {
+            padding: 8px 0;
+            color: seashell;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-header header header-themes">
+    <h1>代码生成工具Plus</h1>
+    <div class="layui-container">
+        <ul class="layui-nav">
+            <li class="layui-nav-item"></li>
+        </ul>
+    </div>
+</div>
+<!-- Gird for ie 8/9 --> <!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script> <![endif]-->
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space5">
+        <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">参数设置</div>
+                <div class="layui-card-body">
+                    <div class="layui-form-item">
+                        <button id="connect-db-id" class="layui-btn layui-btn-sm">连接数据库</button>
+                        <button id="import-database-script-id" class="layui-btn layui-btn-sm">导入数据库脚本</button>
+                    </div>
+                    <blockquote class="layui-elem-quote">
+                        <span id="init-message">请先链接数据库或导入数据脚本</span>
+                        <span id="connect-message">当前链接：MySQL localhost:3306 super_email_sender</span>
+                    </blockquote>
+                    <hr class="layui-border-cyan">
+                    <hr class="layui-border-cyan">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">切换数据库</label>
+                            <div class="layui-input-block">
+                                <select lay-search="">
+                                    <option value="">请选择或搜索</option>
+                                    <option value="1">AAA</option>
+                                    <option value="2">aaa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">项目主包名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="rootPackage" autocomplete="off" value="com.chqiuu"
+                                       placeholder="请输入项目主包名"
+                                       lay-verify="required" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">创建人</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="author" autocomplete="off" value="chqiuu"
+                                       placeholder="请输入创建人"
+                                       lay-verify="required" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">生成接口</label>
+                            <div class="layui-input-block">
+                                <input type="checkbox" name="genMethods" title="add" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="getList" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="getPage" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="update" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="replace" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="delete" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="insertIgnore" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="getDetailById" lay-skin="tag" checked>
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <input type="checkbox" name="isPlus" value="1" checked>
+                            <div lay-checkbox>
+                                是否生成 MyBatis-Plus 代码
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <input type="checkbox" name="isMapstructEnabled" value="1" checked>
+                            <div lay-checkbox>
+                                是否生成mapstruct对象转换
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <input type="checkbox" name="isLayuiAdmin" value="1" checked>
+                            <div lay-checkbox>
+                                是否生成Layui Admin代码
+                            </div>
+                        </div>
+                    </form>
+                    <!--                    <hr class="layui-border-cyan">-->
+                    <!--                    <hr class="layui-border-cyan">-->
+                    <!--                    <div class="layui-form-item">-->
+                    <!--                        <div class="output" id="output"></div>-->
+                    <!--                    </div>-->
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md9">
+            <div class="layui-card">
+                <div class="layui-card-header">代码生成</div>
+                <div class="layui-card-body">
+                    <div class="table-container">
+                        <script type="text/html" id="currentTableToolbar">
+                            <div class="layui-btn-container">
+                                <a class="layui-btn layui-btn-sm" lay-event="batchSetModule">批量设置模块</a>
+                                <a class="layui-btn layui-btn-sm" lay-event="generateCodeSubmit">生成代码</a>
+                            </div>
+                        </script>
+                        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                        <script type="text/html" id="currentTableBar">
+                            <div class="layui-btn-group">
+                                <a class="layui-btn layui-btn-xs" lay-event="previewTable">查看字段信息</a>
+                                <a class="layui-btn layui-btn-xs" lay-event="previewCode">预览代码</a>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    output.innerHTML = marked.parse('# JAVA代码生成工具功能介绍\n' +
+        '## 功能介绍\n' +
+        'code-generator-plus是基于Springboot开发的SSM代码生成器，使用 <a target="_blank" href="https://freemarker.apache.org/">Apache FreeMarker</a> \n' +
+        '作为代码文件的模板，用户可以一键将数据库中的表生成entity、xml、dao、service、html、js、sql代码文件，并集成表的基础操作接口及前端功能实现（数据表的增加、删除、修改、根据ID获取信息以及分页查询功能），减少60%以上的开发任务；<br>\n' +
+        '该工具支持所有实现JDBC规范的数据库;默认集成了MySQL数据库脚本;<br>\n' +
+        '该工具提供了两种数据库表导入方式，连接数据库或直接导入SQL创建表脚本；<br>\n' +
+        '\n' +
+        '## 操作说明\n' +
+        '\n' +
+        '### 1. 设置数据源\n' +
+        '\n' +
+        '​\t本工具提供了两种数据库表导入方式，连接数据库和导入SQL创建表脚本。具体操作步骤见下图：\n' +
+        '\n' +
+        '![连接数据库](https://img-blog.csdnimg.cn/20201126165359570.png)\n' +
+        '\n' +
+        '数据库连接配置界面\n' +
+        '\n' +
+        '![导入SQL脚本](https://img-blog.csdnimg.cn/20201126165832650.png)\n' +
+        '\n' +
+        '​\t导入SQL脚本界面，录入表CREATE脚本，支持多表导入，多个脚本以英文分号隔开。\n' +
+        '\n' +
+        '### 2. 生成代码\n' +
+        '\n' +
+        '​\t数据源设置完成后及可进行代码生成了。代码生成界面展示了数据库中所有表，可通过多选的方式选中你想要生成代码的表，并分别为表指定功能模块（这里必须生成代码后会将代码分发到指定模块下），设置完成后点击“生成代码”即可一键生成你选中表的初始代码了。\n' +
+        '\n' +
+        '![生成代码主界面](https://img-blog.csdnimg.cn/20210611135138929.png)\n' +
+        '\n' +
+        '​\t除此之外，提供了查看表字段信息和生成的代码预览功能，下图为选中表字段信息展示\n' +
+        '\n' +
+        '![查看表字段信息](https://img-blog.csdnimg.cn/20201126170112585.png)\n' +
+        '\n' +
+        '下图为生成的代码预览功能\n' +
+        '\n' +
+        '![代码预览功能](https://img-blog.csdnimg.cn/20201126170222603.png)')
+</script>
+
+<script src="../libs/layui/layui.js"></script>
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form, laydate = layui.laydate,
+            table = layui.table;
+
+        table.render({
+            elem: '#currentTableId',
+            url: '../../../generator/getAllTables',
+            toolbar: '#currentTableToolbar',
+            defaultToolbar: [],
+            request: {
+                pageName: 'current', //页码的参数名称，默认：page
+                limitName: 'size' //每页数据量的参数名，默认：limit
+            }, parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code === 1 ? 0 : res.code, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.records //解析数据列表
+                };
+            },
+            height: 'full-156',
+            lineStyle: 'height: 45px;',
+            text: {none: '暂无数据'},
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'tableName', title: '表名', minWidth: 150},
+                {field: 'tableCollation', title: '字符集', minWidth: 150},
+                {field: 'columns', title: '字段数', minWidth: 150},
+                {field: 'tableComment', title: '表注释', minWidth: 150},
+                {field: 'module', title: '所属模块', minWidth: 150,edit: 'text'},
+                {field: 'mappingName', title: 'URL映射名称', minWidth: 150,edit: function(d){
+                        // d 即为当前行数据，此时可根据行相关字段来开启该行是否编辑的权限
+                        if(d.module){ // editable 为任意字段名
+                            return 'text'; // 编辑模式
+                        }
+                    }},
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
+            ]],
+            limit: 10000,
+            page: false,
+            autoSort: false, // 禁用前端自动排序
+            skin: 'grid'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            tableReload()
+            return false;
+        });
+
+        function tableReload() {
+            table.reloadData('currentTableId', {
+                page: {
+                    curr: 1
+                }
+            }, 'data');
+        }
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'batchSetModule') {
+            } else if (obj.event === 'generateCodeSubmit') {
+                let checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+        table.on('tool(currentTableFilter)', function (obj) {
+            const checkData = obj.data;
+            if (obj.event === 'previewTable') {
+                layer.msg('查看字段信息！');
+                return false;
+            } else if (obj.event === 'previewCode') {
+                return false;
+            }
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
+

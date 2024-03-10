@@ -18,7 +18,7 @@
             <div class="layui-card">
                 <div class="layui-card-header">添加${comment}</div>
                 <div class="layui-card-body" pad15>
-                    <div class="layui-form" wid100 lay-filter="">
+                    <form class="layui-form layui-form-pane" action="">
                         <#list columns as column>
                                 <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName)>
                             <div class="layui-form-item">
@@ -48,7 +48,15 @@
                             </div>
                                 </#if>
                         </#list>
-                    </div>
+                        <div class="layui-form-item layui-hide">
+                            <div class="layui-input-block">
+                                <button id="addBtn" class="layui-btn layui-btn-normal" lay-submit
+                                        lay-filter="addBtn">
+                                    保存
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

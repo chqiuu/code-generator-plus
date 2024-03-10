@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>404 - Layui</title>
+    <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>;!function(){self!==parent&&(location.href="about:blank")}();(function(){var a=location.pathname.replace(/\/v2/,"/2.7"),b=["dev","layui"].reverse().join(".");location.href=["//",b,a].join("")})();</script>
+  <link href="//res.sentcss.com/layui/v/2.7.6/css/layui.css" rel="stylesheet">
+  <link href="//res.sentcss.com/static/dist/docs/2.7/css/global.css?t=27605" rel="stylesheet">
+  <script>;!function(){self!==parent&&(location.href="about:blank")}();(function(){var a=location.pathname.replace(/\/v2/,"/2.7"),b=["dev","layui"].reverse().join(".");location.href=["//",b,a].join("")})();</script>
+</head>
+<body>
+<div class="layui-header header header-404">
+  <div class="layui-container">
+    <a class="logo" href="/v2/">
+      <img src="//res.sentcss.com/static/images/layui/logo.png" alt="layui">
+    </a>
+    <div class="layui-form layui-hide-xs component" lay-filter="LAY-site-header-component"></div>
+    <div class="layui-hide-xs site-notice"></div>
+    
+    <ul class="layui-nav" id="LAY_NAV_TOP">
+      <li class="layui-nav-item" data-dir="docs">
+        <a href="/v2/docs/">文档</a> 
+      </li>
+      <li class="layui-nav-item" data-dir="demo">
+        <a href="/v2/demo/">示例</a>
+      </li>
+      
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <span class="layui-badge-dot" style="left:0; right: auto; margin: -4px 0 0 5px;"></span> 
+          2.7.6
+        </a>
+        <dl class="layui-nav-child layui-nav-child-c">  
+          <dd lay-unselect><a href="https://layui.dev">前往最新版</a></dd>
+          <dd class="layui-this"><a href="/v2/">2.7.6</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item">
+        <a href="https://layui.dev">新版</a>
+      </li>
+      
+    </ul>
+  </div>
+</div>
+ 
+<!-- 让 IE8/9 兼容响应式栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+ 
+<div style="padding: 50px 0; height: 600px; text-align: center;">
+  <h1>
+    <i class="layui-icon" style="line-height: 500px; font-size: 500px; color: #393D50;">&#xe61c;</i>
+  </h1>
+  <p style="font-size: 20px; font-weight: 300; color: #999;">好干净的页面啊，什么都没有的样子</p>
+</div>
+<div class="layui-footer footer footer-404">
+  <p>
+    Copyright &copy; 2022 <a href="/v2/">layui</a> MIT Licensed</p>
+  <p id="LAY-footer-info">
+    <a href="https://github.com/layui/layui/blob/main/DISCLAIMER.md" rel="nofollow" target="_blank">免责声明</a> 
+    <a href="https://github.com/layui/layui/blob/main/LICENSE" rel="nofollow" target="_blank">开源协议</a>
+  </p>
+  <p>
+    <span>
+      感谢 <a href="https://www.upyun.com/?invite=SJ0wu6g2-" target="_blank" rel="nofollow" sponsor="upyun" class="layui-font-blue">
+        <strong>又拍云</strong>
+      </a> 提供云加速支持
+    </span>
+  </p>
+</div>
+<script>
+window.global = {
+  pageType: '404'
+  ,preview: function(){
+    var preview = document.getElementById('LAY_preview');
+    return preview ? preview.innerHTML : '';
+  }()
+};
+</script>
+<div class="site-tree-mobile layui-hide">
+  <i class="layui-icon layui-icon-spread-left"></i>
+</div>
+<div class="site-mobile-shade"></div>
+ 
+<script src="//res.sentcss.com/layui/v/2.7.6/layui.js"></script>
+<script>
+layui.config({
+  base: '//res.sentcss.com/static/dist/docs/2.7/modules/'
+  ,version: '27605'
+}).use('global',function(w){w.a||w.r&&w.r()});
+</script>
+ 
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?697ca70ccd7673d85e991c9168d9cc09";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</body>
+</html>

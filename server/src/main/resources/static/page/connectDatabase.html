@@ -28,23 +28,13 @@
 <div class="layui-fluid">
     <div class="layui-row layui-col-space5">
         <div class="layui-card">
-            <div class="layui-card-header">参数设置</div>
+            <div class="layui-card-header">请填写数据库连接</div>
             <div class="layui-card-body">
-                <div class="layui-form-item">
-                    <button id="connect-db-id" class="layui-btn layui-btn-sm">连接数据库</button>
-                    <button id="import-database-script-id" class="layui-btn layui-btn-sm">导入数据库脚本</button>
-                </div>
-                <blockquote class="layui-elem-quote">
-                    <span id="init-message">请先链接数据库或导入数据脚本</span>
-                    <span id="connect-message">当前链接：MySQL localhost:3306 super_email_sender</span>
-                </blockquote>
-                <hr class="layui-border-cyan">
-                <hr class="layui-border-cyan">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <label class="layui-form-label">数据库类型</label>
                         <div class="layui-input-block">
-                            <select name="dbType" lay-search="">
+                            <select id="input-dbType" name="dbType" lay-search="">
                                 <option value="MySQL">MySQL</option>
                                 <option value="Oracle">Oracle</option>
                                 <option value="SQLServer">SQLServer</option>
@@ -56,7 +46,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">服务器地址</label>
                         <div class="layui-input-block">
-                            <input type="text" name="server" autocomplete="off" value="localhost"
+                            <input id="input-server" type="text" name="server" autocomplete="off" value="localhost"
                                    placeholder="请输入服务器地址"
                                    lay-verify="required" class="layui-input">
                         </div>
@@ -64,7 +54,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">端口号</label>
                         <div class="layui-input-block">
-                            <input type="number" name="port" autocomplete="off" value="3306"
+                            <input id="input-port" type="number" name="port" autocomplete="off" value="3306"
                                    placeholder="请输入端口号"
                                    lay-verify="required" class="layui-input">
                         </div>
@@ -72,7 +62,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">数据库名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="database" autocomplete="off" value=""
+                            <input id="input-database" type="text" name="database" autocomplete="off" value=""
                                    placeholder="请输入数据库名"
                                    lay-verify="required" class="layui-input">
                         </div>
@@ -80,7 +70,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">登录名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="username" autocomplete="off" value=""
+                            <input id="input-username" type="text" name="username" autocomplete="off" value=""
                                    placeholder="请输入登录名"
                                    lay-verify="required" class="layui-input">
                         </div>
@@ -88,9 +78,17 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">密码</label>
                         <div class="layui-input-block">
-                            <input type="text" name="password" autocomplete="off" value=""
+                            <input id="input-password" type="text" name="password" autocomplete="off" value=""
                                    placeholder="请输入密码"
                                    lay-verify="required" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-hide">
+                        <div class="layui-input-block">
+                            <button id="connectDatabaseSubmitBtn" class="layui-btn layui-btn-normal" lay-submit
+                                    lay-filter="connectDatabaseSubmitBtn">
+                                保存
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -101,94 +99,57 @@
 
 <script src="../libs/layui/layui.js"></script>
 <script>
-    layui.use(['form', 'table', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'layer', 'table', 'laydate'], function () {
         var $ = layui.jquery,
-            form = layui.form, laydate = layui.laydate,
+            form = layui.form,
+            layer = layui.layer, laydate = layui.laydate,
             table = layui.table;
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
 
-        table.render({
-            elem: '#currentTableId',
-            url: '../../../generator/getAllTables',
-            toolbar: '#currentTableToolbar',
-            defaultToolbar: [],
-            request: {
-                pageName: 'current', //页码的参数名称，默认：page
-                limitName: 'size' //每页数据量的参数名，默认：limit
-            }, parseData: function (res) { //res 即为原始返回的数据
-                return {
-                    "code": res.code === 1 ? 0 : res.code, //解析接口状态
-                    "msg": res.message, //解析提示文本
-                    "count": res.data.total, //解析数据长度
-                    "data": res.data.records //解析数据列表
-                };
-            },
-            height: 'full-156',
-            lineStyle: 'height: 45px;',
-            text: {none: '暂无数据'},
-            cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'tableName', title: '表名', minWidth: 150},
-                {field: 'tableCollation', title: '字符集', minWidth: 150},
-                {field: 'columns', title: '字段数', minWidth: 150},
-                {field: 'tableComment', title: '表注释', minWidth: 150},
-                {field: 'module', title: '所属模块', minWidth: 150, edit: 'text'},
-                {
-                    field: 'mappingName', title: 'URL映射名称', minWidth: 150, edit: function (d) {
-                        // d 即为当前行数据，此时可根据行相关字段来开启该行是否编辑的权限
-                        if (d.module) { // editable 为任意字段名
-                            return 'text'; // 编辑模式
-                        }
+        // 保存
+        form.on('submit(connectDatabaseSubmitBtn)', function (data) {
+            console.info("connectDatabaseSubmit", dataContent)
+            var dataContent = {
+                dbType: $("#input-dbType").val(),
+                server: $("#input-server").val(),
+                port: $("#input-port").val(),
+                database: $("#input-database").val(),
+                username: $("#input-username").val(),
+                password: $("#input-password").val(),
+            }
+            connectDatabaseSubmit(dataContent)
+            return false;
+        });
+
+        function connectDatabaseSubmit(dataContent) {
+            console.info("connectDatabaseSubmit", dataContent)
+            $.ajax({
+                url: '../../../generator/connectDatabase',
+                async: false,
+                type: "post",
+                dataType: "json",
+                headers: {'Content-Type': 'application/json;charset=utf-8'},
+                data: JSON.stringify(dataContent),
+                success: function (res) {
+                    console.log("提交信息", res)
+                    if (res.code === 1) {
+                        layer.msg("数据库链接成功", {time: 1000}, function () {
+                            const index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        layer.msg('数据库链接失败！【' + res.message + '】');
                     }
                 },
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
-            ]],
-            limit: 10000,
-            page: false,
-            autoSort: false, // 禁用前端自动排序
-            skin: 'grid'
-        });
-
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            //执行搜索重载
-            tableReload()
-            return false;
-        });
-
-        function tableReload() {
-            table.reloadData('currentTableId', {
-                page: {
-                    curr: 1
+                error: function (e) {
+                    layer.msg('数据库链接失败！【' + e + '】');
                 }
-            }, 'data');
+            });
         }
 
-        /**
-         * toolbar事件监听
-         */
-        table.on('toolbar(currentTableFilter)', function (obj) {
-            if (obj.event === 'batchSetModule') {
-            } else if (obj.event === 'generateCodeSubmit') {
-                let checkStatus = table.checkStatus('currentTableId')
-                    , data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-            }
-        });
-
-        //监听表格复选框选择
-        table.on('checkbox(currentTableFilter)', function (obj) {
-            console.log(obj)
-        });
-        table.on('tool(currentTableFilter)', function (obj) {
-            const checkData = obj.data;
-            if (obj.event === 'previewTable') {
-                layer.msg('查看字段信息！');
-                return false;
-            } else if (obj.event === 'previewCode') {
-                return false;
-            }
-            return false;
-        });
     });
 </script>
 </body>

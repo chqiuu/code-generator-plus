@@ -27,7 +27,7 @@
         <fastjson.version>2.0.2</fastjson.version>
         <hutool.version>5.8.0</hutool.version>
         <poi.version>3.17</poi.version>
-        <easyexcel.version>3.0.5</easyexcel.version>
+        <easyexcel.version>3.1.1</easyexcel.version>
         <flying-saucer-pdf.version>9.1.20</flying-saucer-pdf.version>
         <itextpdf.version>5.5.13.1</itextpdf.version>
         <itext-asian.version>5.2.0</itext-asian.version>
@@ -153,6 +153,13 @@
         </dependency>
         <!--hutool end-->
 
+        <!--解析Excel begin-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>${easyexcel.version}</version>
+        </dependency>
+        <!--解析Excel end-->
 
         <dependency>
             <groupId>us.codecraft</groupId>

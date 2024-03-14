@@ -37,19 +37,18 @@
     <div class="layui-row layui-col-space5">
         <div class="layui-col-md3">
             <div class="layui-card">
-                <div class="layui-card-header">参数设置</div>
+                <div class="layui-card-header">数据库设置</div>
                 <div class="layui-card-body">
-                    <div class="layui-form-item">
-                        <button id="connect-db-id" class="layui-btn layui-btn-sm">连接数据库</button>
-                        <button id="import-database-script-id" class="layui-btn layui-btn-sm">导入数据库脚本</button>
-                    </div>
-                    <blockquote class="layui-elem-quote">
-                        <span id="init-message">请先链接数据库或导入数据脚本</span>
-                        <span id="connect-message">当前链接：MySQL localhost:3306 super_email_sender</span>
-                    </blockquote>
-                    <hr class="layui-border-cyan">
-                    <hr class="layui-border-cyan">
-                    <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form layui-form-pane" action="">
+                        <blockquote class="layui-elem-quote">
+                            <span id="init-message">请先链接数据库或导入数据脚本</span>
+                            <span id="connect-message">当前链接：MySQL localhost:3306 super_email_sender</span>
+                        </blockquote>
+                        <div class="layui-form-item">
+                            <button id="connect-db-btn-id" class="layui-btn layui-btn-sm">连接数据库</button>
+                            <button id="import-database-script-btn-id" class="layui-btn layui-btn-sm">导入数据库脚本
+                            </button>
+                        </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">切换数据库</label>
                             <div class="layui-input-block">
@@ -60,6 +59,13 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">生成参数设置</div>
+                <div class="layui-card-body">
+                    <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
                             <label class="layui-form-label">项目主包名</label>
                             <div class="layui-input-block">
@@ -134,49 +140,51 @@
                                 <a class="layui-btn layui-btn-xs" lay-event="previewCode">预览代码</a>
                             </div>
                         </script>
+                        <div id="columns-div" class="layui-hide">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script>
-    output.innerHTML = marked.parse('# JAVA代码生成工具功能介绍\n' +
-        '## 功能介绍\n' +
-        'code-generator-plus是基于Springboot开发的SSM代码生成器，使用 <a target="_blank" href="https://freemarker.apache.org/">Apache FreeMarker</a> \n' +
-        '作为代码文件的模板，用户可以一键将数据库中的表生成entity、xml、dao、service、html、js、sql代码文件，并集成表的基础操作接口及前端功能实现（数据表的增加、删除、修改、根据ID获取信息以及分页查询功能），减少60%以上的开发任务；<br>\n' +
-        '该工具支持所有实现JDBC规范的数据库;默认集成了MySQL数据库脚本;<br>\n' +
-        '该工具提供了两种数据库表导入方式，连接数据库或直接导入SQL创建表脚本；<br>\n' +
-        '\n' +
-        '## 操作说明\n' +
-        '\n' +
-        '### 1. 设置数据源\n' +
-        '\n' +
-        '​\t本工具提供了两种数据库表导入方式，连接数据库和导入SQL创建表脚本。具体操作步骤见下图：\n' +
-        '\n' +
-        '![连接数据库](https://img-blog.csdnimg.cn/20201126165359570.png)\n' +
-        '\n' +
-        '数据库连接配置界面\n' +
-        '\n' +
-        '![导入SQL脚本](https://img-blog.csdnimg.cn/20201126165832650.png)\n' +
-        '\n' +
-        '​\t导入SQL脚本界面，录入表CREATE脚本，支持多表导入，多个脚本以英文分号隔开。\n' +
-        '\n' +
-        '### 2. 生成代码\n' +
-        '\n' +
-        '​\t数据源设置完成后及可进行代码生成了。代码生成界面展示了数据库中所有表，可通过多选的方式选中你想要生成代码的表，并分别为表指定功能模块（这里必须生成代码后会将代码分发到指定模块下），设置完成后点击“生成代码”即可一键生成你选中表的初始代码了。\n' +
-        '\n' +
-        '![生成代码主界面](https://img-blog.csdnimg.cn/20210611135138929.png)\n' +
-        '\n' +
-        '​\t除此之外，提供了查看表字段信息和生成的代码预览功能，下图为选中表字段信息展示\n' +
-        '\n' +
-        '![查看表字段信息](https://img-blog.csdnimg.cn/20201126170112585.png)\n' +
-        '\n' +
-        '下图为生成的代码预览功能\n' +
-        '\n' +
-        '![代码预览功能](https://img-blog.csdnimg.cn/20201126170222603.png)')
-</script>
+<!--<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>-->
+<!--<script>-->
+<!--    output.innerHTML = marked.parse('# JAVA代码生成工具功能介绍\n' +-->
+<!--        '## 功能介绍\n' +-->
+<!--        'code-generator-plus是基于Springboot开发的SSM代码生成器，使用 <a target="_blank" href="https://freemarker.apache.org/">Apache FreeMarker</a> \n' +-->
+<!--        '作为代码文件的模板，用户可以一键将数据库中的表生成entity、xml、dao、service、html、js、sql代码文件，并集成表的基础操作接口及前端功能实现（数据表的增加、删除、修改、根据ID获取信息以及分页查询功能），减少60%以上的开发任务；<br>\n' +-->
+<!--        '该工具支持所有实现JDBC规范的数据库;默认集成了MySQL数据库脚本;<br>\n' +-->
+<!--        '该工具提供了两种数据库表导入方式，连接数据库或直接导入SQL创建表脚本；<br>\n' +-->
+<!--        '\n' +-->
+<!--        '## 操作说明\n' +-->
+<!--        '\n' +-->
+<!--        '### 1. 设置数据源\n' +-->
+<!--        '\n' +-->
+<!--        '​\t本工具提供了两种数据库表导入方式，连接数据库和导入SQL创建表脚本。具体操作步骤见下图：\n' +-->
+<!--        '\n' +-->
+<!--        '![连接数据库](https://img-blog.csdnimg.cn/20201126165359570.png)\n' +-->
+<!--        '\n' +-->
+<!--        '数据库连接配置界面\n' +-->
+<!--        '\n' +-->
+<!--        '![导入SQL脚本](https://img-blog.csdnimg.cn/20201126165832650.png)\n' +-->
+<!--        '\n' +-->
+<!--        '​\t导入SQL脚本界面，录入表CREATE脚本，支持多表导入，多个脚本以英文分号隔开。\n' +-->
+<!--        '\n' +-->
+<!--        '### 2. 生成代码\n' +-->
+<!--        '\n' +-->
+<!--        '​\t数据源设置完成后及可进行代码生成了。代码生成界面展示了数据库中所有表，可通过多选的方式选中你想要生成代码的表，并分别为表指定功能模块（这里必须生成代码后会将代码分发到指定模块下），设置完成后点击“生成代码”即可一键生成你选中表的初始代码了。\n' +-->
+<!--        '\n' +-->
+<!--        '![生成代码主界面](https://img-blog.csdnimg.cn/20210611135138929.png)\n' +-->
+<!--        '\n' +-->
+<!--        '​\t除此之外，提供了查看表字段信息和生成的代码预览功能，下图为选中表字段信息展示\n' +-->
+<!--        '\n' +-->
+<!--        '![查看表字段信息](https://img-blog.csdnimg.cn/20201126170112585.png)\n' +-->
+<!--        '\n' +-->
+<!--        '下图为生成的代码预览功能\n' +-->
+<!--        '\n' +-->
+<!--        '![代码预览功能](https://img-blog.csdnimg.cn/20201126170222603.png)')-->
+<!--</script>-->
 
 <script src="../libs/layui/layui.js"></script>
 <script>
@@ -184,6 +192,10 @@
         var $ = layui.jquery,
             form = layui.form, laydate = layui.laydate,
             table = layui.table;
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
 
         table.render({
             elem: '#currentTableId',
@@ -197,8 +209,8 @@
                 return {
                     "code": res.code === 1 ? 0 : res.code, //解析接口状态
                     "msg": res.message, //解析提示文本
-                    "count": res.data.total, //解析数据长度
-                    "data": res.data.records //解析数据列表
+                    "count": res?.data.length ?? 0, //解析数据长度
+                    "data": res?.data ?? [{}] //解析数据列表
                 };
             },
             height: 'full-156',
@@ -208,28 +220,83 @@
                 {type: "checkbox", width: 50},
                 {field: 'tableName', title: '表名', minWidth: 150},
                 {field: 'tableCollation', title: '字符集', minWidth: 150},
-                {field: 'columns', title: '字段数', minWidth: 150},
-                {field: 'tableComment', title: '表注释', minWidth: 150},
-                {field: 'module', title: '所属模块', minWidth: 150,edit: 'text'},
-                {field: 'mappingName', title: 'URL映射名称', minWidth: 150,edit: function(d){
+                {
+                    field: 'columns', title: '字段数', width: 100, templet: function (d) {
+                        return '<span style="color: blue">' + d.columns.length + '</span>';
+                    }
+                },
+                {field: 'tableComment', title: '表注释', minWidth: 200},
+                {
+                    field: 'module',
+                    title: '所属模块<i class="layui-icon layui-icon-tips layui-font-14" lay-event="module-tips" title="点击可编辑" style="margin-left: 5px;"></i>',
+                    minWidth: 200,
+                    edit: 'text'
+                },
+                {
+                    field: 'mappingName',
+                    title: 'URL映射名称<i class="layui-icon layui-icon-tips layui-font-14" lay-event="mappingName-tips" title="设置模块后编辑" style="margin-left: 5px;"></i>',
+                    minWidth: 200,
+                    edit: function (d) {
                         // d 即为当前行数据，此时可根据行相关字段来开启该行是否编辑的权限
-                        if(d.module){ // editable 为任意字段名
+                        if (d.module) { // editable 为任意字段名
                             return 'text'; // 编辑模式
                         }
-                    }},
+                    }
+                },
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
             ]],
             limit: 10000,
             page: false,
             autoSort: false, // 禁用前端自动排序
-            skin: 'grid'
+            skin: 'grid',
+            done: function (res, curr, count, origin) {
+                console.log(res); // 得到当前渲染的数据
+                console.log(curr);  // 得到当前页码
+                console.log(count); // 得到数据总量
+                console.log(origin); // 回调函数所执行的来源 --- 2.8.7+
+                res.forEach(function (item, index) {
+                    let columnTr = '';
+                    item.columns.forEach(function (column, i) {
+                        columnTr += '<tr><td>' + column.columnName + '</td><td>' + column.dataType + '</td><td>' + column.columnComment + '</td></tr>';
+                    })
+                    let columnTable = '<table lay-filter="' + item.tableName + '-table"><thead><tr><th lay-data="{field:\'name\', width:150}">字段名</th><th lay-data="{field:\'nation\', width:150}">字段类型</th><th lay-data="{field:\'maxim\', minWidth: 180}">字段注释</th></tr></thead><tbody>' + columnTr + '</tbody></table>'
+                    $('#columns-div').append(columnTable);
+                })
+            },
         });
 
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            //执行搜索重载
-            tableReload()
-            return false;
+        $("#connect-db-btn-id").click(function () {
+            console.log("connect-db-btn-id 1")
+            let index = layer.open({
+                title: '连接数据库',
+                type: 2,
+                shade: 0.2,
+                maxmin: true,
+                shadeClose: true,
+                btnAlign: "c",
+                area: ['500px', '520px'],
+                content: 'connectDatabase.html',
+                btn: ['保存', '取消'],
+                yes: function (index, layero) {
+                    console.log("connect-db-btn-id 2")
+                    const body = layer.getChildFrame('body', index);
+                    console.log("connect-db-btn-id 111")
+                    body.find("#connectDatabaseSubmitBtn").click();
+                },
+                btn3: function (index, layero) {
+                    console.log("connect-db-btn-id 3")
+                    //最后关闭弹出层
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                }, end: function () {
+                    console.log("connect-db-btn-id end")
+                    //重载表格
+                    tableReload()
+                }
+            });
+            console.log("connect-db-btn-id 4")
+        });
+        $("#import-database-script-btn-id").click(function () {
+            alert("你点击了按钮哦！");
         });
 
         function tableReload() {

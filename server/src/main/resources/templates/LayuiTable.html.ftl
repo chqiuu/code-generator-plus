@@ -181,7 +181,7 @@
          */
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {   // 监听添加操作
-                var index = layer.open({
+                let index = layer.open({
                     title: '添加${comment}',
                     type: 2,
                     shade: 0.2,
@@ -195,21 +195,20 @@
                         const body = layer.getChildFrame('body', index);
                         // 点击子页面的对应按钮
                         body.find("#addBtn").click()
-                        //重载表格
-                        tableReload()
-                        //最后关闭弹出层
-                        layer.close(index); //如果设定了yes回调，需进行手工关闭
                     },
                     btn3: function (index, layero) {
                         //最后关闭弹出层
                         layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    }, end: function () {
+                        //重载表格
+                        tableReload()
                     }
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
                 });
             } else if (obj.event === 'delete') {  // 监听删除操作
-                var checkStatus = table.checkStatus('currentTableId')
+                let checkStatus = table.checkStatus('currentTableId')
                     , data = checkStatus.data;
                 layer.alert(JSON.stringify(data));
             }
@@ -222,7 +221,7 @@
         table.on('tool(currentTableFilter)', function (obj) {
             const checkData = obj.data;
             if (obj.event === 'edit') {
-                var index = layer.open({
+                let index = layer.open({
                     title: '编辑${comment}',
                     type: 2,
                     shade: 0.2,
@@ -245,14 +244,13 @@
                         const body = layer.getChildFrame('body', index);
                         // 点击子页面的对应按钮
                         body.find("#updateBtn").click()
-                        //重载表格
-                        tableReload()
-                        //最后关闭弹出层
-                        layer.close(index); //如果设定了yes回调，需进行手工关闭
                     },
                     btn3: function (index, layero) {
                         //最后关闭弹出层
                         layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    }, end: function () {
+                        //重载表格
+                        tableReload()
                     }
                 });
                 $(window).on("resize", function () {

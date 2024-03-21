@@ -18,8 +18,8 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">修改${comment}</div>
-                <div class="layui-card-body" pad15>
-                    <div class="layui-form" wid100 lay-filter="">
+                <form class="layui-card-body" pad15>
+                    <form class="layui-form layui-form-pane" action="">
                         <#list columns as column>
                             <#if column.columnName == pk.columnName>
                             <input id="input-${column.attrNameLowerCase}" type="hidden">
@@ -51,7 +51,15 @@
                             </div>
                             </#if>
                         </#list>
-                    </div>
+                        <div class="layui-form-item layui-hide">
+                            <div class="layui-input-block">
+                                <button id="updateBtn" class="layui-btn layui-btn-normal" lay-submit
+                                        lay-filter="updateBtn">
+                                    保存
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -79,6 +79,10 @@ public class Result<T> implements Serializable {
         return restResult(resultEnum, null, null);
     }
 
+    public static <T> Result<T> failed(String message) {
+        return restResult(ResultEnum.FAILED, message, null);
+    }
+
     public static <T> Result<T> failed(ResultEnum resultEnum, Object message) {
         return restResult(resultEnum, message, null);
     }

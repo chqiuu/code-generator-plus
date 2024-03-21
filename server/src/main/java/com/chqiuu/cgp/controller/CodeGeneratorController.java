@@ -1,7 +1,13 @@
 package com.chqiuu.cgp.controller;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.fastjson.JSONObject;
 import com.chqiuu.cgp.common.base.BaseController;
 import com.chqiuu.cgp.common.domain.Result;
 import com.chqiuu.cgp.common.domain.ResultEnum;
@@ -12,6 +18,7 @@ import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.DriverClassEnum;
 import com.chqiuu.cgp.dto.CodePreviewDTO;
+import com.chqiuu.cgp.dto.ExportColumnDTO;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.service.CodeGeneratorService;
 import com.chqiuu.cgp.vo.CodePreviewInputVO;
@@ -21,6 +28,7 @@ import com.chqiuu.cgp.vo.SqlVO;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +36,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -122,6 +133,41 @@ public class CodeGeneratorController extends BaseController {
         return Result.ok(list);
     }
 
+    @ApiOperation(value = "质检员排名统计导出", notes = "质检员排名统计导出", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/exportAllTables")
+    public void exportAllTables() throws IOException {
+        List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
+        if (list.size() > 0) {
+            HttpServletResponse response = getResponse();
+            try {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8");
+                response.setHeader("Content-Disposition", String.format("attachment;filename=%s_%s.xlsx", URLEncoder.encode("数据库表导出", "UTF-8"), DateUtil.format(LocalDateTime.now(), DatePattern.PURE_DATETIME_MS_PATTERN)));
+                ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
+                for (int i = 0; i < list.size(); i++) {
+                    TableEntity table = list.get(i);
+                    List<ExportColumnDTO> exportColumnList = new ArrayList<>();
+                    table.getColumns().forEach(columnEntity -> {
+                        exportColumnList.add(ExportColumnDTO.importEntity(columnEntity));
+                    });
+                    WriteSheet writeSheet = EasyExcel.writerSheet(i, table.getTableComment().replaceAll("/","")).head(ExportColumnDTO.class).build();
+                    excelWriter.write(exportColumnList, writeSheet);
+                }
+
+                excelWriter.finish();
+            } catch (IOException e) {
+                response.reset();
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("application/json;charset=utf-8");
+                PrintWriter writer = response.getWriter();
+                writer.write(JSONObject.toJSONString(Result.failed(ResultEnum.FAILED, "质检员排名统计下载文件失败")));
+                writer.flush();
+                writer.close();
+                e.printStackTrace();
+            }
+        }
+    }
+
     @ApiOperation(value = "多表批量生成代码", notes = "多表批量生成代码")
     @PostMapping("/generatorCodes")
     public void generatorCodes(@RequestBody GeneratorVO vo) throws IOException {
@@ -147,8 +193,7 @@ public class CodeGeneratorController extends BaseController {
      * 数据库表列表模糊查询
      */
     @ApiOperation(value = "数据库表列表模糊查询", notes = "数据库表列表模糊查询")
-    @ApiImplicitParams({@ApiImplicitParam(name = "tableName", value = "表名", dataType = "string", dataTypeClass = String.class, paramType = "query", required = false),
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "tableName", value = "表名", dataType = "string", dataTypeClass = String.class, paramType = "query", required = false),})
     @GetMapping("/queryTableList")
     public Result<List<TableEntity>> queryList(String tableName) {
         //查询列表数据
@@ -171,8 +216,7 @@ public class CodeGeneratorController extends BaseController {
             vo.setModuleName(vo.getCodePackage().substring(vo.getCodePackage().lastIndexOf(".") + 1));
             vo.setRootPackage(vo.getCodePackage().substring(0, vo.getCodePackage().lastIndexOf(".")));
         }
-        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName()
-                , vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), vo.getIsLayuimini(), vo.getIsMapstructEnabled(), vo.getGenMethods(), list));
+        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName(), vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsPlus(), vo.getIsLayuimini(), vo.getIsMapstructEnabled(), vo.getGenMethods(), list));
     }
 
     /**
@@ -192,13 +236,7 @@ public class CodeGeneratorController extends BaseController {
      * 生成代码，全部生成
      */
     @ApiOperation(value = "批量生成所有表代码", notes = "批量生成所有表代码")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
-            @ApiImplicitParam(name = "isMapstructEnabled", value = "是否启用mapstruct对象转换", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "rootPackage", value = "包名。如：com.chqiuu", defaultValue = "com.chqiuu", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true), @ApiImplicitParam(name = "moduleName", value = "模块名。如：user，最终生成代码，包名为com.chqiuu.user", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true), @ApiImplicitParam(name = "author", value = "创建人。用于注解", dataType = "String", dataTypeClass = String.class, paramType = "query", required = true), @ApiImplicitParam(name = "isPlus", value = "是否为MyBatis-Plus", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true), @ApiImplicitParam(name = "isMapstructEnabled", value = "是否启用mapstruct对象转换", dataType = "boolean", dataTypeClass = Boolean.class, paramType = "query", required = true),})
     @GetMapping("/codeAll")
     public void codeAll(String codePackage, String rootPackage, String moduleName, String author, boolean isPlus, boolean isMapstructEnabled, String[] genMethods) throws Exception {
         if (StrUtil.isNotBlank(codePackage)) {

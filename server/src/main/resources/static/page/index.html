@@ -1,225 +1,339 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>layuiAdmin 控制台主页一</title>
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="../libs/layui/css/layui.css"/>
-  <link rel="stylesheet" type="text/css" href="../libs/layui/adminui/dist/css/admin.css" media="all">
+    <meta charset="utf-8">
+    <title>代码生成工具Plus</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../libs/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" href="../libs/layui/adminui/dist/css/admin.css" media="all">
+    <style>
+        .header {
+            height: 59px;
+            border-bottom: 1px solid #404553;
+            background-color: #393d49;
+        }
+
+        .header h1 {
+            padding: 8px 0;
+            color: seashell;
+        }
+    </style>
 </head>
 <body>
-<div class="layui-fluid">
-  <div class="layui-row layui-col-space15">
-    <div class="layui-col-md8">
-      <div class="layui-row layui-col-space15">
-        <div class="layui-col-md6">
-          <div class="layui-card">
-            <div class="layui-card-header">快捷方式</div>
-            <div class="layui-card-body">
-
-              <div class="layui-carousel layadmin-carousel layadmin-shortcut">
-                <div carousel-item>
-                  <ul class="layui-row layui-col-space10">
-                    <li class="layui-col-xs3">
-                      <a lay-href="home/homepage1.html">
-                        <i class="layui-icon layui-icon-console"></i>
-                        <cite>主页一</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="home/homepage2.html">
-                        <i class="layui-icon layui-icon-chart"></i>
-                        <cite>主页二</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="component/layer/list.html">
-                        <i class="layui-icon layui-icon-template-1"></i>
-                        <cite>弹层</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="senior/im/">
-                        <i class="layui-icon layui-icon-chat"></i>
-                        <cite>聊天</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="component/progress/index.html">
-                        <i class="layui-icon layui-icon-find-fill"></i>
-                        <cite>进度条</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="app/workorder/list.html">
-                        <i class="layui-icon layui-icon-survey"></i>
-                        <cite>工单</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="user/user/list.html">
-                        <i class="layui-icon layui-icon-user"></i>
-                        <cite>用户</cite>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs3">
-                      <a lay-href="set/system/website.html">
-                        <i class="layui-icon layui-icon-set"></i>
-                        <cite>设置</cite>
-                      </a>
-                    </li>
-                  </ul>
-                  <ul class="layui-row layui-col-space10">
-                    <li class="layui-col-xs3">
-                      <a lay-href="set/user/info.html">
-                        <i class="layui-icon layui-icon-set"></i>
-                        <cite>我的资料</cite>
-                      </a>
-                    </li>
-                  </ul>
-
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-        <div class="layui-col-md6">
-          <div class="layui-card">
-            <div class="layui-card-header">待办事项</div>
-            <div class="layui-card-body">
-
-              <div class="layui-carousel layadmin-carousel layadmin-backlog">
-                <div carousel-item>
-                  <ul class="layui-row layui-col-space10">
-                    <li class="layui-col-xs6">
-                      <a lay-href="app/content/comment.html" class="layadmin-backlog-body">
-                        <h3>待审评论</h3>
-                        <p><cite>66</cite></p>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs6">
-                      <a lay-href="app/forum/list.html" class="layadmin-backlog-body">
-                        <h3>待审帖子</h3>
-                        <p><cite>12</cite></p>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs6">
-                      <a lay-href="template/goodslist.html" class="layadmin-backlog-body">
-                        <h3>待审商品</h3>
-                        <p><cite>99</cite></p>
-                      </a>
-                    </li>
-                    <li class="layui-col-xs6">
-                      <a href="javascript:;" onclick="layer.tips('不跳转', this, {tips: 3});" class="layadmin-backlog-body">
-                        <h3>待发货</h3>
-                        <p><cite>20</cite></p>
-                      </a>
-                    </li>
-                  </ul>
-                  <ul class="layui-row layui-col-space10">
-                    <li class="layui-col-xs6">
-                      <a href="javascript:;" class="layadmin-backlog-body">
-                        <h3>待审友情链接</h3>
-                        <p><cite style="color: #FF5722;">5</cite></p>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="layui-col-md12">
-          <div class="layui-card">
-            <div class="layui-card-header">数据概览</div>
-            <div class="layui-card-body">
-
-              <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-dataview">
-                <div carousel-item id="LAY-index-dataview">
-                  <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
-                  <!--<div></div>-->
-                  <div></div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="layui-header header header-themes">
+    <h1>代码生成工具Plus</h1>
+    <div class="layui-container">
+        <ul class="layui-nav">
+            <li class="layui-nav-item"></li>
+        </ul>
     </div>
-
-    <div class="layui-col-md4">
-      <div class="layui-card">
-        <div class="layui-card-header">主题信息</div>
-        <div class="layui-card-body layui-text layadmin-version">
-          <table class="layui-table">
-            <colgroup>
-              <col width="100">
-              <col>
-            </colgroup>
-            <tbody>
-            <tr>
-              <td>页面模式</td>
-              <td>iframe</td>
-            </tr>
-            <tr>
-              <td>Version</td>
-              <td>
-                <script type="text/html" template>
-                  v{{ layui.admin.v }}
-                </script>
-              </td>
-            </tr>
-            <tr>
-              <td>Layui</td>
-              <td>
-                <script type="text/html" template>
-                  v{{ layui.v }}
-                </script>
-              </td>
-            </tr>
-            <tr>
-              <td>主要特色</td>
-              <td>易上手 / 响应式 / 清爽 / 极简</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
+<!-- Gird for ie 8/9 --> <!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script> <![endif]-->
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space5">
+        <div class="layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">数据库设置</div>
+                <div class="layui-card-body">
+                    <div class="layui-form layui-form-pane" action="">
+                        <blockquote class="layui-elem-quote">
+                            <span id="init-message">请先链接数据库或导入数据脚本</span>
+                            <span id="connect-message">当前链接：MySQL localhost:3306 super_email_sender</span>
+                        </blockquote>
+                        <div class="layui-form-item">
+                            <button id="connect-db-btn-id" class="layui-btn layui-btn-sm">连接数据库</button>
+                            <button id="import-database-script-btn-id" class="layui-btn layui-btn-sm">导入数据库脚本
+                            </button>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">切换数据库</label>
+                            <div class="layui-input-block">
+                                <select lay-search="">
+                                    <option value="">请选择或搜索</option>
+                                    <option value="1">AAA</option>
+                                    <option value="2">aaa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">生成参数设置</div>
+                <div class="layui-card-body">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">项目主包名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="rootPackage" autocomplete="off" value="com.chqiuu"
+                                       placeholder="请输入项目主包名"
+                                       lay-verify="required" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">创建人</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="author" autocomplete="off" value="chqiuu"
+                                       placeholder="请输入创建人"
+                                       lay-verify="required" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">生成接口</label>
+                            <div class="layui-input-block">
+                                <input type="checkbox" name="genMethods" title="add" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="getList" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="getPage" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="update" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="replace" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="delete" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="insertIgnore" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="getDetailById" lay-skin="tag" checked>
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <input type="checkbox" name="isPlus" value="1" checked>
+                            <div lay-checkbox>
+                                是否生成 MyBatis-Plus 代码
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <input type="checkbox" name="isMapstructEnabled" value="1" checked>
+                            <div lay-checkbox>
+                                是否生成mapstruct对象转换
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
+                            <input type="checkbox" name="isLayuiAdmin" value="1" checked>
+                            <div lay-checkbox>
+                                是否生成Layui Admin代码
+                            </div>
+                        </div>
+                    </form>
+                    <!--                    <hr class="layui-border-cyan">-->
+                    <!--                    <hr class="layui-border-cyan">-->
+                    <!--                    <div class="layui-form-item">-->
+                    <!--                        <div class="output" id="output"></div>-->
+                    <!--                    </div>-->
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md9">
+            <div class="layui-card">
+                <div class="layui-card-header">代码生成</div>
+                <div class="layui-card-body">
+                    <div class="table-container">
+                        <script type="text/html" id="currentTableToolbar">
+                            <div class="layui-btn-container">
+                                <a class="layui-btn layui-btn-sm" lay-event="batchSetModule">批量设置模块</a>
+                                <a class="layui-btn layui-btn-sm" lay-event="generateCodeSubmit">生成代码</a>
+                            </div>
+                        </script>
+                        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                        <script type="text/html" id="currentTableBar">
+                            <div class="layui-btn-group">
+                                <a class="layui-btn layui-btn-xs" lay-event="previewTable">查看字段信息</a>
+                                <a class="layui-btn layui-btn-xs" lay-event="previewCode">预览代码</a>
+                            </div>
+                        </script>
+                        <div id="columns-div" class="layui-hide">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>-->
+<!--<script>-->
+<!--    output.innerHTML = marked.parse('# JAVA代码生成工具功能介绍\n' +-->
+<!--        '## 功能介绍\n' +-->
+<!--        'code-generator-plus是基于Springboot开发的SSM代码生成器，使用 <a target="_blank" href="https://freemarker.apache.org/">Apache FreeMarker</a> \n' +-->
+<!--        '作为代码文件的模板，用户可以一键将数据库中的表生成entity、xml、dao、service、html、js、sql代码文件，并集成表的基础操作接口及前端功能实现（数据表的增加、删除、修改、根据ID获取信息以及分页查询功能），减少60%以上的开发任务；<br>\n' +-->
+<!--        '该工具支持所有实现JDBC规范的数据库;默认集成了MySQL数据库脚本;<br>\n' +-->
+<!--        '该工具提供了两种数据库表导入方式，连接数据库或直接导入SQL创建表脚本；<br>\n' +-->
+<!--        '\n' +-->
+<!--        '## 操作说明\n' +-->
+<!--        '\n' +-->
+<!--        '### 1. 设置数据源\n' +-->
+<!--        '\n' +-->
+<!--        '​\t本工具提供了两种数据库表导入方式，连接数据库和导入SQL创建表脚本。具体操作步骤见下图：\n' +-->
+<!--        '\n' +-->
+<!--        '![连接数据库](https://img-blog.csdnimg.cn/20201126165359570.png)\n' +-->
+<!--        '\n' +-->
+<!--        '数据库连接配置界面\n' +-->
+<!--        '\n' +-->
+<!--        '![导入SQL脚本](https://img-blog.csdnimg.cn/20201126165832650.png)\n' +-->
+<!--        '\n' +-->
+<!--        '​\t导入SQL脚本界面，录入表CREATE脚本，支持多表导入，多个脚本以英文分号隔开。\n' +-->
+<!--        '\n' +-->
+<!--        '### 2. 生成代码\n' +-->
+<!--        '\n' +-->
+<!--        '​\t数据源设置完成后及可进行代码生成了。代码生成界面展示了数据库中所有表，可通过多选的方式选中你想要生成代码的表，并分别为表指定功能模块（这里必须生成代码后会将代码分发到指定模块下），设置完成后点击“生成代码”即可一键生成你选中表的初始代码了。\n' +-->
+<!--        '\n' +-->
+<!--        '![生成代码主界面](https://img-blog.csdnimg.cn/20210611135138929.png)\n' +-->
+<!--        '\n' +-->
+<!--        '​\t除此之外，提供了查看表字段信息和生成的代码预览功能，下图为选中表字段信息展示\n' +-->
+<!--        '\n' +-->
+<!--        '![查看表字段信息](https://img-blog.csdnimg.cn/20201126170112585.png)\n' +-->
+<!--        '\n' +-->
+<!--        '下图为生成的代码预览功能\n' +-->
+<!--        '\n' +-->
+<!--        '![代码预览功能](https://img-blog.csdnimg.cn/20201126170222603.png)')-->
+<!--</script>-->
 
 <script src="../libs/layui/layui.js"></script>
 <script>
-  //区块轮播切换
-  layui.use(['admin', 'carousel'], function(){
-    var $ = layui.$
-            ,admin = layui.admin
-            ,carousel = layui.carousel
-            ,element = layui.element
-            ,device = layui.device();
+    layui.use(['form', 'table', 'laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form, laydate = layui.laydate,
+            table = layui.table;
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
 
-    //轮播切换
-    $('.layadmin-carousel').each(function(){
-      var othis = $(this);
-      carousel.render({
-        elem: this
-        ,width: '100%'
-        ,arrow: 'none'
-        ,interval: othis.data('interval')
-        ,autoplay: othis.data('autoplay') === true
-        ,trigger: (device.ios || device.android) ? 'click' : 'hover'
-        ,anim: othis.data('anim')
-      });
+        table.render({
+            elem: '#currentTableId',
+            url: '../../../generator/getAllTables',
+            toolbar: '#currentTableToolbar',
+            defaultToolbar: [],
+            request: {
+                pageName: 'current', //页码的参数名称，默认：page
+                limitName: 'size' //每页数据量的参数名，默认：limit
+            }, parseData: function (res) { //res 即为原始返回的数据
+                return {
+                    "code": res.code === 1 ? 0 : res.code, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res?.data.length ?? 0, //解析数据长度
+                    "data": res?.data ?? [{}] //解析数据列表
+                };
+            },
+            height: 'full-156',
+            lineStyle: 'height: 45px;',
+            text: {none: '暂无数据'},
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'tableName', title: '表名', minWidth: 150},
+                {field: 'tableCollation', title: '字符集', minWidth: 150},
+                {
+                    field: 'columns', title: '字段数', width: 100, templet: function (d) {
+                        return '<span style="color: blue">' + d.columns.length + '</span>';
+                    }
+                },
+                {field: 'tableComment', title: '表注释', minWidth: 200},
+                {
+                    field: 'module',
+                    title: '所属模块<i class="layui-icon layui-icon-tips layui-font-14" lay-event="module-tips" title="点击可编辑" style="margin-left: 5px;"></i>',
+                    minWidth: 200,
+                    edit: 'text'
+                },
+                {
+                    field: 'mappingName',
+                    title: 'URL映射名称<i class="layui-icon layui-icon-tips layui-font-14" lay-event="mappingName-tips" title="设置模块后编辑" style="margin-left: 5px;"></i>',
+                    minWidth: 200,
+                    edit: function (d) {
+                        // d 即为当前行数据，此时可根据行相关字段来开启该行是否编辑的权限
+                        if (d.module) { // editable 为任意字段名
+                            return 'text'; // 编辑模式
+                        }
+                    }
+                },
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
+            ]],
+            limit: 10000,
+            page: false,
+            autoSort: false, // 禁用前端自动排序
+            skin: 'grid',
+            done: function (res, curr, count, origin) {
+                console.log(res); // 得到当前渲染的数据
+                console.log(curr);  // 得到当前页码
+                console.log(count); // 得到数据总量
+                console.log(origin); // 回调函数所执行的来源 --- 2.8.7+
+                res.forEach(function (item, index) {
+                    let columnTr = '';
+                    item.columns.forEach(function (column, i) {
+                        columnTr += '<tr><td>' + column.columnName + '</td><td>' + column.dataType + '</td><td>' + column.columnComment + '</td></tr>';
+                    })
+                    let columnTable = '<table lay-filter="' + item.tableName + '-table"><thead><tr><th lay-data="{field:\'name\', width:150}">字段名</th><th lay-data="{field:\'nation\', width:150}">字段类型</th><th lay-data="{field:\'maxim\', minWidth: 180}">字段注释</th></tr></thead><tbody>' + columnTr + '</tbody></table>'
+                    $('#columns-div').append(columnTable);
+                })
+            },
+        });
+
+        $("#connect-db-btn-id").click(function () {
+            console.log("connect-db-btn-id 1")
+            let index = layer.open({
+                title: '连接数据库',
+                type: 2,
+                shade: 0.2,
+                maxmin: true,
+                shadeClose: true,
+                btnAlign: "c",
+                area: ['500px', '520px'],
+                content: 'connectDatabase.html',
+                btn: ['保存', '取消'],
+                yes: function (index, layero) {
+                    console.log("connect-db-btn-id 2")
+                    const body = layer.getChildFrame('body', index);
+                    console.log("connect-db-btn-id 111")
+                    body.find("#connectDatabaseSubmitBtn").click();
+                },
+                btn3: function (index, layero) {
+                    console.log("connect-db-btn-id 3")
+                    //最后关闭弹出层
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                }, end: function () {
+                    console.log("connect-db-btn-id end")
+                    //重载表格
+                    tableReload()
+                }
+            });
+            console.log("connect-db-btn-id 4")
+        });
+        $("#import-database-script-btn-id").click(function () {
+            alert("你点击了按钮哦！");
+        });
+
+        function tableReload() {
+            table.reloadData('currentTableId', {
+                page: {
+                    curr: 1
+                }
+            }, 'data');
+        }
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'batchSetModule') {
+            } else if (obj.event === 'generateCodeSubmit') {
+                let checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+        table.on('tool(currentTableFilter)', function (obj) {
+            const checkData = obj.data;
+            if (obj.event === 'previewTable') {
+                layer.msg('查看字段信息！');
+                return false;
+            } else if (obj.event === 'previewCode') {
+                return false;
+            }
+            return false;
+        });
     });
-
-    element.render('progress');
-  });
 </script>
 </body>
 </html>

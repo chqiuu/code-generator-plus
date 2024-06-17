@@ -68,6 +68,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         BaseDatabase database = new DatabaseFactory().create(connect.getDriverClassEnum());
         List<TableEntity> tables = database.queryTableList(connect, tableName);
         tables.forEach(table -> {
+            String tableJavaName = WordUtils.capitalizeFully(table.getTableName(), new char[]{'_'}).replace("_", "");
+            tableJavaName = tableJavaName.substring(0, 1).toLowerCase() + tableJavaName.substring(1);
+            table.setTableJavaName(tableJavaName);
             // 定义警告信息
             List<String> warningMessages = new ArrayList<>();
             if (StrUtil.isEmpty(table.getTableComment())) {

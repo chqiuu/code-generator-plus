@@ -14,6 +14,7 @@ import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,7 +157,7 @@ public class MySqlDatabase extends BaseDatabase {
                     SQLAssignItem sqlAssignItem = alterTableStatement.getTableOptions().get(i);
                     tableNameEntity.setTableComment(sqlAssignItem.getValue().toString());
                 }
-                if (StrUtil.isEmpty(tableNameEntity.getTableComment())){
+                if (StrUtil.isEmpty(tableNameEntity.getTableComment())) {
                     alterTableStatement.getItems().forEach(i -> {
                         if (i instanceof MySqlAlterTableOption) {
                             MySqlAlterTableOption tableOption = (MySqlAlterTableOption) i;

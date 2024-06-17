@@ -14,6 +14,7 @@ import com.chqiuu.cgp.db.entity.ColumnEntity;
 import com.chqiuu.cgp.db.entity.SchemataEntity;
 import com.chqiuu.cgp.db.entity.TableEntity;
 import com.chqiuu.cgp.db.enums.JdbcTypeEnum;
+import org.apache.commons.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,7 @@ public class OracleDatabase extends BaseDatabase {
                 OracleCreateTableStatement stmt = (OracleCreateTableStatement) sqlStatement;
                 TableEntity tableEntity = new TableEntity();
                 tableEntity.setTableName(stmt.getTableSource().getExpr().toString().replace("`", ""));
+                tableEntity.setTableJavaName(WordUtils.capitalizeFully(tableEntity.getTableName(), new char[]{'_'}).replace("_", ""));
                 tableEntity.setTableComment(stmt.getComment().toString().replace("'", ""));
                 List<ColumnEntity> columns = new ArrayList<>();
                 for (SQLTableElement column : stmt.getTableElementList()) {

@@ -254,7 +254,7 @@
                 console.log(curr);  // 得到当前页码
                 console.log(count); // 得到数据总量
                 console.log(origin); // 回调函数所执行的来源 --- 2.8.7+
-                res.forEach(function (item, index) {
+                res.data.forEach(function (item, index) {
                     let columnTr = '';
                     item.columns.forEach(function (column, i) {
                         columnTr += '<tr><td>' + column.columnName + '</td><td>' + column.dataType + '</td><td>' + column.columnComment + '</td></tr>';
@@ -307,21 +307,66 @@
             }, 'data');
         }
 
+        function getMappingName(moduleName, tableName) {
+            // 获取字符串中最后一个单词，若最后单词为info则忽略，向前移一个单词
+            if (tableName.indexOf('Info') === tableName.length - 4) {
+                tableName.substr(0, tableName.length - 4);
+            }
+            return '/'.concat(moduleName).concat('/').concat(tableName)
+        }
+
         /**
          * toolbar事件监听
          */
         table.on('toolbar(currentTableFilter)', function (obj) {
-            if (obj.event === 'batchSetModule') {
-            } else if (obj.event === 'generateCodeSubmit') {
-                let checkStatus = table.checkStatus('currentTableId')
-                    , data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
+            let checkStatus = table.checkStatus(obj.config.id);
+            console.info("checkStatus", checkStatus)
+            let checkData = checkStatus.data;
+            checkData.forEach(function (data, i) {
+                console.info("checkData data", data)
+                console.info("checkData data i", i)
+            })
+            switch (obj.event) {
+                case 'batchSetModule':
+                    layer.prompt({title: '设置模块名'}, function (value, index, elem) {
+                        if (value === '') return elem.focus();
+                        checkData.forEach(function (data, i) {
+                            data.module = value;
+                            data.mappingName = getMappingName(value, data.tableJavaName);
+                            table.updateRow('currentTableId', {
+                                index: data.rowIndex, data: data
+                            });
+                        })
+                        // 关闭 prompt
+                        layer.close(index);
+                    });
+                    break;
+                case 'generateCodeSubmit':
+                    layer.msg('生成代码！');
+                    break;
+                default:
+                    break;
             }
         });
 
         //监听表格复选框选择
         table.on('checkbox(currentTableFilter)', function (obj) {
-            console.log(obj)
+            const checkStatus = table.checkStatus(obj.config.id);
+            let checkData = obj.data;
+            if ('all' === obj.type) {
+                checkStatus.data.forEach(function (data, index) {
+                    checkData.rowIndex = index
+                    table.updateRow('currentTableId', {
+                        index: index, data: checkData
+                    });
+                });
+            } else {
+                let rowIndex = $(obj.tr).attr("data-index");
+                checkData.rowIndex = rowIndex
+                table.updateRow('currentTableId', {
+                    index: rowIndex, data: checkData
+                });
+            }
         });
         table.on('tool(currentTableFilter)', function (obj) {
             const checkData = obj.data;

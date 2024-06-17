@@ -31,6 +31,11 @@ public class TableEntity implements Serializable {
      */
     private String tableName;
     /**
+     * 表名称
+     * `TABLE_NAME` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+     */
+    private String tableJavaName;
+    /**
      * 表类型[system view|base table]
      * `TABLE_TYPE` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
      */

@@ -81,6 +81,7 @@ public class CodeGeneratorController extends BaseController {
         //连接数据库
         if (null != connect && null != connect.getDataSource()) {
             HttpSession httpSession = getSession();
+            httpSession.setAttribute("connectDatabase", vo);
             httpSession.setAttribute("dbConnect", connect);
             httpSession.setAttribute("allTables", codeGeneratorService.queryTableList(connect, null));
             httpSession.setAttribute("allDatabases", codeGeneratorService.queryDatabaseList(connect));
@@ -111,6 +112,16 @@ public class CodeGeneratorController extends BaseController {
         return Result.ok();
     }
 
+    @ApiOperation(value = "获取数据库连接参数", notes = "获取数据库连接参数")
+    @GetMapping("/getConnectDatabase")
+    public Result<ConnectDatabaseInputVO> getConnectDatabase() {
+        ConnectDatabaseInputVO vo = (ConnectDatabaseInputVO) getSession().getAttribute("connectDatabase");
+        if (null == vo) {
+            return Result.failed(ResultEnum.PARAM_EMPTY_ERROR, "请先连接数据库！");
+        }
+        return Result.ok(vo);
+    }
+
     @ApiOperation(value = "获取数据库", notes = "获取数据库")
     @GetMapping("/getAllDatabases")
     public Result<List<SchemataEntity>> getAllDatabases() {
@@ -133,7 +144,7 @@ public class CodeGeneratorController extends BaseController {
         return Result.ok(list);
     }
 
-    @ApiOperation(value = "质检员排名统计导出", notes = "质检员排名统计导出", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "统计导出", notes = "统计导出", produces = MediaType.APPLICATION_JSON_VALUE)
     @GetMapping(value = "/exportAllTables")
     public void exportAllTables() throws IOException {
         List<TableEntity> list = (List<TableEntity>) getSession().getAttribute("allTables");
@@ -150,7 +161,7 @@ public class CodeGeneratorController extends BaseController {
                     table.getColumns().forEach(columnEntity -> {
                         exportColumnList.add(ExportColumnDTO.importEntity(columnEntity));
                     });
-                    WriteSheet writeSheet = EasyExcel.writerSheet(i, table.getTableComment().replaceAll("/","")).head(ExportColumnDTO.class).build();
+                    WriteSheet writeSheet = EasyExcel.writerSheet(i, table.getTableComment().replaceAll("/", "")).head(ExportColumnDTO.class).build();
                     excelWriter.write(exportColumnList, writeSheet);
                 }
 

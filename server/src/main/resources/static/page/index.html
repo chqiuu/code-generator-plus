@@ -89,9 +89,9 @@
                                 <input type="checkbox" name="genMethods" title="getList" lay-skin="tag" checked>
                                 <input type="checkbox" name="genMethods" title="getPage" lay-skin="tag" checked>
                                 <input type="checkbox" name="genMethods" title="update" lay-skin="tag" checked>
-                                <input type="checkbox" name="genMethods" title="replace" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="replace" lay-skin="tag">
                                 <input type="checkbox" name="genMethods" title="delete" lay-skin="tag" checked>
-                                <input type="checkbox" name="genMethods" title="insertIgnore" lay-skin="tag" checked>
+                                <input type="checkbox" name="genMethods" title="insertIgnore" lay-skin="tag">
                                 <input type="checkbox" name="genMethods" title="getDetailById" lay-skin="tag" checked>
                             </div>
                         </div>
@@ -114,11 +114,6 @@
                             </div>
                         </div>
                     </form>
-                    <!--                    <hr class="layui-border-cyan">-->
-                    <!--                    <hr class="layui-border-cyan">-->
-                    <!--                    <div class="layui-form-item">-->
-                    <!--                        <div class="output" id="output"></div>-->
-                    <!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -219,9 +214,9 @@
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'tableName', title: '表名', minWidth: 150},
-                {field: 'tableCollation', title: '字符集', minWidth: 150},
+                {field: 'tableCollation', title: '字符集', width: 155},
                 {
-                    field: 'columns', title: '字段数', width: 100, templet: function (d) {
+                    field: 'columns', title: '字段数', width: 74, templet: function (d) {
                         return '<span style="color: blue">' + d.columns.length + '</span>';
                     }
                 },
@@ -229,7 +224,7 @@
                 {
                     field: 'module',
                     title: '所属模块<i class="layui-icon layui-icon-tips layui-font-14" lay-event="module-tips" title="点击可编辑" style="margin-left: 5px;"></i>',
-                    minWidth: 200,
+                    width: 120,
                     edit: 'text'
                 },
                 {
@@ -243,7 +238,7 @@
                         }
                     }
                 },
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
+                {title: '操作', width: 175, toolbar: '#currentTableBar', align: "left", fixed: 'right'}
             ]],
             limit: 10000,
             page: false,
@@ -295,6 +290,7 @@
             });
             console.log("connect-db-btn-id 4")
         });
+
         $("#import-database-script-btn-id").click(function () {
             alert("你点击了按钮哦！");
         });
@@ -310,7 +306,7 @@
         function getMappingName(moduleName, tableName) {
             // 获取字符串中最后一个单词，若最后单词为info则忽略，向前移一个单词
             if (tableName.indexOf('Info') === tableName.length - 4) {
-                tableName.substr(0, tableName.length - 4);
+                tableName.substring(0, tableName.length - 4);
             }
             return '/'.concat(moduleName).concat('/').concat(tableName)
         }
@@ -326,6 +322,10 @@
                 console.info("checkData data", data)
                 console.info("checkData data i", i)
             })
+            if (checkData.length === 0) {
+                layer.msg("请选择要操作的数据表！");
+                return
+            }
             switch (obj.event) {
                 case 'batchSetModule':
                     layer.prompt({title: '设置模块名'}, function (value, index, elem) {
@@ -342,7 +342,72 @@
                     });
                     break;
                 case 'generateCodeSubmit':
-                    layer.msg('生成代码！');
+                    // 当前选中的表列表
+                    let selectedTables = []
+                    let mappingNames = []
+                    for (let data of checkData) {
+                        if (data.module === undefined || data.module === '' || data.module === null) {
+                            layer.alert("请先为表【" + data.tableName + "】设置模块名！");
+                            return;
+                        }
+                        selectedTables.push(data)
+                        mappingNames.push(data.mappingName)
+                    }
+                    // 检查URL映射名称是否有重复
+                    const sortMappingNames = mappingNames.slice().sort()
+                    let errorMessage = ''
+                    for (let i = 0; i < mappingNames.length; i++) {
+                        if (sortMappingNames[i] === sortMappingNames[i + 1]) {
+                            errorMessage = errorMessage.concat(sortMappingNames[i]).concat('，')
+                        }
+                    }
+                    if (errorMessage !== '') {
+                        layer.alert("URL映射名称不能重复，存在以下重复项：" + errorMessage + "，请修改后再生成代码！");
+                        return
+                    }
+                    let genMethods = [];
+                    $('input[name="genMethods"]:checked').each(function () {
+                        // 遍历，将所有选中的值放到数组中
+                        genMethods.push($(this).attr('title'));
+                    });
+                    let dataContent = {
+                        tables: selectedTables,
+                        rootPackage: $("input[name='rootPackage']").val(),
+                        author: $("input[name='author']").val(),
+                        isPlus: $("input[name='isPlus']").is(':checked'),
+                        isLayuimini: $("input[name='isLayuiAdmin']").is(':checked'),
+                        isMapstructEnabled: $("input[name='isMapstructEnabled']").is(':checked'),
+                        genMethods: genMethods,
+                    }
+                    console.log("dataContent data", dataContent)
+
+                    let url = '../../../generator/generatorCodes';
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('post', url, true);
+                    xhr.responseType = 'blob';
+                    xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var filename = '';
+                            var disposition = xhr.getResponseHeader('Content-Disposition');
+                            if (disposition && disposition.indexOf('attachment') !== -1) {
+                                var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                                var matches = filenameRegex.exec(disposition);
+                                if (matches != null && matches[1]) {
+                                    filename = matches[1].replace(/['"]/g, '');
+                                }
+                            }
+                            var blob = new Blob([xhr.response]);
+                            let link = document.createElement('a');
+                            let url = URL.createObjectURL(blob);
+                            link.style.display = 'none';
+                            link.href = url;
+                            link.download = filename;
+                            document.body.appendChild(link);
+                            link.click();
+                        }
+                    }
+                    xhr.send(JSON.stringify(dataContent));
                     break;
                 default:
                     break;
@@ -371,9 +436,76 @@
         table.on('tool(currentTableFilter)', function (obj) {
             const checkData = obj.data;
             if (obj.event === 'previewTable') {
-                layer.msg('查看字段信息！');
+                let rows = []
+                for (let i = 0; i < checkData.columns.length; i++) {
+                    let column = checkData.columns[i]
+                    rows.push('<tr><td>' + column.columnName + '</td><td>' + column.columnType + '</td><td>' + column.columnComment + '</td></tr>')
+                }
+                layer.open({
+                    type: 1, // page 层类型
+                    area: ['768px', '680px'], // 宽高
+                    title: checkData.tableName + " 表字段信息",
+                    shade: 0.6, // 遮罩透明度
+                    shadeClose: true, // 点击遮罩区域，关闭弹层
+                    maxmin: true, // 允许全屏最小化
+                    anim: 0, // 0-6 的动画形式，-1 不开启
+                    content: '<div style="padding: 11px;"><table class="layui-table" lay-skin="line"><thead><tr><th>字段名</th><th>字段类型</th><th>字段注释</th></tr></thead><tbody>' + rows.splice(" ") + '</tbody></table></div>'
+                });
                 return false;
             } else if (obj.event === 'previewCode') {
+                if (obj.data.module === undefined || obj.data.module === '' || obj.data.module === null) {
+                    layer.alert("请先为表【" + obj.data.tableName + "】设置模块名！");
+                    return;
+                }
+                let selectedTables = []
+                selectedTables.push(obj.data)
+                let genMethods = [];
+                $('input[name="genMethods"]:checked').each(function () {
+                    // 遍历，将所有选中的值放到数组中
+                    genMethods.push($(this).attr('title'));
+                });
+                let dataContent = {
+                    rootPackage: $("input[name='rootPackage']").val(),
+                    author: $("input[name='author']").val(),
+                    moduleName: obj.data.module,
+                    table: obj.data.tableName,
+                    mappingName: obj.data.mappingName,
+                    isPlus: $("input[name='isPlus']").is(':checked'),
+                    isLayuimini: $("input[name='isLayuiAdmin']").is(':checked'),
+                    isMapstructEnabled: $("input[name='isMapstructEnabled']").is(':checked'),
+                    genMethods: genMethods,
+                }
+                console.log("dataContent data", dataContent)
+                $.ajax({
+                    url: '../../../generator/preview',
+                    type: "post",
+                    dataType: "json",
+                    headers: {'Content-Type': 'application/json;charset=utf-8'},
+                    data: JSON.stringify(dataContent),
+                    success: function (res) {
+                        if (res.code === 1) {
+                            let index = layer.open({
+                                title: '预览代码',
+                                type: 2,
+                                shade: 0.2,
+                                maxmin: true,
+                                shadeClose: true,
+                                btnAlign: "c",
+                                area: ['90%', '95%'],
+                                content: 'previewCode.html',
+                                success: function (layero, index) {
+                                    const body = layer.getChildFrame('body', index);
+                                    body.find("#code-value-id").val(JSON.stringify(res.data));
+                                }
+                            });                        } else {
+                            layer.msg('失败！【' + res.message + '】');
+                        }
+                    },
+                    error: function (e) {
+                        layer.msg('失败！【' + e + '】');
+                    }
+                });
+
                 return false;
             }
             return false;

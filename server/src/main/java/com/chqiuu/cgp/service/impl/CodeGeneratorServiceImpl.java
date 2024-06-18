@@ -166,8 +166,15 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         if ("PageQuery.java.ftl".equals(templateName) && tableMetadata.getGeneralMethod().getGetPageEnabled() == 0) {
             return true;
         }
-        if ("ListDTO.java.ftl".equals(templateName) && tableMetadata.getGeneralMethod().getGetListEnabled() == 0 && tableMetadata.getGeneralMethod().getGetPageEnabled() == 0) {
-            return true;
+        if (tableMetadata.getGeneralMethod().getGetListEnabled() == 0 && tableMetadata.getGeneralMethod().getGetPageEnabled() == 0) {
+            if ("ListDTO.java.ftl".equals(templateName)) {
+                return true;
+            }
+        }
+        if (tableMetadata.getGeneralMethod().getGetListEnabled() == 0 && tableMetadata.getGeneralMethod().getGetPageEnabled() == 0 && tableMetadata.getGeneralMethod().getGetDetailByIdEnabled() == 0) {
+            if ("BriefDTO.java.ftl".equals(templateName)) {
+                return true;
+            }
         }
         if ("InputVO.java.ftl".equals(templateName) && tableMetadata.getGeneralMethod().getAddEnabled() == 0 && tableMetadata.getGeneralMethod().getUpdateEnabled() == 0) {
             return true;

@@ -605,7 +605,7 @@ export default {
       if (tableName.search('_') !== -1) {
         return tableName.substring(tableName.lastIndexOf('_') + 1)
       }
-      return tableName
+      return tableName + '_' + (Math.floor(Math.random() * 1000000) + 1)
     },
     onMappingNameCellChange (tableName, dataIndex, value) {
       // 修改Controller中URL映射名称

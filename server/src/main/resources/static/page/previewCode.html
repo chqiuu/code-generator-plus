@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>预览代码</title>
+    <link rel="stylesheet" type="text/css" href="../libs/layui/css/layui.css"/>
+    <link rel="stylesheet" type="text/css" href="../libs/layui/adminui/dist/css/admin.css" media="all">
+    <link rel="stylesheet" data-name="vs/editor/editor.main"
+          href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs/editor/editor.main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs/loader.js"></script>
+</head>
+<body class="layui-bg-gray">
+<h2>预览代码</h2>
+<div class="layui-row">
+    <input type="hidden" id="code-value-id">
+    <div class="layui-col-md2">
+        <div class="layui-panel" style="margin: 5px;">
+            <ul class="layui-menu" id="demo-menu">
+
+            </ul>
+        </div>
+    </div>
+    <div class="layui-col-md10">
+        <div id="code-preview" style="height: 910px;width: 100%;"></div>
+    </div>
+</div>
+<!-- Gird for ie 8/9 --> <!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script> <![endif]-->
+<script src="../libs/layui/layui.js"></script>
+<script>
+    var monacoEditor;
+
+    layui.use(function () {
+        var $ = layui.jquery
+        var dropdown = layui.dropdown;
+        var layer = layui.layer;
+        var util = layui.util;
+        var loadIndex = layer.load(1);
+
+        console.log("code-value-id ", $("#code-value-id").val())
+        // 加载 Monaco Editor 的核心模块
+        require.config({paths: {'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs'}});
+        require(['vs/editor/editor.main'], function () {
+            // 创建 Monaco Editor 实例
+            // monacoEditor && monacoEditor.dispose()
+            // monacoEditor = monaco.editor.create(
+            //     document.getElementById('code-preview'), {
+            //         language: 'html',
+            //         automaticLayout: true, // 自动布局
+            //         theme: 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
+            //         accessibilitySupport: 'on', // 辅助功能支持 控制编辑器是否应在为屏幕阅读器优化的模式下运行。
+            //         colorDecorators: false, // 呈现内联色彩装饰器和颜色选择器
+            //         contextmenu: true, // 启用上下文菜单
+            //         cursorSmoothCaretAnimation: true, // 光标动画
+            //         cursorStyle: 'line', // 光标样式
+            //         minimap: {
+            //             // 显示小地图
+            //             enabled: true,
+            //         },
+            //         folding: true, // 是否启用代码折叠
+            //         links: true, // 是否点击链接
+            //     });
+            layer.close(loadIndex);
+        });
+
+        // 菜单点击事件
+        dropdown.on('click(demo-menu)', function (options) {
+            console.log(this, options);
+            let fileSuffix = $(this).attr("data-file-suffix");
+            let language = fileSuffix
+            if (language === "xml") {
+                language = "html"
+            }
+            if (fileSuffix === "pdf") {
+                console.log(location.protocol + '//' + window.location.host + contextPath + $(this).attr("data-url") + 'download');
+                window.open('../../static/js/pdfjs-4.2.67/web/viewer.html?file=' + encodeURIComponent(location.protocol + '//' + window.location.host + contextPath + $(this).attr("data-url") + 'download'), '_blank');
+            } else if (fileSuffix === "xml" || fileSuffix === "template") {
+                $.ajax({
+                    type: "get",
+                    dataType: "xml",
+                    url: '../..' + $(this).attr("data-url"),
+                    success: function (data) {
+                        console.log(this, (new XMLSerializer()).serializeToString(data));
+                        // // 更改editor内容
+                        // const newModel = monaco.editor.createModel((new XMLSerializer()).serializeToString(data), {language: language});
+                        // monacoEditor.setModel(newModel);
+                        // monacoEditor.focus();
+                        monacoEditor && monacoEditor.dispose()
+                        monacoEditor = monaco.editor.create(
+                            document.getElementById('code-preview'), {
+                                value: (new XMLSerializer()).serializeToString(data),
+                                language: 'xml',
+                                automaticLayout: true, // 自动布局
+                                theme: 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
+                                accessibilitySupport: 'on', // 辅助功能支持 控制编辑器是否应在为屏幕阅读器优化的模式下运行。
+                                colorDecorators: false, // 呈现内联色彩装饰器和颜色选择器
+                                contextmenu: true, // 启用上下文菜单
+                                cursorSmoothCaretAnimation: true, // 光标动画
+                                cursorStyle: 'line', // 光标样式
+                                minimap: {
+                                    // 显示小地图
+                                    enabled: true,
+                                },
+                                folding: true, // 是否启用代码折叠
+                                links: true, // 是否点击链接
+                            });
+                        monacoEditor.focus();
+                    }
+                })
+            } else if (fileSuffix === "html" || fileSuffix === "act" || fileSuffix === "3d" || fileSuffix === "3f") {
+                $.ajax({
+                    type: "get",
+                    url: '../..' + $(this).attr("data-url"),
+                    success: function (data) {
+                        console.log(this, data);
+                        // 更改editor内容
+                        // const newModel = monaco.editor.createModel(data, {language: language});
+                        // monacoEditor.setModel(newModel);
+                        // monacoEditor.focus();
+                        monacoEditor && monacoEditor.dispose()
+                        monacoEditor = monaco.editor.create(document.getElementById('code-preview'), {
+                            value: data, // 编辑器初始显示文字
+                            language: 'xml', // 语言支持自行查阅demo
+                            automaticLayout: true, // 自动布局
+                            theme: 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
+                            minimap: {
+                                // 显示小地图
+                                enabled: true,
+                            },
+                        });
+                        monacoEditor.focus();
+                    }
+                })
+            } else if (fileSuffix === "png") {
+                layer.photos({
+                    photos: {
+                        "title": "Photos",
+                        "start": 0,
+                        "data": [
+                            {
+                                "alt": "layer",
+                                "pid": 1,
+                                "src": '../..' + $(this).attr("data-url"),
+                            }
+                        ]
+                    }
+                });
+            } else {
+                window.open('../..' + $(this).attr("data-url"), '_blank');
+            }
+        });
+    });
+</script>
+</body>
+</html>

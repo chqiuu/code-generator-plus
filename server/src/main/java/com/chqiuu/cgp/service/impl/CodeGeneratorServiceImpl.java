@@ -421,8 +421,8 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
         }
         if (template.contains("Controller.java.ftl")) {
             return packagePath + "controller" + File.separator + className + "Controller.java";
-        } else if (template.contains("Converter.java.ftl")) {
-            return packagePath + "converter" + File.separator + className + "Converter.java";
+        } else if (template.contains("MapStruct.java.ftl")) {
+            return packagePath + "mapstruct" + File.separator + className + "MapStruct.java";
         } else if (template.contains("Service.java.ftl")) {
             return packagePath + "service" + File.separator + className + "Service.java";
         } else if (template.contains("ServiceImpl.java.ftl")) {

@@ -9,7 +9,7 @@ import ${codePackage}.query.${classNameUpperCase}ListQuery;
 import ${codePackage}.query.${classNameUpperCase}PageQuery;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.time.LocalDateTime;
@@ -22,15 +22,8 @@ import java.util.Map;
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
  */
-@Repository
+@Mapper
 public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpperCase}Entity> {
-    /**
-    * 根据唯一ID获取简要信息
-    *
-    * @param ${pk.attrNameLowerCase} ${pk.comment}
-    * @return 简要信息
-    */
-    ${classNameUpperCase}BriefDTO getBriefById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
     <#if generalMethod??>
         <#if generalMethod.insertIgnoreEnabled==1>
 
@@ -53,6 +46,16 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     */
     @Insert("${r'<'}script>REPLACE INTO `${tableName}` <trim prefix='(' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>`${column.columnName}`, </if></#list></trim><trim prefix='values (' suffix=')' suffixOverrides=','><#list columns as column><if test='${column.attrNameLowerCase} != null'>${r'#{'}${column.attrNameLowerCase}<#if column.attrType == 'JSONObject'>, typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>${r'}'}, </if></#list></trim>${r'<'}/script>")
     int replace(${classNameUpperCase}Entity entity);
+        </#if>
+
+        <#if generalMethod.getBriefByIdEnabled==1>
+    /**
+    * 根据唯一ID获取简要信息
+    *
+    * @param ${pk.attrNameLowerCase} ${pk.comment}
+    * @return 简要信息
+    */
+    ${classNameUpperCase}BriefDTO getBriefById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
         </#if>
         <#if generalMethod.getDetailByIdEnabled==1>
 

@@ -19,7 +19,7 @@
     <input type="hidden" id="code-value-id">
     <div class="layui-col-md2">
         <div class="layui-panel" style="margin: 5px;">
-            <ul class="layui-menu" id="demo-menu">
+            <ul class="layui-menu" id="previewCode-menu">
 
             </ul>
         </div>
@@ -41,35 +41,36 @@
         var layer = layui.layer;
         var util = layui.util;
         var loadIndex = layer.load(1);
-
-        console.log("code-value-id ", $("#code-value-id").val())
         // 加载 Monaco Editor 的核心模块
         require.config({paths: {'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.48.0/min/vs'}});
         require(['vs/editor/editor.main'], function () {
-            // 创建 Monaco Editor 实例
-            // monacoEditor && monacoEditor.dispose()
-            // monacoEditor = monaco.editor.create(
-            //     document.getElementById('code-preview'), {
-            //         language: 'html',
-            //         automaticLayout: true, // 自动布局
-            //         theme: 'vs-dark', // 官方自带三种主题vs, hc-black, or vs-dark
-            //         accessibilitySupport: 'on', // 辅助功能支持 控制编辑器是否应在为屏幕阅读器优化的模式下运行。
-            //         colorDecorators: false, // 呈现内联色彩装饰器和颜色选择器
-            //         contextmenu: true, // 启用上下文菜单
-            //         cursorSmoothCaretAnimation: true, // 光标动画
-            //         cursorStyle: 'line', // 光标样式
-            //         minimap: {
-            //             // 显示小地图
-            //             enabled: true,
-            //         },
-            //         folding: true, // 是否启用代码折叠
-            //         links: true, // 是否点击链接
-            //     });
             layer.close(loadIndex);
         });
 
+
+        setTimeout(() => {
+            let codes = JSON.parse($("#code-value-id").val())
+            console.log(codes)
+            let lis = []
+            for (let i = 0; i < codes.length; i++) {
+                let code = codes[i];
+                lis.push('<li lay-options="{id: ' + i + '}"><div class="layui-menu-body-title"><a href="javascript:;">' + code.showName + '</a></div></li>');
+            }
+            console.log('lis', lis.join(''))
+            $("#previewCode-menu").html(lis.join(''));
+        }, 3000)
+
+
+        // 定时执行
+        let timer = setInterval(() => {
+            let codes = JSON.parse($("#code-value-id").val())
+            if (codes.length > 0) {
+
+            }
+        }, 1000);
+
         // 菜单点击事件
-        dropdown.on('click(demo-menu)', function (options) {
+        dropdown.on('click(previewCode-menu)', function (options) {
             console.log(this, options);
             let fileSuffix = $(this).attr("data-file-suffix");
             let language = fileSuffix

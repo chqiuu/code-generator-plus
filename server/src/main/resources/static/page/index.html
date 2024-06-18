@@ -92,6 +92,7 @@
                                 <input type="checkbox" name="genMethods" title="replace" lay-skin="tag">
                                 <input type="checkbox" name="genMethods" title="delete" lay-skin="tag" checked>
                                 <input type="checkbox" name="genMethods" title="insertIgnore" lay-skin="tag">
+                                <input type="checkbox" name="genMethods" title="getBriefById" lay-skin="tag" >
                                 <input type="checkbox" name="genMethods" title="getDetailById" lay-skin="tag" checked>
                             </div>
                         </div>
@@ -449,7 +450,7 @@
                     shadeClose: true, // 点击遮罩区域，关闭弹层
                     maxmin: true, // 允许全屏最小化
                     anim: 0, // 0-6 的动画形式，-1 不开启
-                    content: '<div style="padding: 11px;"><table class="layui-table" lay-skin="line"><thead><tr><th>字段名</th><th>字段类型</th><th>字段注释</th></tr></thead><tbody>' + rows.splice(" ") + '</tbody></table></div>'
+                    content: '<div style="padding: 11px;"><table class="layui-table" lay-skin="line"><thead><tr><th>字段名</th><th>字段类型</th><th>字段注释</th></tr></thead><tbody>' + rows.join("") + '</tbody></table></div>'
                 });
                 return false;
             } else if (obj.event === 'previewCode') {

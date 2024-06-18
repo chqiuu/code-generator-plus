@@ -83,15 +83,16 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1>extends ISer
      */
     List<${classNameUpperCase}Entity> getAll();
 <#elseif plusEnabled == 1>
-
-    /**
-     * 根据唯一ID获取简要信息
-     *
-     * @param ${pk.attrNameLowerCase} ${pk.comment}
-     * @return 简要信息
-     */
-    ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase});
  <#if generalMethod??>
+  <#if generalMethod.getBriefByIdEnabled==1>
+  /**
+  * 根据唯一ID获取简要信息
+  *
+  * @param ${pk.attrNameLowerCase} ${pk.comment}
+  * @return 简要信息
+  */
+  ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase});
+  </#if>
   <#if generalMethod.getDetailByIdEnabled==1>
 
     /**

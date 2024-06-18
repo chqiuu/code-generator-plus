@@ -51,7 +51,7 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
             <#elseif column.attrType == 'Integer'>
     @Max(value = Integer.MAX_VALUE, message = "${column.commentEscape}不能超过{value}", groups = Default.class)
             <#elseif column.attrType == 'Long'>
-    @Max(value = Long.MAX_VALUE, message = "${column.commentEscape}不能超过{max}", groups = Default.class)
+    // @Max(value = Long.MAX_VALUE, message = "${column.commentEscape}不能超过{max}", groups = Default.class)
             </#if>
     @ApiModelProperty(value = "${column.commentEscape}")
     private ${column.attrType} ${column.attrNameLowerCase};

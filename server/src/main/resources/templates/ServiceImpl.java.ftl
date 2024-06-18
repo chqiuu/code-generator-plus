@@ -120,12 +120,13 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
         return ${classNameLowerCase}Dao.getAll();
     }
 <#elseif plusEnabled == 1>
-
+    <#if generalMethod??>
+        <#if generalMethod.getBriefByIdEnabled==1>
     @Override
     public ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getBriefById(${pk.attrNameLowerCase});
     }
-    <#if generalMethod??>
+        </#if>
         <#if generalMethod.getDetailByIdEnabled==1>
 
     @Override

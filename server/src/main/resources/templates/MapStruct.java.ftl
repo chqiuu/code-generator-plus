@@ -1,4 +1,4 @@
-package ${codePackage}.converter;
+package ${codePackage}.mapstruct;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 import ${codePackage}.vo.${classNameUpperCase}InputVO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
@@ -11,7 +11,7 @@ import org.mapstruct.Mapper;
  * @date ${createTime?date("yyyy-MM-dd")}
  */
 @Mapper(componentModel = "spring")
-public interface ${classNameUpperCase}Converter {
+public interface ${classNameUpperCase}MapStruct {
 
     /**
     * VO 转 Entity

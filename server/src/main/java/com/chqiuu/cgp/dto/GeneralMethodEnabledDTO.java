@@ -27,6 +27,10 @@ public class GeneralMethodEnabledDTO {
     /**
      * 是否启用根据唯一ID获取详细信息方法
      */
+    private Integer getBriefByIdEnabled = 0;
+    /**
+     * 是否启用根据唯一ID获取详细信息方法
+     */
     private Integer getDetailByIdEnabled = 0;
     /**
      * 是否启用 列表 方法

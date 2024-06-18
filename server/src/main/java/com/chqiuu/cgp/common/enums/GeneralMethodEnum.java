@@ -24,6 +24,10 @@ public enum GeneralMethodEnum {
      */
     REPLACE("replace", "替换一条数据（选择字段插入），存在则替换，不存在则插入", new String[]{}),
     /**
+     * 根据唯一ID获取简要信息
+     */
+    GET_BRIEF_BY_ID("getBriefById", "根据唯一ID获取简要信息", new String[]{"BriefDTO.java.ftl"}),
+    /**
      * 根据唯一ID获取详细信息
      */
     GET_DETAIL_BY_ID("getDetailById", "根据唯一ID获取详细信息", new String[]{"DetailDTO.java.ftl"}),

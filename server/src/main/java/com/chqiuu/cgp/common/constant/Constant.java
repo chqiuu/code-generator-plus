@@ -44,7 +44,7 @@ public class Constant {
         public final static String[] CODE_FILE_TEMPLATES = new String[]{
                 "Entity.java.ftl"
                 , "Controller.java.ftl"
-                , "Converter.java.ftl"
+                , "MapStruct.java.ftl"
                 , "Service.java.ftl"
                 , "ServiceImpl.java.ftl"
                 , "Dao.java.ftl"

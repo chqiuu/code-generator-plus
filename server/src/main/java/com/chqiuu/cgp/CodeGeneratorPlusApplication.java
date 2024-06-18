@@ -39,6 +39,5 @@ public class CodeGeneratorPlusApplication {
                 , env.getProperty("spring.application.name"), portPath, ip, portPath, portPath
                 , delimiter);
         BrowseUtil.openBrowseByUrl(String.format("http://localhost%s/static/page/index.html", portPath));
-        BrowseUtil.openBrowseByUrl(String.format("http://localhost%s/static/ant-vue/index.html", portPath));
     }
 }

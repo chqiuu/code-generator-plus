@@ -154,7 +154,12 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
     }
 
     private boolean checkGenerateFile(TableMetadataDTO tableMetadata, String templateName) {
-        if ("Converter.java.ftl".equals(templateName) && tableMetadata.getMapstructEnabled() == 0) {
+        if (tableMetadata.getLayuiminiEnabled() == 0) {
+            if (templateName.startsWith("Layui") || templateName.contains(".vue.")) {
+                return true;
+            }
+        }
+        if ("MapStruct.java.ftl".equals(templateName) && tableMetadata.getMapstructEnabled() == 0) {
             return true;
         }
         if ("DetailDTO.java.ftl".equals(templateName) && tableMetadata.getGeneralMethod().getGetDetailByIdEnabled() == 0) {
@@ -175,9 +180,6 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
             if ("BriefDTO.java.ftl".equals(templateName)) {
                 return true;
             }
-        }
-        if ("InputVO.java.ftl".equals(templateName) && tableMetadata.getGeneralMethod().getAddEnabled() == 0 && tableMetadata.getGeneralMethod().getUpdateEnabled() == 0) {
-            return true;
         }
         return false;
     }

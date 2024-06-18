@@ -42,7 +42,7 @@
                     <div class="layui-form layui-form-pane" action="">
                         <blockquote class="layui-elem-quote">
                             <span id="init-message">请先链接数据库或导入数据脚本</span>
-                            <span id="connect-message">当前链接：MySQL localhost:3306 mysql</span>
+                            <span id="connect-message"></span>
                         </blockquote>
                         <div class="layui-form-item">
                             <button id="connect-db-btn-id" class="layui-btn layui-btn-sm">连接数据库</button>
@@ -52,7 +52,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">切换数据库</label>
                             <div class="layui-input-block">
-                                <select lay-search="">
+                                <select id="now-database-select" lay-search="" lay-filter="demo-select-filter">
                                     <option value="">请选择或搜索</option>
                                     <option value="1">AAA</option>
                                     <option value="2">aaa</option>
@@ -92,16 +92,16 @@
                                 <input type="checkbox" name="genMethods" title="replace" lay-skin="tag">
                                 <input type="checkbox" name="genMethods" title="delete" lay-skin="tag" checked>
                                 <input type="checkbox" name="genMethods" title="insertIgnore" lay-skin="tag">
-                                <input type="checkbox" name="genMethods" title="getBriefById" lay-skin="tag" >
+                                <input type="checkbox" name="genMethods" title="getBriefById" lay-skin="tag">
                                 <input type="checkbox" name="genMethods" title="getDetailById" lay-skin="tag" checked>
                             </div>
                         </div>
-                        <div class="layui-form-item" pane>
-                            <input type="checkbox" name="isServiceInterface" value="1" checked>
-                            <div lay-checkbox>
-                                是否生成Service接口
-                            </div>
-                        </div>
+<!--                        <div class="layui-form-item" pane>-->
+<!--                            <input type="checkbox" name="isServiceInterface" value="1" checked>-->
+<!--                            <div lay-checkbox>-->
+<!--                                是否生成Service接口-->
+<!--                            </div>-->
+<!--                        </div>-->
                         <div class="layui-form-item" pane>
                             <input type="checkbox" name="isPlus" value="1" checked>
                             <div lay-checkbox>
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                         <div class="layui-form-item" pane>
-                            <input type="checkbox" name="isLayuiAdmin" value="1" checked>
+                            <input type="checkbox" name="isLayuiAdmin" value="1">
                             <div lay-checkbox>
                                 是否生成Layui Admin代码
                             </div>
@@ -132,14 +132,14 @@
                         <script type="text/html" id="currentTableToolbar">
                             <div class="layui-btn-container">
                                 <a class="layui-btn layui-btn-sm" lay-event="batchSetModule">批量设置模块</a>
-                                <a class="layui-btn layui-btn-sm" lay-event="generateCodeSubmit">生成代码</a>
+                                <a class="layui-btn layui-btn-sm layui-bg-blue" lay-event="generateCodeSubmit">生成代码</a>
                             </div>
                         </script>
                         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
                         <script type="text/html" id="currentTableBar">
                             <div class="layui-btn-group">
-                                <a class="layui-btn layui-btn-xs" lay-event="previewTable">查看字段信息</a>
-                                <a class="layui-btn layui-btn-xs" lay-event="previewCode">预览代码</a>
+                                <a class="layui-btn layui-btn-sm layui-btn-primary layui-border-blue" lay-event="previewTable">字段信息</a>
+                                <a class="layui-btn layui-btn-sm layui-btn-primary layui-border" lay-event="previewCode">预览代码</a>
                             </div>
                         </script>
                         <div id="columns-div" class="layui-hide">
@@ -194,6 +194,37 @@
         var $ = layui.jquery,
             form = layui.form, laydate = layui.laydate,
             table = layui.table;
+
+        $("body > div.layui-fluid").click(function () {
+            // 关闭最近打开窗口
+            layer.closeLast('page');
+        });
+
+        $.getJSON('../../../generator/getConnectDatabase', function (data) {
+            if (data.code === 1) {
+                const connectDatabase = data.data;
+                console.log('connectDatabase', connectDatabase)
+                $.getJSON('../../../generator/getAllDatabases', function (res) {
+                    if (res.code === 1) {
+                        const databases = res.data;
+                        $('#init-message').addClass('layui-hide');
+                        $('#connect-message').removeClass('layui-hide').html(`当前链接：${connectDatabase.dbType} ${connectDatabase.server}:${connectDatabase.port} ${connectDatabase.database} `);
+                        console.log('databases', databases)
+                        $('#now-database-select').html('');
+                        $.each(databases, function (index, item) {
+                            if (connectDatabase.database === item.schemaName) {
+                                $('#now-database-select').append(new Option(item.schemaName, item.schemaName, true, true));
+                            } else {
+                                $('#now-database-select').append(new Option(item.schemaName, item.schemaName))
+                            }
+                        })
+                        console.log('now-database-select ',  $('#now-database-select').html())
+                        form.render("select");
+                    }
+                })
+            }
+        })
+
         /**
          * 初始化表单，要加上，不然刷新部分组件可能会不加载
          */
@@ -220,7 +251,42 @@
             text: {none: '暂无数据'},
             cols: [[
                 {type: "checkbox", width: 50},
-                {field: 'tableName', title: '表名', minWidth: 150},
+                {field: 'tableName', title: '表名', minWidth: 150, templet: function (d) {
+                        let xmlDom = "";
+                        function assemblyWarningMessagesBtn(tableName, warningMessages) {
+                            $(document).on('mouseenter', '#warning-' + tableName, function () {
+                                let lineBox = $(['<ul class="diff-list-slide-warning"></ul>'].join(''));
+                                warningMessages.forEach(function (line) {
+                                    lineBox.append($(['<li></li>'].join('')).text(line))
+                                });
+                                $('.layui-layer-page').each(function (i, el) {
+                                    var layero = $(el);
+                                    var shouldSkip = (type.indexOf(layero.attr('type')) === -1) || layero.css('display') === 'none';
+                                    if (shouldSkip) {
+                                        layer.close(Number(layero.attr('times')));
+                                    }
+                                });
+                                layer.open({
+                                    title: '警告信息',
+                                    type: 1,
+                                    offset: 'r',
+                                    anim: 'slideLeft', // 从右往左
+                                    area: ['480px', '100%'],
+                                    shade: 0,
+                                    shadeClose: true,
+                                    content: lineBox.prop("outerHTML")
+                                });
+                            });
+                            // <span class="layui-badge">61728</span>
+                            return ['<span id="warning-', tableName, '" class="layui-badge">', warningMessages.length, '</span>'].join('');
+                        }
+
+                        if (d.warningMessages != null && d.warningMessages.length > 0)  {
+                            xmlDom += assemblyWarningMessagesBtn(d.tableName, d.warningMessages);
+                        }
+                        return '<div><span>' + d.tableName + '</span>  <div class="layui-btn-group">' + xmlDom + '</div></div>';
+                    }
+                },
                 {field: 'tableCollation', title: '字符集', width: 155},
                 {
                     field: 'columns', title: '字段数', width: 74, templet: function (d) {
@@ -501,10 +567,12 @@
                                 area: ['90%', '95%'],
                                 content: 'previewCode.html',
                                 success: function (layero, index) {
+                                    layer.full(index); // 最大化
                                     const body = layer.getChildFrame('body', index);
                                     body.find("#code-value-id").val(JSON.stringify(res.data));
                                 }
-                            });                        } else {
+                            });
+                        } else {
                             layer.msg('失败！【' + res.message + '】');
                         }
                     },

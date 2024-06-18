@@ -47,25 +47,18 @@
             layer.close(loadIndex);
         });
 
-
-        setTimeout(() => {
-            let codes = JSON.parse($("#code-value-id").val())
-            console.log(codes)
-            let lis = []
-            for (let i = 0; i < codes.length; i++) {
-                let code = codes[i];
-                lis.push('<li lay-options="{id: ' + i + '}"><div class="layui-menu-body-title"><a href="javascript:;">' + code.showName + '</a></div></li>');
-            }
-            console.log('lis', lis.join(''))
-            $("#previewCode-menu").html(lis.join(''));
-        }, 3000)
-
-
         // 定时执行
         let timer = setInterval(() => {
             let codes = JSON.parse($("#code-value-id").val())
-            if (codes.length > 0) {
-
+            if (codes !== undefined && codes !== null || codes.length > 0) {
+                clearInterval(timer);//清除定时器
+                let lis = []
+                for (let i = 0; i < codes.length; i++) {
+                    let code = codes[i];
+                    lis.push('<li lay-options="{id: ' + i + '}"><div class="layui-menu-body-title"><a href="javascript:;">' + code.showName + '</a></div></li>');
+                }
+                console.log('lis', lis.join(''))
+                $("#previewCode-menu").html(lis.join(''));
             }
         }, 1000);
 

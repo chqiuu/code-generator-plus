@@ -338,6 +338,9 @@ public class CodeGeneratorServiceImpl implements CodeGeneratorService {
                 case REPLACE:
                     generalMethod.setReplaceEnabled(1);
                     break;
+                case GET_BRIEF_BY_ID:
+                    generalMethod.setGetBriefByIdEnabled(1);
+                    break;
                 case GET_DETAIL_BY_ID:
                     generalMethod.setGetDetailByIdEnabled(1);
                     break;

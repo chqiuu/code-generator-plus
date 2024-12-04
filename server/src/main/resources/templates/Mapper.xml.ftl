@@ -18,7 +18,6 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
 
 <#if plusEnabled == 1>
     <#if generalMethod??>
-        <#if generalMethod.getBriefByIdEnabled==1>
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap id="BriefResultMap" type="${codePackage}.dto.${classNameUpperCase}BriefDTO">
         <#list columns as column>
@@ -31,7 +30,6 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
         <include refid="Base_${acronymUpperCase}_Column_List"/>
         FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}<#if logicDelete == 1> AND ${acronymLowerCase}.`is_deleted` = 0</#if>
     </select>
-        </#if>
         <#if generalMethod.getDetailByIdEnabled==1>
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap id="DetailResultMap" type="${codePackage}.dto.${classNameUpperCase}DetailDTO">

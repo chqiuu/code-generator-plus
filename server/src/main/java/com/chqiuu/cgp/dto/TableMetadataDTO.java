@@ -102,6 +102,10 @@ public class TableMetadataDTO implements Serializable {
      */
     private GeneralMethodEnabledDTO generalMethod;
     /**
+     * 是否生成Service接口
+     */
+    private Integer serviceInterfaceEnabled = 0;
+    /**
      * 是否支持MyBatis-Plus
      */
     private Integer plusEnabled = 0;

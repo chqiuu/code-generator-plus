@@ -48,7 +48,6 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     int replace(${classNameUpperCase}Entity entity);
         </#if>
 
-        <#if generalMethod.getBriefByIdEnabled==1>
     /**
     * 根据唯一ID获取简要信息
     *
@@ -56,7 +55,6 @@ public interface ${classNameUpperCase}Mapper extends BaseMapper<${classNameUpper
     * @return 简要信息
     */
     ${classNameUpperCase}BriefDTO getBriefById(@Param("${pk.attrNameLowerCase}") ${pk.attrType} ${pk.attrNameLowerCase});
-        </#if>
         <#if generalMethod.getDetailByIdEnabled==1>
 
     /**

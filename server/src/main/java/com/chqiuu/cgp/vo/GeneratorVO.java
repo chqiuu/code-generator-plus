@@ -32,6 +32,12 @@ public class GeneratorVO implements Serializable {
     @ApiModelProperty(value = "创建人")
     private String author;
     /**
+     * 是否生成Service接口
+     */
+    @NotNull(message = "是否生成Service接口不能为空")
+    @ApiModelProperty(value = "是否生成Service接口")
+    private Boolean isServiceInterface;
+    /**
      * 是否生成MyBatis-Plus模式代码
      */
     @NotNull(message = "MyBatis-Plus支持不能为空")

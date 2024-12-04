@@ -43,6 +43,12 @@ public class CodePreviewInputVO implements Serializable {
     @ApiModelProperty(value = "Controller中URL映射名称")
     private String mappingName;
 
+    /**
+     * 是否生成Service接口
+     */
+    @NotNull(message = "是否生成Service接口不能为空")
+    @ApiModelProperty(value = "是否生成Service接口")
+    private Boolean isServiceInterface;
     @NotNull(message = "是否为MyBatis-Plus不能为空")
     @ApiModelProperty(value = "是否为MyBatis-Plus")
     private Boolean isPlus;

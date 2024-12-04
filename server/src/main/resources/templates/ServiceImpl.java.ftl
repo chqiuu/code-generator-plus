@@ -1,4 +1,4 @@
-package ${codePackage}.service.impl;
+package ${codePackage}.service<#if serviceInterfaceEnabled == 1>.impl</#if>;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +8,9 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 <#if plusEnabled == 1>
+    <#if serviceInterfaceEnabled != 1>
+import com.baomidou.mybatisplus.extension.service.IService;
+    </#if>
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ${codePackage}.mapper.${classNameUpperCase}Mapper;
 import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
@@ -35,8 +38,11 @@ import ${codePackage}.service.${classNameUpperCase}Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+<#if serviceInterfaceEnabled == 1>
 public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends ServiceImpl${r'<'}${classNameUpperCase}Mapper, ${classNameUpperCase}Entity></#if> implements ${classNameUpperCase}Service ${r'{'}
-
+<#else>
+public class ${classNameUpperCase}Service <#if plusEnabled == 1>extends ServiceImpl${r'<'}${classNameUpperCase}Mapper, ${classNameUpperCase}Entity> implements IService${r'<'}${classNameUpperCase}Entity></#if> ${r'{'}
+</#if>
 <#if plusEnabled == 0>
     private final ${classNameUpperCase}Dao ${classNameLowerCase}Dao;
     <#if pk.extra?? && pk.extra == 'auto_increment'>
@@ -121,29 +127,27 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
     }
 <#elseif plusEnabled == 1>
     <#if generalMethod??>
-        <#if generalMethod.getBriefByIdEnabled==1>
-    @Override
+    <#if serviceInterfaceEnabled == 1>@Override</#if>
     public ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getBriefById(${pk.attrNameLowerCase});
     }
-        </#if>
         <#if generalMethod.getDetailByIdEnabled==1>
 
-    @Override
+    <#if serviceInterfaceEnabled == 1>@Override</#if>
     public ${classNameUpperCase}DetailDTO getDetailById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getDetailById(${pk.attrNameLowerCase});
     }
         </#if>
         <#if generalMethod.getListEnabled==1>
 
-    @Override
+    <#if serviceInterfaceEnabled == 1>@Override</#if>
     public List${r'<'}${classNameUpperCase}ListDTO> getList(${classNameUpperCase}ListQuery query) {
         return this.baseMapper.getList(query);
     }
         </#if>
         <#if generalMethod.getPageEnabled==1>
 
-    @Override
+    <#if serviceInterfaceEnabled == 1>@Override</#if>
     public IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query) {
         Page${r'<'}${classNameUpperCase}ListDTO> pageInfo = new Page<>(query.getCurrent(), query.getSize());
         return this.baseMapper.getPage(pageInfo, query);
@@ -152,7 +156,7 @@ public class ${classNameUpperCase}ServiceImpl <#if plusEnabled == 1>extends Serv
     </#if>
     <#if logicDelete == 1>
         
-    @Override
+    <#if serviceInterfaceEnabled == 1>@Override</#if>
     public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long operatorId) {
         ${classNameUpperCase}Entity updateEntity = new ${classNameUpperCase}Entity();
         updateEntity.set${pk.attrNameUpperCase}(${pk.attrNameLowerCase});

@@ -2,11 +2,19 @@ package ${codePackage}.query;
 
 import java.io.Serializable;
 import java.util.Date;
+<#if apiVersion == 3>
+import io.swagger.v3.oas.annotations.media.Schema;
+<#else>
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+</#if>
+<#if hasBigDecimalAttr==1 >
 import java.math.BigDecimal;
+</#if>
+<#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
-
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;</#if>
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,22 +31,38 @@ import java.time.LocalDate;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
+<#if apiVersion == 3>
+@Schema(description = "${commentEscape}列表查询对象")
+<#else>
 @ApiModel(value = "${commentEscape}列表查询对象")
+</#if>
 public class ${classNameUpperCase}ListQuery implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
     /** 排序参数 */
+<#if apiVersion == 3>
+    @Schema(description = "排序参数")
+<#else>
     @ApiModelProperty(value = "排序参数")
+</#if>
     private String sortParam;
     /** 排序方式：正序asc，倒序desc，默认为desc */
+<#if apiVersion == 3>
+    @Schema(description = "排序方式：正序asc，倒序desc，默认为desc")
+<#else>
     @ApiModelProperty(value = "排序方式：正序asc，倒序desc，默认为desc")
+</#if>
     private String sortord;
 
 //TODO 当您看到这个后您应该自己修改模板增减规则
 <#list columns as column>
     <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
     /** ${column.commentEscape} ${column.columnDetail} */
+<#if apiVersion == 3>
+    @Schema(description = "${column.commentEscape}")
+<#else>
     @ApiModelProperty(value = "${column.commentEscape}")
+</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
     </#if>
 </#list>

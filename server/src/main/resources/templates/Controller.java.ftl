@@ -10,10 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.stereotype.Controller;
+<#if apiVersion == 3>
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+<#else>
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+</#if>
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +58,11 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("${mappingName}")
+<#if apiVersion == 3>
+@Tag(name = "${commentEscape}")
+<#else>
 @Api(value = "${commentEscape}", tags = "${commentEscape}")
+</#if>
 @RequiredArgsConstructor
 public class ${classNameUpperCase}Controller extends BaseController {
 
@@ -59,8 +71,11 @@ public class ${classNameUpperCase}Controller extends BaseController {
 <#if plusEnabled == 1>
     <#if generalMethod??>
         <#if generalMethod.getDetailByIdEnabled==1>
-
+            <#if apiVersion == 3>
+    @Operation(summary = "根据唯一ID获取详细信息")
+            <#else>
     @ApiOperation(value = "根据唯一ID获取详细信息", notes = "根据唯一ID获取详细信息")
+            </#if>
     @GetMapping("/detail/{${pk.attrNameLowerCase}}")
     public Result${r'<'}${classNameUpperCase}DetailDTO> detail(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "唯一ID不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         return Result.ok(${classNameLowerCase}Service.getDetailById(${pk.attrNameLowerCase}));
@@ -68,7 +83,11 @@ public class ${classNameUpperCase}Controller extends BaseController {
         </#if>
         <#if generalMethod.getListEnabled==1>
 
+            <#if apiVersion == 3>
+    @Operation(summary = "${commentEscape}列表查询")
+            <#else>
     @ApiOperation(value = "${commentEscape}列表查询", notes = "${commentEscape}列表查询")
+            </#if>
     @GetMapping("/list")
     public Result${r'<List<'}${classNameUpperCase}ListDTO>> list(${classNameUpperCase}ListQuery query) {
         return Result.ok(${classNameLowerCase}Service.getList(query));
@@ -76,7 +95,11 @@ public class ${classNameUpperCase}Controller extends BaseController {
         </#if>
         <#if generalMethod.getPageEnabled==1>
 
+            <#if apiVersion == 3>
+    @Operation(summary = "${commentEscape}分页查询")
+            <#else>
     @ApiOperation(value = "${commentEscape}分页查询", notes = "${commentEscape}分页查询")
+            </#if>
     @GetMapping("/page")
     public Result${r'<IPage<'}${classNameUpperCase}ListDTO>> page(${classNameUpperCase}PageQuery query) {
         return Result.ok(${classNameLowerCase}Service.getPage(query));
@@ -84,7 +107,11 @@ public class ${classNameUpperCase}Controller extends BaseController {
         </#if>
         <#if generalMethod.addEnabled==1>
 
+            <#if apiVersion == 3>
+    @Operation(summary = "新建${commentEscape}，返回ID")
+            <#else>
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
+            </#if>
     @PostMapping("/add")
     public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         <#if mapstructEnabled == 1>${classNameUpperCase}Entity entity = ${classNameLowerCase}MapStruct.fromInputVO(vo);<#else>${classNameUpperCase}Entity entity = vo.convertToEntity();</#if>
@@ -95,7 +122,11 @@ public class ${classNameUpperCase}Controller extends BaseController {
         </#if>
         <#if generalMethod.updateEnabled==1>
 
+            <#if apiVersion == 3>
+    @Operation(summary = "更新${commentEscape}")
+            <#else>
     @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
+            </#if>
     @PostMapping("/update")
     public Result${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
         ${classNameUpperCase}BriefDTO briefDTO = ${classNameLowerCase}Service.getBriefById(vo.get${pk.attrNameUpperCase}());
@@ -108,10 +139,17 @@ public class ${classNameUpperCase}Controller extends BaseController {
         </#if>
     </#if>
 
+            <#if apiVersion == 3>
+    @Operation(summary = "根据唯一ID删除${commentEscape}")
+    @Parameters({
+        @Parameter(name = "${pk.attrNameLowerCase}",description = "${pk.comment}",in = ParameterIn.PATH)
+    })
+            <#else>
     @ApiOperation(value = "根据唯一ID删除${commentEscape}", notes = "根据唯一ID删除${commentEscape}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "${pk.attrNameLowerCase}", value = "${pk.comment}", paramType = "path"),
     })
+            </#if>
     @PostMapping("/delete/{${pk.attrNameLowerCase}}")
     public Result${r'<'}Boolean> delete(@PathVariable("${pk.attrNameLowerCase}") @NotNull(message = "${pk.comment}不能为空") ${pk.attrType} ${pk.attrNameLowerCase}) {
         UserOnlineDTO user = getOnlineUser();

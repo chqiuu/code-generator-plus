@@ -190,7 +190,7 @@ public class CodeGeneratorController extends BaseController {
         if (null == driverClassEnum) {
             throw new UserException(ResultEnum.FAILED, "数据库类型有误！");
         }
-        byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsServiceInterface(), vo.getIsPlus(), vo.getIsLayuimini(), vo.getIsMapstructEnabled(), vo.getGenMethods(), vo.getTables(), list);
+        byte[] data = codeGeneratorService.generatorCodes(driverClassEnum, vo.getRootPackage(), vo.getAuthor(), vo.getIsServiceInterface(), vo.getIsPlus(), vo.getIsLayuimini(), vo.getIsMapstructEnabled(), vo.getApiVersion(), vo.getGenMethods(), vo.getTables(), list);
         HttpServletResponse response = getResponse();
         response.reset();
         response.setHeader("Content-Disposition", String.format("attachment; filename=%s-%s.zip", vo.getRootPackage(), LocalDateTimeUtil.format(LocalDateTime.now(), PURE_DATETIME_MS_PATTERN)));
@@ -227,7 +227,7 @@ public class CodeGeneratorController extends BaseController {
             vo.setModuleName(vo.getCodePackage().substring(vo.getCodePackage().lastIndexOf(".") + 1));
             vo.setRootPackage(vo.getCodePackage().substring(0, vo.getCodePackage().lastIndexOf(".")));
         }
-        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName(), vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsServiceInterface(), vo.getIsPlus(), vo.getIsLayuimini(), vo.getIsMapstructEnabled(), vo.getGenMethods(), list));
+        return Result.ok(codeGeneratorService.preview(driverClassEnum, vo.getRootPackage(), vo.getModuleName(), vo.getAuthor(), vo.getTable(), vo.getMappingName(), vo.getIsServiceInterface(), vo.getIsPlus(), vo.getIsLayuimini(), vo.getIsMapstructEnabled(), vo.getApiVersion(), vo.getGenMethods(), list));
     }
 
     /**

@@ -2,9 +2,16 @@ package ${codePackage}.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+<#if apiVersion == 3>
+import io.swagger.v3.oas.annotations.media.Schema;
+<#else>
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;<#if hasBigDecimalAttr==1 >
-import java.math.BigDecimal;</#if><#if hasJsonAttr==1 >
+import io.swagger.annotations.ApiModelProperty;
+</#if>
+<#if hasBigDecimalAttr==1 >
+import java.math.BigDecimal;
+</#if>
+<#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;</#if>
 
@@ -32,7 +39,11 @@ import java.time.LocalDate;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
-@ApiModel(value = "${commentEscape}")
+<#if apiVersion == 3>
+@Schema(description = "${commentEscape}实体类")
+<#else>
+@ApiModel(value = "${commentEscape}实体类")
+</#if>
 <#if plusEnabled == 1>
 @EqualsAndHashCode(callSuper = true)
 @TableName("${tableName}")
@@ -52,7 +63,11 @@ public class ${classNameUpperCase}Entity implements Serializable</#if> ${r'{'}
     @TableLogic
         </#if>
     </#if>
-    @ApiModelProperty(value = "${column.commentEscape}")<#if column.attrType == 'JSONObject'>
+<#if apiVersion == 3>
+    @Schema(description = "${column.commentEscape}")
+<#else>
+    @ApiModelProperty(value = "${column.commentEscape}")
+</#if><#if column.attrType == 'JSONObject'>
     @TableField(typeHandler = FastjsonTypeHandler.class)</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
     </#list>

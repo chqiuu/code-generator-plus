@@ -2,7 +2,6 @@ package ${codePackage}.service<#if serviceInterfaceEnabled == 1>.impl</#if>;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ${codePackage}.dao.${classNameUpperCase}Dao;
 </#if>
 import ${codePackage}.entity.${classNameUpperCase}Entity;
+<#if serviceInterfaceEnabled == 1>
 import ${codePackage}.service.${classNameUpperCase}Service;
+</#if>
 
 /**
  * ${commentEscape}业务逻辑层实现

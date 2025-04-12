@@ -2,11 +2,18 @@ package ${codePackage}.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+<#if apiVersion == 3>
+import io.swagger.v3.oas.annotations.media.Schema;
+<#else>
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+</#if>
+<#if hasBigDecimalAttr==1 >
 import java.math.BigDecimal;
+</#if>
+<#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
-
+</#if>
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
 <#if lombokDataEnabled == 1>
@@ -32,7 +39,11 @@ import java.time.LocalDate;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
+<#if apiVersion == 3>
+@Schema(description = "${commentEscape}录入信息")
+<#else>
 @ApiModel(value = "${commentEscape}录入信息")
+</#if>
 public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
@@ -53,7 +64,11 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
             <#elseif column.attrType == 'Long'>
     // @Max(value = Long.MAX_VALUE, message = "${column.commentEscape}不能超过{max}", groups = Default.class)
             </#if>
+<#if apiVersion == 3>
+    @Schema(description = "${column.commentEscape}")
+<#else>
     @ApiModelProperty(value = "${column.commentEscape}")
+</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
         </#if>
     </#list>

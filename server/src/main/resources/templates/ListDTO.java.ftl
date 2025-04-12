@@ -2,9 +2,16 @@ package ${codePackage}.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+<#if apiVersion == 3>
+import io.swagger.v3.oas.annotations.media.Schema;
+<#else>
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;<#if hasBigDecimalAttr==1 >
-import java.math.BigDecimal;</#if><#if hasJsonAttr==1 >
+import io.swagger.annotations.ApiModelProperty;
+</#if>
+<#if hasBigDecimalAttr==1 >
+import java.math.BigDecimal;
+</#if>
+<#if hasJsonAttr==1 >
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;</#if>
@@ -24,14 +31,22 @@ import java.time.LocalDate;
 <#if lombokDataEnabled == 1>
 @Data
 </#if>
+<#if apiVersion == 3>
+@Schema(description = "${commentEscape}列表信息")
+<#else>
 @ApiModel(value = "${commentEscape}列表信息")
+</#if>
 public class ${classNameUpperCase}ListDTO implements Serializable${r'{'}
 
     private static final long serialVersionUID = 1L;
 //TODO 当您看到这个后您应该自己修改模板增减字段
 <#list columns as column>
     /** ${column.commentEscape} ${column.columnDetail} */
-    @ApiModelProperty(value = "${column.commentEscape}")<#if column.attrType == 'JSONObject'>
+<#if apiVersion == 3>
+    @Schema(description = "${column.commentEscape}")
+<#else>
+    @ApiModelProperty(value = "${column.commentEscape}")
+</#if><#if column.attrType == 'JSONObject'>
     @TableField(typeHandler = FastjsonTypeHandler.class)</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
 </#list>

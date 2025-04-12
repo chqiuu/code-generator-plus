@@ -53,6 +53,10 @@ public class GeneratorVO implements Serializable {
     @ApiModelProperty(value = "是否启用mapstruct对象转换")
     private Boolean isMapstructEnabled;
     /**
+     * API 版本号
+     */
+    private Integer apiVersion;
+    /**
      * 带生成的数据库表列表
      */
     @Valid

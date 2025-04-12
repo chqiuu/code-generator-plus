@@ -130,6 +130,10 @@ public class TableMetadataDTO implements Serializable {
      */
     private Integer layuiminiEnabled = 0;
     /**
+     * API 版本号
+     */
+    private Integer apiVersion = 2;
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;

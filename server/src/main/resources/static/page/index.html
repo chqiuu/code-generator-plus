@@ -97,6 +97,13 @@
                             </div>
                         </div>
                         <div class="layui-form-item" pane>
+                            <label class="layui-form-label" title="Springboot3 版本则应选 OpenAPI3">API版本</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="apiVersion" value="2" title="OpenAPI2" checked>
+                                <input type="radio" name="apiVersion" value="3" title="OpenAPI3">
+                            </div>
+                        </div>
+                        <div class="layui-form-item" pane>
                             <input type="checkbox" name="isServiceInterface" value="1">
                             <div lay-checkbox>
                                 是否生成Service接口
@@ -446,6 +453,11 @@
                         layer.alert("URL映射名称不能重复，存在以下重复项：" + errorMessage + "，请修改后再生成代码！");
                         return
                     }
+                    let apiVersion=2;
+                    $('input[name="apiVersion"]:checked').each(function () {
+                        // 遍历，将所有选中的值放到数组中
+                        apiVersion=$(this).attr('value');
+                    });
                     let genMethods = [];
                     $('input[name="genMethods"]:checked').each(function () {
                         // 遍历，将所有选中的值放到数组中
@@ -459,7 +471,8 @@
                         isPlus: $("input[name='isPlus']").is(':checked'),
                         isLayuimini: $("input[name='isLayuiAdmin']").is(':checked'),
                         isMapstructEnabled: $("input[name='isMapstructEnabled']").is(':checked'),
-                        genMethods: genMethods,
+                        apiVersion: apiVersion,
+                        genMethods: genMethods
                     }
                     console.log("dataContent data", dataContent)
 
@@ -541,6 +554,11 @@
                 }
                 let selectedTables = []
                 selectedTables.push(obj.data)
+                let apiVersion=2;
+                $('input[name="apiVersion"]:checked').each(function () {
+                    // 遍历，将所有选中的值放到数组中
+                    apiVersion=$(this).attr('value');
+                });
                 let genMethods = [];
                 $('input[name="genMethods"]:checked').each(function () {
                     // 遍历，将所有选中的值放到数组中
@@ -556,7 +574,8 @@
                     isPlus: $("input[name='isPlus']").is(':checked'),
                     isLayuimini: $("input[name='isLayuiAdmin']").is(':checked'),
                     isMapstructEnabled: $("input[name='isMapstructEnabled']").is(':checked'),
-                    genMethods: genMethods,
+                    apiVersion: apiVersion,
+                    genMethods: genMethods
                 }
                 console.log("dataContent data", dataContent)
                 $.ajax({

@@ -5,6 +5,9 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.chqiuu.cgp.connect.BaseConnect;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 公共变量
  *
@@ -41,27 +44,7 @@ public class Constant {
         /**
          * 代码模版文件列表
          */
-        public final static String[] CODE_FILE_TEMPLATES = new String[]{
-                "Entity.java.ftl"
-                , "Controller.java.ftl"
-                , "MapStruct.java.ftl"
-                , "Service.java.ftl"
-                , "ServiceImpl.java.ftl"
-                , "Dao.java.ftl"
-                , "Mapper.xml.ftl"
-                , "BriefDTO.java.ftl"
-                , "DetailDTO.java.ftl"
-                , "ListDTO.java.ftl"
-                , "InputVO.java.ftl"
-                , "ListQuery.java.ftl"
-                , "PageQuery.java.ftl"
-                , "menu.sql.ftl"
-                , "index.vue.ftl"
-                , "add-or-update.vue.ftl"
-                , "LayuiAdd.html.ftl"
-                , "LayuiDetail.html.ftl"
-                , "LayuiEdit.html.ftl"
-                , "LayuiTable.html.ftl"};
+        public static List<String> FTL_TEMPLATE_NAMES=new ArrayList<>();
         /**
          * 初始化ID生成器，调用方式 snowflake.nextId();
          */

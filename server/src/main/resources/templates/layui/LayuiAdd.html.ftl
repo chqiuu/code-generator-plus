@@ -6,8 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" type="text/css" href="../../libs/layui/css/layui.css"/>
-    <link rel="stylesheet" type="text/css" href="../../libs/layui/adminui/dist/css/admin.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../layui/css/layui.css"/>
     <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <body>
@@ -21,31 +20,31 @@
                     <form class="layui-form layui-form-pane" action="">
                         <#list columns as column>
                                 <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName)>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">${column.commentEscape}</label>
-                                <#if column.attrType == 'String'>
-                                    <#if column.charlength?? && column.charlength < 1000>
-                                        <div class="layui-input-block">
-                                            <input id="input-${column.attrNameLowerCase}" type="text" name="${column.attrNameLowerCase}" placeholder="请输入${column.commentEscape}" value="" class="layui-input">
-                                        </div>
-                                    <#else>
-                                        <div class="layui-input-block">
-                                            <textarea id="input-${column.attrNameLowerCase}" name="${column.attrNameLowerCase}" class="layui-textarea" placeholder="请输入${column.commentEscape}"></textarea>
-                                        </div>
-                                    </#if>
-                                <#elseif column.attrType == 'Long' || column.attrType == 'Integer' || column.attrType == 'Float' || column.attrType == 'Double' || column.attrType == 'BigDecimal'>
-                                    <div class="layui-input-inline" style="width: <#if column.attrType == 'Integer'>80<#else>150</#if>px;">
-                                        <input id="input-${column.attrNameLowerCase}" name="${column.attrNameLowerCase}" type="number" lay-verify="number" class="layui-input">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">${column.commentEscape}</label>
+                            <#if column.attrType == 'String'>
+                                <#if column.charlength?? && column.charlength < 1000>
+                                    <div class="layui-input-block">
+                                        <input id="input-${column.attrNameLowerCase}" type="text" name="${column.attrNameLowerCase}" placeholder="请输入${column.commentEscape}" value="" class="layui-input">
                                     </div>
-                                    <div class="layui-input-inline layui-input-company">单位</div>
-                                    <div class="layui-form-mid layui-word-aux">提示：---</div>
-                                <#elseif column.attrType == 'LocalDateTime'>
-                                    <div class="layui-input-inline" style="width: 150px;">
-                                        <input id="input-${column.attrNameLowerCase}" type="text" name="${column.attrNameLowerCase}" autocomplete="off" placeholder="请选择${column.commentEscape}" class="layui-input">
+                                <#else>
+                                    <div class="layui-input-block">
+                                        <textarea id="input-${column.attrNameLowerCase}" name="${column.attrNameLowerCase}" class="layui-textarea" placeholder="请输入${column.commentEscape}"></textarea>
                                     </div>
-                                    <div class="layui-form-mid layui-word-aux">提示：---</div>
                                 </#if>
-                            </div>
+                            <#elseif column.attrType == 'Long' || column.attrType == 'Integer' || column.attrType == 'Float' || column.attrType == 'Double' || column.attrType == 'BigDecimal'>
+                                <div class="layui-input-inline" style="width: <#if column.attrType == 'Integer'>80<#else>150</#if>px;">
+                                    <input id="input-${column.attrNameLowerCase}" name="${column.attrNameLowerCase}" type="number" lay-verify="number" class="layui-input">
+                                </div>
+                                <div class="layui-input-inline layui-input-company">单位</div>
+                                <div class="layui-form-mid layui-word-aux">提示：---</div>
+                            <#elseif column.attrType == 'LocalDateTime'>
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <input id="input-${column.attrNameLowerCase}" type="text" name="${column.attrNameLowerCase}" autocomplete="off" placeholder="请选择${column.commentEscape}" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">提示：---</div>
+                            </#if>
+                        </div>
                                 </#if>
                         </#list>
                         <div class="layui-form-item layui-hide">
@@ -63,12 +62,12 @@
     </div>
 </div>
 
-<script src="../../libs/layui/layui.js"></script>
+<script src="../../layui/layui.js"></script>
 <script>
     layui.use(['jquery', 'form', 'layer', 'table', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
-            layer = layui.layer,laydate = layui.laydate,
+            layer = layui.layer, laydate = layui.laydate,
             table = layui.table;
 
         /**

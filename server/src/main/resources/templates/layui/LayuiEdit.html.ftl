@@ -7,8 +7,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="../../libs/layui/css/layui.css"/>
-    <link rel="stylesheet" type="text/css" href="../../libs/layui/adminui/dist/css/admin.css" media="all">
+    <link rel="stylesheet" type="text/css" href="../../layui/css/layui.css"/>
     <link rel="stylesheet" type="text/css" href="../../css/common.css"/>
 </head>
 <body>
@@ -18,7 +17,7 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">修改${comment}</div>
-                <form class="layui-card-body" pad15>
+                <div class="layui-card-body" pad15>
                     <form class="layui-form layui-form-pane" action="">
                         <#list columns as column>
                             <#if column.columnName == pk.columnName>
@@ -65,12 +64,12 @@
         </div>
     </div>
 </div>
-<script src="../../libs/layui/layui.js"></script>
+<script src="../../layui/layui.js"></script>
 <script>
     layui.use(['jquery', 'form', 'layer', 'table', 'laydate'], function () {
         var $ = layui.jquery,
             form = layui.form,
-            layer = layui.layer,laydate = layui.laydate,
+            layer = layui.layer, laydate = layui.laydate,
             table = layui.table;
 
         /**

@@ -19,6 +19,7 @@ import com.chqiuu.cgp.dto.GeneralMethodEnabledDTO;
 import com.chqiuu.cgp.dto.TableMetadataDTO;
 import com.chqiuu.cgp.exception.UserException;
 import com.chqiuu.cgp.vo.GeneratorTableVO;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.chqiuu.cgp.common.constant.Constant.Public.CODE_FILE_TEMPLATES;
+import static com.chqiuu.cgp.common.constant.Constant.Public.FTL_TEMPLATE_NAMES;
 
 /**
  * 代码生成业务层
@@ -187,7 +188,7 @@ public class CodeGeneratorService {
         TableMetadataDTO tableMetadata = getTableMetadata(driverClassEnum, rootPackage, moduleName, author, mappingName, table, columns, isPlus, isServiceInterface, false, isMapstructEnabled, apiVersion, genMethods, mapQueryEnabled, lombokDataEnabled);
         List<CodePreviewDTO> list = new ArrayList<>();
         // 模板列表
-        for (String templateName : CODE_FILE_TEMPLATES) {
+        for (String templateName : FTL_TEMPLATE_NAMES) {
             if (tableMetadata.getPlusEnabled() == 0) {
                 if (templateName.contains("DTO.") || templateName.contains("VO.")) {
                     continue;
@@ -444,7 +445,7 @@ public class CodeGeneratorService {
      */
     private void generateFiles(TableMetadataDTO tableMetadata, ZipOutputStream zip) {
         // 模板列表
-        for (String templateStr : CODE_FILE_TEMPLATES) {
+        for (String templateStr : FTL_TEMPLATE_NAMES) {
             if (tableMetadata.getPlusEnabled() == 0) {
                 if (templateStr.contains("DTO.") || templateStr.contains("VO.")) {
                     continue;

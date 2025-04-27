@@ -31,7 +31,7 @@ import ${commonPackage}.common.domain.ResultEnum;
 import ${codePackage}.service.${classNameUpperCase}Service;
 import ${codePackage}.entity.${classNameUpperCase}Entity;
 
-<#if mapstructEnabled == 1>import ${codePackage}.converter.${classNameUpperCase}Converter;</#if>
+<#if mapstructEnabled == 1>import ${codePackage}.mapstruct.${classNameUpperCase}MapStruct;</#if>
 
 <#if plusEnabled == 1>
 import ${codePackage}.vo.${classNameUpperCase}InputVO;

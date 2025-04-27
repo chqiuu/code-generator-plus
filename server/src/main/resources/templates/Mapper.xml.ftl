@@ -21,7 +21,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap id="BriefResultMap" type="${codePackage}.dto.${classNameUpperCase}BriefDTO">
         <#list columns as column>
-            <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
+        <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
         </#list>
     </resultMap>
     <!--根据唯一ID获取简要信息-->
@@ -34,20 +34,20 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap id="DetailResultMap" type="${codePackage}.dto.${classNameUpperCase}DetailDTO">
         <#list columns as column>
-            <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
+        <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
         </#list>
     </resultMap>
     <!--根据唯一ID获取详细信息-->
     <select id="getDetailById" resultMap="DetailResultMap">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
-        FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` =  ${r'#{'}${pk.attrNameLowerCase}${r'}'}<#if logicDelete == 1> AND ${acronymLowerCase}.`is_deleted` = 0</#if>
+        FROM `${tableName}` AS ${acronymLowerCase} where ${acronymLowerCase}.`${pk.columnName}` = ${r'#{'}${pk.attrNameLowerCase}${r'}'}<#if logicDelete == 1> AND ${acronymLowerCase}.`is_deleted` = 0</#if>
     </select>
         </#if>
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap id="ListResultMap" type="${codePackage}.dto.${classNameUpperCase}ListDTO">
         <#list columns as column>
-            <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
+        <result property="${column.attrNameLowerCase}" column="${column.columnName}" <#if column.attrType == 'JSONObject'> typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"</#if>/>
         </#list>
     </resultMap>
         <#if generalMethod.getListEnabled==1>

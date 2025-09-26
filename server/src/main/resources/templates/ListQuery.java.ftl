@@ -1,5 +1,6 @@
 package ${codePackage}.query;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 <#if apiVersion == 3>
@@ -38,6 +39,7 @@ import java.time.LocalDate;
 </#if>
 public class ${classNameUpperCase}ListQuery implements Serializable${r'{'}
 
+    @Serial
     private static final long serialVersionUID = 1L;
     /** 排序参数 */
 <#if apiVersion == 3>

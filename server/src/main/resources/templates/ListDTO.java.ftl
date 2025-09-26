@@ -1,5 +1,6 @@
 package ${codePackage}.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 <#if apiVersion == 3>
@@ -38,6 +39,7 @@ import java.time.LocalDate;
 </#if>
 public class ${classNameUpperCase}ListDTO implements Serializable${r'{'}
 
+    @Serial
     private static final long serialVersionUID = 1L;
 //TODO 当您看到这个后您应该自己修改模板增减字段
 <#list columns as column>

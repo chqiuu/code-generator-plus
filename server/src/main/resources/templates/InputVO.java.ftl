@@ -1,5 +1,6 @@
 package ${codePackage}.vo;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 <#if apiVersion == 3>
@@ -24,8 +25,15 @@ import ${commonPackage}.common.validator.group.Update;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
 
+<#if apiVersion == 3>
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+<#else>
+import javax.validation.constraints.Size;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+</#if>
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 </#if>
@@ -46,6 +54,7 @@ import java.time.LocalDate;
 </#if>
 public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
 
+    @Serial
     private static final long serialVersionUID = 1L;
     //TODO 当您看到这个后您应该自己修改模板增减规则
     <#list columns as column>
@@ -58,7 +67,7 @@ public class ${classNameUpperCase}InputVO implements Serializable${r'{'}
     @NotNull(message = "${column.commentEscape}不能为空", groups = Default.class)
             </#if>
             <#if column.attrType == 'String' && column.charlength?? && column.charlength < 10000>
-    @Length(max = ${column.charlength}, message = "${column.commentEscape}不能超过{max}个字符", groups = Default.class)
+    @Size(max = ${column.charlength}, message = "${column.commentEscape}不能超过{max}个字符", groups = Default.class)
             <#elseif column.attrType == 'Integer'>
     @Max(value = Integer.MAX_VALUE, message = "${column.commentEscape}不能超过{value}", groups = Default.class)
             <#elseif column.attrType == 'Long'>

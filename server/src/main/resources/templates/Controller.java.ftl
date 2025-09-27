@@ -34,15 +34,13 @@ import ${codePackage}.entity.${classNameUpperCase}Entity;
 <#if mapstructEnabled == 1>import ${codePackage}.mapstruct.${classNameUpperCase}MapStruct;</#if>
 
 <#if plusEnabled == 1>
-import ${codePackage}.vo.${classNameUpperCase}InputVO;
+import ${codePackage}.vo.${classNameUpperCase}AddInputVO;
+import ${codePackage}.vo.${classNameUpperCase}UpdateInputVO;
 import ${codePackage}.dto.${classNameUpperCase}BriefDTO;
 import ${codePackage}.dto.${classNameUpperCase}DetailDTO;
 import ${codePackage}.dto.${classNameUpperCase}ListDTO;
 import ${codePackage}.query.${classNameUpperCase}ListQuery;
 import ${codePackage}.query.${classNameUpperCase}PageQuery;
-import ${commonPackage}.common.validator.group.Default;
-import ${commonPackage}.common.validator.group.Create;
-import ${commonPackage}.common.validator.group.Update;
 import javax.validation.constraints.NotNull;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDateTime;
@@ -113,7 +111,7 @@ public class ${classNameUpperCase}Controller extends BaseController {
     @ApiOperation(value = "新建${commentEscape}", notes = "新建${commentEscape}，返回ID")
             </#if>
     @PostMapping("/add")
-    public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
+    public Result${r'<'}${pk.attrType}> add(@Validated @RequestBody ${classNameUpperCase}AddInputVO vo) {
         <#if mapstructEnabled == 1>${classNameUpperCase}Entity entity = ${classNameLowerCase}MapStruct.toEntity(vo);<#else>${classNameUpperCase}Entity entity = vo.convertToEntity();</#if>
         entity.set${pk.attrNameUpperCase}(null);
         ${classNameLowerCase}Service.save(entity);
@@ -128,7 +126,7 @@ public class ${classNameUpperCase}Controller extends BaseController {
     @ApiOperation(value = "更新${commentEscape}", notes = "更新${commentEscape}")
             </#if>
     @PostMapping("/update")
-    public Result${r'<'}String> update(@Validated({Update.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
+    public Result${r'<'}String> update(@Validated @RequestBody ${classNameUpperCase}UpdateInputVO vo) {
         ${classNameUpperCase}BriefDTO briefDTO = ${classNameLowerCase}Service.getBriefById(vo.get${pk.attrNameUpperCase}());
         if (null == briefDTO) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");

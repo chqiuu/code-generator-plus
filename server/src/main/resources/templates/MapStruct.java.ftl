@@ -14,13 +14,22 @@ import org.mapstruct.Mapper;
 public interface ${classNameUpperCase}MapStruct {
 <#if generalMethod??>
         <#if generalMethod.addEnabled==1 || generalMethod.updateEnabled==1>
+
    /**
-   * VO 转 Entity
+   * AddInputVO 转 Entity
    *
    * @param vo InputVO
    * @return Entity
    */
-   ${classNameUpperCase}Entity toEntity(${classNameUpperCase}InputVO vo);
+   ${classNameUpperCase}Entity toEntity(${classNameUpperCase}AddInputVO vo);
+
+    /**
+    * UpdateInputVO 转 Entity
+    *
+    * @param vo InputVO
+    * @return Entity
+    */
+    ${classNameUpperCase}Entity toEntity(${classNameUpperCase}UpdateInputVO vo);
         </#if>
 </#if>
 ${r'}'}

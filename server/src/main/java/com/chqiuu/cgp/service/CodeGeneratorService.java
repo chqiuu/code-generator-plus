@@ -528,8 +528,10 @@ public class CodeGeneratorService {
             return packagePath + "query" + File.separator + className + "ListQuery.java";
         } else if (template.contains("PageQuery.java.ftl")) {
             return packagePath + "query" + File.separator + className + "PageQuery.java";
-        } else if (template.contains("InputVO.java.ftl")) {
-            return packagePath + "vo" + File.separator + className + "InputVO.java";
+        } else if (template.contains("AddInputVO.java.ftl")) {
+            return packagePath + "vo" + File.separator + className + "AddInputVO.java";
+        } else if (template.contains("UpdateInputVO.java.ftl")) {
+            return packagePath + "vo" + File.separator + className + "UpdateInputVO.java";
         } else if (template.contains("Dao.java.ftl")) {
             if (plusEnabled == 1) {
                 return packagePath + "mapper" + File.separator + className + "Mapper.java";

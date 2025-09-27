@@ -20,9 +20,6 @@ import ${codePackage}.entity.${classNameUpperCase}Entity;
 <#if lombokDataEnabled == 1>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import ${commonPackage}.common.validator.group.Default;
-import ${commonPackage}.common.validator.group.Update;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
 
 <#if apiVersion == 3>
@@ -39,7 +36,7 @@ import java.time.LocalDate;
 </#if>
 
 /**
- * ${comment}录入信息
+ * 添加${comment}录入信息
  *
  * @author ${author}
  * @date ${createTime?date("yyyy-MM-dd")}
@@ -58,20 +55,16 @@ public class ${classNameUpperCase}InputVO implements Serializable ${r'{'}
     private static final long serialVersionUID = 1L;
     //TODO 当您看到这个后您应该自己修改模板增减规则
     <#list columns as column>
-        <#if exclusionShowColumns?contains(column.columnName)>
+        <#if exclusionShowColumns?contains(column.columnName) || column.columnName == pk.columnName>
         <#else>
     /** ${column.comment} ${column.columnDetail} */
-            <#if column.columnName == pk.columnName>
-    @NotNull(message = "${column.commentEscape}不能为空", groups = Update.class)
-            <#else>
-    @NotNull(message = "${column.commentEscape}不能为空", groups = Default.class)
-            </#if>
+    @NotNull(message = "${column.commentEscape}不能为空")
             <#if column.attrType == 'String' && column.charlength?? && column.charlength < 10000>
-    @Size(max = ${column.charlength}, message = "${column.commentEscape}不能超过{max}个字符", groups = Default.class)
+    @Size(max = ${column.charlength}, message = "${column.commentEscape}不能超过{max}个字符")
             <#elseif column.attrType == 'Integer'>
-    @Max(value = Integer.MAX_VALUE, message = "${column.commentEscape}不能超过{value}", groups = Default.class)
+    @Max(value = Integer.MAX_VALUE, message = "${column.commentEscape}不能超过{value}")
             <#elseif column.attrType == 'Long'>
-    // @Max(value = Long.MAX_VALUE, message = "${column.commentEscape}不能超过{max}", groups = Default.class)
+    // @Max(value = Long.MAX_VALUE, message = "${column.commentEscape}不能超过{max}")
             </#if>
 <#if apiVersion == 3>
     @Schema(description = "${column.commentEscape}")

@@ -114,7 +114,7 @@ public class ${classNameUpperCase}Controller extends BaseController {
             </#if>
     @PostMapping("/add")
     public Result${r'<'}${pk.attrType}> add(@Validated({Create.class}) @RequestBody ${classNameUpperCase}InputVO vo) {
-        <#if mapstructEnabled == 1>${classNameUpperCase}Entity entity = ${classNameLowerCase}MapStruct.fromInputVO(vo);<#else>${classNameUpperCase}Entity entity = vo.convertToEntity();</#if>
+        <#if mapstructEnabled == 1>${classNameUpperCase}Entity entity = ${classNameLowerCase}MapStruct.toEntity(vo);<#else>${classNameUpperCase}Entity entity = vo.convertToEntity();</#if>
         entity.set${pk.attrNameUpperCase}(null);
         ${classNameLowerCase}Service.save(entity);
         return Result.ok(entity.get${pk.attrNameUpperCase}());
@@ -133,7 +133,7 @@ public class ${classNameUpperCase}Controller extends BaseController {
         if (null == briefDTO) {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要更新的记录");
         }
-        <#if mapstructEnabled == 1>${classNameLowerCase}Service.updateById(${classNameLowerCase}MapStruct.fromInputVO(vo));<#else>${classNameLowerCase}Service.updateById(vo.convertToEntity());</#if>
+        <#if mapstructEnabled == 1>${classNameLowerCase}Service.updateById(${classNameLowerCase}MapStruct.toEntity(vo));<#else>${classNameLowerCase}Service.updateById(vo.convertToEntity());</#if>
         return Result.ok();
     }
         </#if>
@@ -158,7 +158,8 @@ public class ${classNameUpperCase}Controller extends BaseController {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
         }
         //TODO 其他限制删除条件
-        return Result.ok(${classNameLowerCase}Service.removeById(${pk.attrNameLowerCase}));
+        ${classNameLowerCase}Service.removeById(${pk.attrNameLowerCase})
+        return Result.ok();
     }
 </#if>
 }

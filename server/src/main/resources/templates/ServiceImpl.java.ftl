@@ -128,6 +128,7 @@ public class ${classNameUpperCase}Service <#if plusEnabled == 1>extends ServiceI
     }
 <#elseif plusEnabled == 1>
     <#if generalMethod??>
+
     <#if serviceInterfaceEnabled == 1>@Override</#if>
     public ${classNameUpperCase}BriefDTO getBriefById(${pk.attrType} ${pk.attrNameLowerCase}) {
         return this.baseMapper.getBriefById(${pk.attrNameLowerCase});

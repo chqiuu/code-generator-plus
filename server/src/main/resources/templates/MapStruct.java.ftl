@@ -20,22 +20,7 @@ public interface ${classNameUpperCase}MapStruct {
    * @param vo InputVO
    * @return Entity
    */
-   ${classNameUpperCase}Entity fromInputVO(${classNameUpperCase}InputVO vo);
+   ${classNameUpperCase}Entity toEntity(${classNameUpperCase}InputVO vo);
         </#if>
-   /**
-   * Entity 转 DetailDTO
-   *
-   * @param entity Entity
-   * @return DetailDTO
-   */
-   // ${classNameUpperCase}DetailDTO toDetailDTO(${classNameUpperCase}Entity entity);
-
-   /**
-   * Entity 转 ListDTO
-   *
-   * @param entity Entity
-   * @return ListDTO
-   */
-   // ${classNameUpperCase}ListDTO toListDTO(${classNameUpperCase}Entity entity);
 </#if>
 ${r'}'}

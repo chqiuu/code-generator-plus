@@ -53,24 +53,24 @@ public class ${classNameUpperCase}Entity implements Serializable</#if> ${r'{'}
 
     @Serial
     private static final long serialVersionUID = 1L;
-
     <#list columns as column>
+
     /** ${column.comment} ${column.columnDetail} */
     <#if plusEnabled == 1><#if column.columnName == pk.columnName>
     <#--设置表主键，并设置ID生成方式-->
     @TableId(value = "${column.columnName}"<#if column.attrType == 'Long'>, type = IdType.ASSIGN_ID<#elseif column.attrType == 'Integer'>, type = IdType.AUTO</#if>)
-    </#if>
-        <#if column.columnName == 'delete_flag' || column.columnName == 'is_deleted'>
-        <#--逻辑删除标识-->
+        </#if><#if column.columnName == 'delete_flag' || column.columnName == 'is_deleted'>
+    <#--逻辑删除标识-->
     @TableLogic
-        </#if>
+        </#if></#if>
+    <#if column.attrType == 'JSONObject'>
+    @TableField(typeHandler = FastjsonTypeHandler.class)
     </#if>
-<#if column.attrType == 'JSONObject'>@TableField(typeHandler = FastjsonTypeHandler.class)</#if>
-<#if apiVersion == 3>
+    <#if apiVersion == 3>
     @Schema(description = "${column.commentEscape}")
-<#else>
+    <#else>
     @ApiModelProperty(value = "${column.commentEscape}")
-</#if>
+    </#if>
     private ${column.attrType} ${column.attrNameLowerCase};
     </#list>
     <#if lombokDataEnabled == 0>

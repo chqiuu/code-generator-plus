@@ -120,16 +120,5 @@ public interface ${classNameUpperCase}Service <#if plusEnabled == 1>extends ISer
     IPage${r'<'}${classNameUpperCase}ListDTO> getPage(${classNameUpperCase}PageQuery query);
         </#if>
  </#if>
-  <#if logicDelete == 1>
-
-    /**
-     * 删除
-     *
-     * @param ${pk.attrNameLowerCase} ${pk.comment}
-     * @param operatorId    当前操作人员ID
-     * @return 是否成功
-     */
-    boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long operatorId);
-  </#if>
 </#if>
 ${r'}'}

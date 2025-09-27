@@ -82,9 +82,9 @@ public class TableMetadataDTO implements Serializable {
      */
     private String author = "chqiuu";
     /**
-     * 是否存在逻辑删除字段 is_deleted
+     * 逻辑删除字段 is_deleted 或 delete_flag
      */
-    private Integer logicDelete = 0;
+    private String logicDelete = "";
     /**
      * 是否存在 BigDecimal 字段
      */
@@ -96,7 +96,7 @@ public class TableMetadataDTO implements Serializable {
     /**
      * 排除显示的字段
      */
-    private String exclusionShowColumns = "is_deleted,del_time,del_user,create_time,update_time,gmt_create,gmt_modified";
+    private String exclusionShowColumns = "is_deleted,delete_flag,del_time,del_user,create_time,update_time,gmt_create,gmt_modified";
     /**
      * 是否生成通用方法
      */

@@ -60,17 +60,17 @@ public class ${classNameUpperCase}Entity implements Serializable</#if> ${r'{'}
     <#--设置表主键，并设置ID生成方式-->
     @TableId(value = "${column.columnName}"<#if column.attrType == 'Long'>, type = IdType.ASSIGN_ID<#elseif column.attrType == 'Integer'>, type = IdType.AUTO</#if>)
     </#if>
-        <#if column.columnName == 'is_deleted'>
+        <#if column.columnName == 'delete_flag' || column.columnName == 'is_deleted'>
         <#--逻辑删除标识-->
     @TableLogic
         </#if>
     </#if>
+<#if column.attrType == 'JSONObject'>@TableField(typeHandler = FastjsonTypeHandler.class)</#if>
 <#if apiVersion == 3>
     @Schema(description = "${column.commentEscape}")
 <#else>
     @ApiModelProperty(value = "${column.commentEscape}")
-</#if><#if column.attrType == 'JSONObject'>
-    @TableField(typeHandler = FastjsonTypeHandler.class)</#if>
+</#if>
     private ${column.attrType} ${column.attrNameLowerCase};
     </#list>
     <#if lombokDataEnabled == 0>

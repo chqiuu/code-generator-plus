@@ -155,22 +155,5 @@ public class ${classNameUpperCase}Service <#if plusEnabled == 1>extends ServiceI
     }
         </#if>
     </#if>
-    <#if logicDelete == 1>
-        
-    <#if serviceInterfaceEnabled == 1>@Override</#if>
-    public boolean delete(${pk.attrType} ${pk.attrNameLowerCase}, Long operatorId) {
-        ${classNameUpperCase}Entity updateEntity = new ${classNameUpperCase}Entity();
-        updateEntity.set${pk.attrNameUpperCase}(${pk.attrNameLowerCase});
-        updateEntity.setIsDeleted(true);
-    <#list columns as column>
-        <#if column.columnName == 'del_time'>
-        updateEntity.setDelTime(LocalDateTime.now());
-        <#elseif column.columnName == 'del_user'>
-        updateEntity.setDelUser(operatorId);
-        </#if>
-    </#list>
-        return baseMapper.updateById(updateEntity) > 0;
-    }
-    </#if>
 </#if>
 ${r'}'}

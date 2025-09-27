@@ -158,11 +158,7 @@ public class ${classNameUpperCase}Controller extends BaseController {
             return Result.failed(ResultEnum.NOT_FOUND, "没有找到需要删除的记录");
         }
         //TODO 其他限制删除条件
-    <#if logicDelete == 1>
-        return Result.ok(${classNameLowerCase}Service.delete(${pk.attrNameLowerCase}, user.getUserId()));
-    <#else>
         return Result.ok(${classNameLowerCase}Service.removeById(${pk.attrNameLowerCase}));
-    </#if>
     }
 </#if>
 }

@@ -352,13 +352,13 @@ public class CodeGeneratorService {
             columnDto.setAttrNameLowerCase(attrName.substring(0, 1).toLowerCase() + attrName.substring(1));
             // 列的数据类型，转换成Java类型
             columnDto.setAttrType(getJavaType(columnDto.getColumnName(), columnDto.getDataType()));
-            //是否主键
+            // 是否主键
             if ("PRI".equalsIgnoreCase(column.getColumnKey()) && dto.getPk() == null) {
                 dto.setPk(columnDto);
             }
-            //是否存在逻辑删除字段 is_deleted
-            if ("is_deleted".equalsIgnoreCase(column.getColumnName())) {
-                dto.setLogicDelete(1);
+            // 设置逻辑删除字段 is_deleted 或 delete_flag
+            if ("is_deleted".equalsIgnoreCase(column.getColumnName()) || "delete_flag".equalsIgnoreCase(column.getColumnName())) {
+                dto.setLogicDelete(column.getColumnName());
             }
             // 是否存在 BigDecimal 字段
             if ("BigDecimal".equalsIgnoreCase(columnDto.getAttrType())) {

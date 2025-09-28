@@ -55,7 +55,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <select id="getList" parameterType="${codePackage}.query.${classNameUpperCase}ListQuery" resultMap="ListResultMap">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
-        FROM `${tableName}` AS ${acronymLowerCase} WHERE 1 = 1
+        FROM `${tableName}` AS ${acronymLowerCase} WHERE <#if logicDelete != ''><#--逻辑删除标识--> ${acronymLowerCase}.`${logicDelete}` = 0<#else>1 = 1</#if>
         <#list columns as column>
             <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
                 <#if column.attrType == 'String'>
@@ -69,7 +69,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 </#if>
             </#if>
         </#list>
-        <#if logicDelete != ''><#--逻辑删除标识--> AND ${acronymLowerCase}.`${logicDelete}` = 0</#if>
+
         <choose>
             <when test="query.sortParam=='${pk.attrNameLowerCase}'">
                 <choose>
@@ -103,7 +103,7 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
     <select id="getPage" parameterType="${codePackage}.query.${classNameUpperCase}PageQuery" resultMap="ListResultMap">
         SELECT
         <include refid="Base_${acronymUpperCase}_Column_List"/>
-        FROM `${tableName}` AS ${acronymLowerCase} WHERE 1 = 1
+        FROM `${tableName}` AS ${acronymLowerCase} WHERE <#if logicDelete != ''><#--逻辑删除标识--> ${acronymLowerCase}.`${logicDelete}` = 0<#else>1 = 1</#if>
         <#list columns as column>
             <#if column.columnName != pk.columnName && !exclusionShowColumns?contains(column.columnName) && !column.dataType?contains('text')>
                 <#if column.attrType == 'String'>
@@ -117,7 +117,6 @@ ${r'<mapper'} <#if plusEnabled == 1>namespace="${codePackage}.mapper.${className
                 </#if>
             </#if>
         </#list>
-        <#if logicDelete != ''><#--逻辑删除标识--> AND ${acronymLowerCase}.`${logicDelete}` = 0</#if>
         <choose>
             <when test="query.sortParam=='${pk.attrNameLowerCase}'">
                 <choose>

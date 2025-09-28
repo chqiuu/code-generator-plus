@@ -49,7 +49,7 @@ import java.time.LocalDate;
 <#else>
 @ApiModel(value = "${commentEscape}录入信息")
 </#if>
-public class ${classNameUpperCase}InputVO implements Serializable ${r'{'}
+public class ${classNameUpperCase}AddInputVO implements Serializable ${r'{'}
 
     @Serial
     private static final long serialVersionUID = 1L;

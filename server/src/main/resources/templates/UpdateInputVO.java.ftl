@@ -33,6 +33,7 @@ import javax.validation.constraints.NotNull;
 </#if>
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 </#if>
 
 /**
@@ -65,6 +66,8 @@ public class ${classNameUpperCase}UpdateInputVO implements Serializable ${r'{'}
     @Max(value = Integer.MAX_VALUE, message = "${column.commentEscape}不能超过{value}")
             <#elseif column.attrType == 'Long'>
     // @Max(value = Long.MAX_VALUE, message = "${column.commentEscape}不能超过{max}")
+            <#elseif column.attrType == 'LocalDateTime'>
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             </#if>
 <#if apiVersion == 3>
     @Schema(description = "${column.commentEscape}")
